@@ -1,146 +1,124 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ORION Breakout Scanner — 7 Pillars Terminal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { background-color: #0d1117; color: #c9d1d9; font-family: ui-sans-serif, system-ui, sans-serif; }
-    .card-explosive { border-left: 4px solid #ef4444; background: #161b22; }
-    .card-strong { border-left: 4px solid #f97316; background: #161b22; }
-    .card-spurt { border-left: 4px solid #eab308; background: #161b22; }
-    .badge-ce { background: #064e3b; color: #34d399; }
-    .badge-pe { background: #7f1d1d; color: #f87171; }
-  </style>
-</head>
-<body class="p-4 md:p-8">
+import json
+import datetime
+import yfinance as yf
+import pandas as pd
+import numpy as np
 
-  <!-- Header -->
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-gray-800 gap-4">
-    <div>
-      <div class="flex items-center gap-3">
-        <h1 class="text-2xl font-bold tracking-tight text-white">ORION 7-PILLARS TERMINAL</h1>
-        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">
-          ● LIVE 9:16 AM FEED
-        </span>
-      </div>
-      <p class="text-sm text-gray-400">Complete 7-Rule Intraday F&O Breakout System</p>
-    </div>
+# Expanded liquid NSE F&O universe
+SYMBOLS = [
+    # Index Heavies & Banks
+    "RELIANCE.NS", "HDFCBANK.NS", "ICICIBANK.NS", "SBIN.NS", "AXISBANK.NS", "KOTAKBANK.NS",
+    # IT Leaders
+    "TCS.NS", "INFY.NS", "HCLTECH.NS", "WIPRO.NS", "TECHM.NS",
+    # Auto & Metals
+    "TATAMOTORS.NS", "MARUTI.NS", "M&M.NS", "TATASTEEL.NS", "JINDALSTEL.NS", "HINDALCO.NS",
+    # High-Momentum Mid/Large F&O
+    "BHARTIARTL.NS", "ASTRAL.NS", "VOLTAS.NS", "MANAPPURAM.NS", "PNBHOUSING.NS",
+    "KFINTECH.NS", "NAM-INDIA.NS", "DIXON.NS", "POLYCAB.NS", "COFORGE.NS", "PERSISTENT.NS",
+    "CANBK.NS", "FEDERALBNK.NS", "INDUSINDBK.NS", "BAJFINANCE.NS", "BAJAJFINSV.NS",
+    "SUNPHARMA.NS", "CIPLA.NS", "DRREDDY.NS", "LTIM.NS", "LT.NS", "BEL.NS", "HAL.NS"
+]
 
-    <!-- Market Mood Breadth Bar -->
-    <div class="bg-gray-900 border border-gray-800 rounded-lg p-3 text-xs flex gap-6">
-      <div>Advances: <span id="adv-count" class="text-emerald-400 font-bold">--</span></div>
-      <div>Declines: <span id="dec-count" class="text-rose-400 font-bold">--</span></div>
-      <div>Sentiment: <span id="sentiment" class="text-emerald-400 font-bold">MONITORING</span></div>
-    </div>
-  </header>
+leaders = []
+advances = 0
+declines = 0
 
-  <!-- Filter Navigation Tabs -->
-  <div class="flex gap-2 my-6 overflow-x-auto">
-    <button onclick="filterCards('ALL')" class="px-3 py-1.5 rounded text-xs font-medium bg-gray-800 text-white hover:bg-gray-700">ALL</button>
-    <button onclick="filterCards('EXPLOSIVE')" class="px-3 py-1.5 rounded text-xs font-medium bg-red-950 text-red-400 border border-red-800">💥 EXPLOSIVE (6-7 Pillars)</button>
-    <button onclick="filterCards('STRONG')" class="px-3 py-1.5 rounded text-xs font-medium bg-orange-950 text-orange-400 border border-orange-800">🔥 STRONG (5 Pillars)</button>
-    <button onclick="filterCards('SPURT')" class="px-3 py-1.5 rounded text-xs font-medium bg-yellow-950 text-yellow-400 border border-yellow-800">⚡ SPURT (4 Pillars)</button>
-  </div>
+print("Scanning broad F&O universe across 7 Pillars...")
 
-  <!-- Cards Grid -->
-  <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <!-- Dynamic Cards Injected Here -->
-  </div>
+for sym in SYMBOLS:
+    try:
+        ticker = yf.Ticker(sym)
+        df_daily = ticker.history(period="5d", interval="1d")
+        df_intra = ticker.history(period="1d", interval="5m")
 
-  <script>
-    async function fetchScannerData() {
-      try {
-        const res = await fetch('data.json?t=' + new Date().getTime());
-        const data = await res.json();
+        if len(df_intra) < 2 or len(df_daily) < 2:
+            continue
 
-        if (data.breadth) {
-          document.getElementById("adv-count").innerText = data.breadth.advances;
-          document.getElementById("dec-count").innerText = data.breadth.declines;
-          if (data.breadth.sentiment) {
-            document.getElementById("sentiment").innerText = data.breadth.sentiment;
-          }
-        }
+        last_bar = df_intra.iloc[-1]
+        prev_bar = df_intra.iloc[-2]
+        pdh = float(df_daily['High'].iloc[-2])
 
-        window.allLeaders = data.leaders || [];
-        renderCards(window.allLeaders);
-      } catch (e) {
-        console.log("Awaiting scan updates...", e);
-      }
-    }
+        clean_symbol = sym.replace(".NS", "")
+        close = round(float(last_bar['Close']), 2)
+        open_p = round(float(last_bar['Open']), 2)
+        low_p = round(float(last_bar['Low']), 2)
 
-    function renderCards(data) {
-      const container = document.getElementById("cards-container");
-      container.innerHTML = "";
+        if close >= open_p:
+            advances += 1
+        else:
+            declines += 1
 
-      if (!data || data.length === 0) {
-        container.innerHTML = `<div class="text-gray-500 text-sm p-4 col-span-3">Scanning market for 7-pillar setups...</div>`;
-        return;
-      }
+        # Pillar Checks
+        p1_liquidity = (close > 50) and (float(last_bar['Volume']) > 5000)
+        
+        avg_vol = df_intra['Volume'].mean()
+        vol_x = round(float(last_bar['Volume'] / avg_vol), 1) if avg_vol > 0 else 1.0
+        p2_volume = vol_x >= 2.5
 
-      data.forEach(item => {
-        const cardClass = item.tier === 'EXPLOSIVE' ? 'card-explosive' : (item.tier === 'STRONG' ? 'card-strong' : 'card-spurt');
-        const badgeClass = item.type === 'CE' ? 'badge-ce' : 'badge-pe';
+        p3_orb = close >= float(df_intra['High'].iloc[0])
 
-        const card = document.createElement("div");
-        card.className = `${cardClass} p-4 rounded-lg shadow-lg border border-gray-800 transition hover:border-gray-700`;
-        card.innerHTML = `
-          <div class="flex justify-between items-center mb-2">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-semibold px-2 py-0.5 rounded ${badgeClass}">${item.type}</span>
-              <span class="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">🏆 ${item.score || '7/7'}</span>
-            </div>
-            <span class="text-xs text-gray-400">🕐 ${item.detectTime}</span>
-          </div>
+        cum_vol = df_intra['Volume'].cumsum()
+        vwap = (df_intra['Volume'] * df_intra['Close']).cumsum() / cum_vol
+        p4_vwap = close > float(vwap.iloc[-1])
 
-          <div class="flex justify-between items-baseline mb-2">
-            <h2 class="text-xl font-bold text-white tracking-wide">${item.symbol}</h2>
-            <div class="text-right">
-              <span class="text-sm font-semibold text-white">₹${item.price}</span>
-              <span class="text-xs ml-1 ${item.type === 'CE' ? 'text-emerald-400' : 'text-rose-400'} font-bold">${item.pctChange}</span>
-            </div>
-          </div>
+        p5_pdh = close > pdh
 
-          <!-- 7-Pillars Matrix -->
-          <div class="grid grid-cols-2 gap-2 text-xs bg-gray-900/60 p-2.5 rounded border border-gray-800/80 mb-3">
-            <div>1. Universe: <span class="text-emerald-400 font-bold">F&O</span></div>
-            <div>2. Vol Surge: <span class="text-amber-400 font-bold">${item.volumeX}</span></div>
-            <div>3. ORB High: <span class="text-emerald-400 font-bold">BROKEN</span></div>
-            <div>4. VWAP: <span class="text-emerald-400 font-bold">ABOVE</span></div>
-            <div>5. PDH Break: <span class="text-emerald-400 font-bold">YES</span></div>
-            <div>6. Follow-Thru: <span class="text-emerald-400 font-bold">CONFIRMED</span></div>
-            <div>7. RSI (>60): <span class="text-gray-200 font-bold">${item.rsi}</span></div>
-            <div>Risk Rule: <span class="text-purple-400 font-bold">1% SL LAW</span></div>
-          </div>
+        p6_follow = (close > open_p) and (close > float(prev_bar['High']))
 
-          <!-- Actionable Strike & Targets -->
-          <div class="border-t border-gray-800 pt-3 flex justify-between items-center text-xs">
-            <div>
-              <p class="text-gray-400">Pillar 7 Strike Zone</p>
-              <p class="font-bold text-white text-sm">${item.strike} <span class="text-gray-400 font-normal">(@ ${item.premium})</span></p>
-            </div>
-            <div class="text-right">
-              <p class="text-gray-400">SL: <span class="text-rose-400 font-semibold">${item.sl}</span></p>
-              <p class="text-gray-400">T1: <span class="text-emerald-400 font-semibold">${item.t1}</span></p>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
+        delta = df_intra['Close'].diff()
+        gain = (delta.where(delta > 0, 0)).rolling(14).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
+        rs = gain / loss
+        rsi_series = 100 - (100 / (1 + rs))
+        rsi_val = round(float(rsi_series.iloc[-1]), 1) if not np.isnan(rsi_series.iloc[-1]) else 60.0
+        p7_rsi = rsi_val >= 58.0
 
-    function filterCards(tier) {
-      if (!window.allLeaders) return;
-      if (tier === 'ALL') {
-        renderCards(window.allLeaders);
-      } else {
-        renderCards(window.allLeaders.filter(d => d.tier === tier));
-      }
-    }
+        pillars_passed = sum([p1_liquidity, p2_volume, p3_orb, p4_vwap, p5_pdh, p6_follow, p7_rsi])
 
-    fetchScannerData();
-    setInterval(fetchScannerData, 10000);
-  </script>
-</body>
-</html>
+        if pillars_passed >= 4:
+            if pillars_passed >= 6 and vol_x >= 4.0:
+                tier = "EXPLOSIVE"
+            elif pillars_passed >= 5:
+                tier = "STRONG"
+            else:
+                tier = "SPURT"
+
+            strike_step = 50 if close >= 500 else (20 if close >= 200 else 10)
+            atm_strike = int(round(close / strike_step) * strike_step)
+            sl = low_p if low_p < close else round(close * 0.99, 2)
+            t1 = round(close + ((close - sl) * 1.5), 2)
+
+            leaders.append({
+                "symbol": clean_symbol,
+                "type": "CE",
+                "tier": tier,
+                "score": f"{pillars_passed}/7",
+                "detectTime": datetime.datetime.now().strftime("%H:%M:%S"),
+                "price": close,
+                "pctChange": f"+{round(((close - open_p) / open_p) * 100, 2)}%",
+                "volumeX": f"{vol_x}x",
+                "strike": f"{atm_strike} CE",
+                "premium": "₹--",
+                "sl": sl,
+                "t1": t1,
+                "rsi": rsi_val
+            })
+    except Exception as e:
+        print(f"Skipping {sym}: {e}")
+
+leaders = sorted(leaders, key=lambda x: int(x['score'].split('/')[0]), reverse=True)
+
+output = {
+    "lastUpdated": datetime.datetime.now().strftime("%I:%M:%S %p"),
+    "breadth": {
+        "advances": advances,
+        "declines": declines,
+        "sentiment": "STRONG BULLISH" if advances > (declines * 1.5) else ("BULLISH" if advances >= declines else "BEARISH")
+    },
+    "leaders": leaders
+}
+
+with open("data.json", "w") as f:
+    json.dump(output, f, indent=2)
+
+print(f"Updated data.json with {len(leaders)} setups.")
