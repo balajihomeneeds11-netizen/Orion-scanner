@@ -1,34 +1,70 @@
 {
-  "lastUpdated": "09:16:05 AM",
-  "breadth": { "advances": 142, "declines": 48, "sentiment": "STRONG BULLISH" },
+  "lastUpdated": "06:08:33 PM",
+  "breadth": {
+    "advances": 8,
+    "declines": 5,
+    "sentiment": "STRONG BULLISH"
+  },
   "leaders": [
+    {
+      "symbol": "MANAPPURAM",
+      "type": "CE",
+      "tier": "STRONG",
+      "score": "6/7",
+      "detectTime": "18:08:33",
+      "price": 324.95,
+      "pctChange": "+0.4%",
+      "volumeX": "1.7x",
+      "strike": "300 CE",
+      "premium": "\u20b9--",
+      "sl": 323.65,
+      "t1": 326.9,
+      "rsi": 72.5
+    },
+    {
+      "symbol": "TCS",
+      "type": "CE",
+      "tier": "STRONG",
+      "score": "5/7",
+      "detectTime": "18:08:14",
+      "price": 2087.0,
+      "pctChange": "+0.65%",
+      "volumeX": "6.3x",
+      "strike": "2100 CE",
+      "premium": "\u20b9--",
+      "sl": 2073.6,
+      "t1": 2107.1,
+      "rsi": 65.7
+    },
+    {
+      "symbol": "INFY",
+      "type": "CE",
+      "tier": "STRONG",
+      "score": "5/7",
+      "detectTime": "18:08:19",
+      "price": 1014.5,
+      "pctChange": "+0.39%",
+      "volumeX": "4.1x",
+      "strike": "1000 CE",
+      "premium": "\u20b9--",
+      "sl": 1010.6,
+      "t1": 1020.35,
+      "rsi": 73.7
+    },
     {
       "symbol": "ASTRAL",
       "type": "CE",
-      "tier": "EXPLOSIVE",
-      "detectTime": "09:16:04",
-      "price": 1564.50,
-      "pctChange": "+4.8%",
-      "volumeX": "28.4x",
-      "strike": "1560 CE",
-      "premium": "₹38.50",
-      "sl": "1545.00",
-      "t1": "1590.00",
-      "rsi": 68.2
-    },
-    {
-      "symbol": "VOLTAS",
-      "type": "PE",
-      "tier": "EXPLOSIVE",
-      "detectTime": "09:16:12",
-      "price": 1292.00,
-      "pctChange": "-3.2%",
-      "volumeX": "24.1x",
-      "strike": "1300 PE",
-      "premium": "₹29.00",
-      "sl": "1310.00",
-      "t1": "1265.00",
-      "rsi": 32.1
+      "tier": "SPURT",
+      "score": "4/7",
+      "detectTime": "18:08:21",
+      "price": 1392.0,
+      "pctChange": "+0.36%",
+      "volumeX": "3.6x",
+      "strike": "1400 CE",
+      "premium": "\u20b9--",
+      "sl": 1387.0,
+      "t1": 1399.5,
+      "rsi": 54.2
     }
   ]
 }
