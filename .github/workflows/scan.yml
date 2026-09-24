@@ -13,7 +13,7 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -24,7 +24,10 @@ jobs:
       - name: Install Libs
         run: pip install yfinance pandas numpy
 
-      - name: Run 7-Pillars Scanner
+      - name: Run 7-Pillars Scanner & Dispatch Alerts
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python scanner.py
 
       - name: Commit and Push
@@ -32,5 +35,5 @@ jobs:
           git config --global user.name "Actions Bot"
           git config --global user.email "bot@github.com"
           git add data.json
-          git commit -m "Auto-update 7-pillar cards [skip ci]" || exit 0
+          git commit -m "Auto-update 7-pillar cards & alerts [skip ci]" || exit 0
           git push
