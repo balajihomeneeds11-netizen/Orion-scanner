@@ -1,18 +1,38 @@
+import os
 import json
 import datetime
+import urllib.parse
+import urllib.request
 import yfinance as yf
 import pandas as pd
 import numpy as np
 
-# Expanded liquid NSE F&O universe
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+def send_telegram_alert(message):
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("Telegram credentials not configured.")
+        return
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        payload = {
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": message,
+            "parse_mode": "HTML"
+        }
+        data = urllib.parse.urlencode(payload).encode("utf-8")
+        req = urllib.request.Request(url, data=data)
+        urllib.request.urlopen(req, timeout=10)
+        print("Telegram alert dispatched successfully.")
+    except Exception as err:
+        print(f"Telegram dispatch error: {err}")
+
+# Broad F&O basket to scan
 SYMBOLS = [
-    # Index Heavies & Banks
     "RELIANCE.NS", "HDFCBANK.NS", "ICICIBANK.NS", "SBIN.NS", "AXISBANK.NS", "KOTAKBANK.NS",
-    # IT Leaders
     "TCS.NS", "INFY.NS", "HCLTECH.NS", "WIPRO.NS", "TECHM.NS",
-    # Auto & Metals
     "TATAMOTORS.NS", "MARUTI.NS", "M&M.NS", "TATASTEEL.NS", "JINDALSTEL.NS", "HINDALCO.NS",
-    # High-Momentum Mid/Large F&O
     "BHARTIARTL.NS", "ASTRAL.NS", "VOLTAS.NS", "MANAPPURAM.NS", "PNBHOUSING.NS",
     "KFINTECH.NS", "NAM-INDIA.NS", "DIXON.NS", "POLYCAB.NS", "COFORGE.NS", "PERSISTENT.NS",
     "CANBK.NS", "FEDERALBNK.NS", "INDUSINDBK.NS", "BAJFINANCE.NS", "BAJAJFINSV.NS",
@@ -48,7 +68,7 @@ for sym in SYMBOLS:
         else:
             declines += 1
 
-        # Pillar Checks
+        # 7-Pillars Matrix
         p1_liquidity = (close > 50) and (float(last_bar['Volume']) > 5000)
         
         avg_vol = df_intra['Volume'].mean()
@@ -107,6 +127,23 @@ for sym in SYMBOLS:
         print(f"Skipping {sym}: {e}")
 
 leaders = sorted(leaders, key=lambda x: int(x['score'].split('/')[0]), reverse=True)
+
+# Dispatch Telegram Alert for Top Breakout Candidate
+if leaders:
+    top_pick = leaders[0]
+    badge = "💥 EXPLOSIVE" if top_pick['tier'] == 'EXPLOSIVE' else "🔥 STRONG"
+    msg = (
+        f"<b>{badge} BREAKOUT DETECTED</b>\n\n"
+        f"🎯 <b>Stock:</b> #{top_pick['symbol']} ({top_pick['type']})\n"
+        f"🏆 <b>Score:</b> {top_pick['score']} Pillars Matched\n"
+        f"💰 <b>LTP:</b> ₹{top_pick['price']} ({top_pick['pctChange']})\n"
+        f"⚡ <b>Volume Surge:</b> {top_pick['volumeX']}\n"
+        f"📈 <b>RSI:</b> {top_pick['rsi']}\n"
+        f"🎯 <b>Strike:</b> {top_pick['strike']}\n"
+        f"🛑 <b>SL:</b> ₹{top_pick['sl']} | <b>T1:</b> ₹{top_pick['t1']}\n\n"
+        f"🌐 <a href='https://balajihomeneeds11-netizen.github.io/Orion-scanner/'>Open Live Terminal</a>"
+    )
+    send_telegram_alert(msg)
 
 output = {
     "lastUpdated": datetime.datetime.now().strftime("%I:%M:%S %p"),
