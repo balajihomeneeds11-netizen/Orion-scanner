@@ -1,25 +1,25 @@
 {
-  "lastUpdated": "07:10:45 AM",
+  "lastUpdated": "07:20:08 AM",
   "breadth": {
-    "advances": 38,
-    "declines": 0,
+    "advances": 26,
+    "declines": 12,
     "sentiment": "STRONG BULLISH"
   },
   "leaders": [
     {
-      "symbol": "HDFCBANK",
+      "symbol": "WIPRO",
       "type": "CE",
       "tier": "SPURT",
       "score": "4/7",
-      "detectTime": "07:10:37",
-      "price": 734.85,
-      "pctChange": "+0.0%",
-      "volumeX": "0.0x",
-      "strike": "750 CE",
+      "detectTime": "07:20:00",
+      "price": 163.39,
+      "pctChange": "+0.07%",
+      "volumeX": "1.4x",
+      "strike": "160 CE",
       "premium": "\u20b9--",
-      "sl": 727.5,
-      "t1": 745.88,
-      "rsi": 58.8
+      "sl": 163.24,
+      "t1": 163.61,
+      "rsi": 49.6
     }
   ]
 }
