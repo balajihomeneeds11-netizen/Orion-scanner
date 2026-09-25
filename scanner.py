@@ -12,7 +12,6 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 def send_telegram_alert(message):
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        print("Telegram credentials not configured.")
         return
     try:
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -24,7 +23,6 @@ def send_telegram_alert(message):
         data = urllib.parse.urlencode(payload).encode("utf-8")
         req = urllib.request.Request(url, data=data)
         urllib.request.urlopen(req, timeout=10)
-        print("Telegram alert dispatched successfully.")
     except Exception as err:
         print(f"Telegram dispatch error: {err}")
 
@@ -44,6 +42,10 @@ advances = 0
 declines = 0
 
 print("Scanning broad F&O universe across 7 Pillars...")
+
+# Convert UTC server time to Indian Standard Time (IST)
+ist_now = datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)
+current_ist_time = ist_now.strftime("%I:%M %p")
 
 for sym in SYMBOLS:
     try:
@@ -113,12 +115,12 @@ for sym in SYMBOLS:
                 "type": "CE",
                 "tier": tier,
                 "score": f"{pillars_passed}/7",
-                "detectTime": datetime.datetime.now().strftime("%H:%M:%S"),
+                "detectTime": current_ist_time,
                 "price": close,
                 "pctChange": f"+{round(((close - open_p) / open_p) * 100, 2)}%",
                 "volumeX": f"{vol_x}x",
                 "strike": f"{atm_strike} CE",
-                "premium": "₹--",
+                "premium": "Check Broker",
                 "sl": sl,
                 "t1": t1,
                 "rsi": rsi_val
@@ -128,7 +130,6 @@ for sym in SYMBOLS:
 
 leaders = sorted(leaders, key=lambda x: int(x['score'].split('/')[0]), reverse=True)
 
-# Dispatch Telegram Alert for Top Breakout Candidate
 if leaders:
     top_pick = leaders[0]
     badge = "💥 EXPLOSIVE" if top_pick['tier'] == 'EXPLOSIVE' else "🔥 STRONG"
@@ -146,7 +147,7 @@ if leaders:
     send_telegram_alert(msg)
 
 output = {
-    "lastUpdated": datetime.datetime.now().strftime("%I:%M:%S %p"),
+    "lastUpdated": current_ist_time,
     "breadth": {
         "advances": advances,
         "declines": declines,
