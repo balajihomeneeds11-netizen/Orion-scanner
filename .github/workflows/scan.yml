@@ -1,9 +1,11 @@
-name: Run Morning Orion Scan
+name: Auto Orion Scanner
 
 on:
   schedule:
-    # 03:46 UTC = 9:16 AM IST (Monday to Friday)
+    # 1. The Opening Bell Scan: Runs exactly at 9:16 AM IST (03:46 UTC)
     - cron: '46 3 * * 1-5'
+    # 2. The Sustained Scan: Runs every 5 minutes from 9:30 AM to 3:25 PM IST (04:00 to 09:59 UTC)
+    - cron: '*/5 4-9 * * 1-5'
   workflow_dispatch:
 
 permissions:
