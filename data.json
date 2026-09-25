@@ -1,25 +1,25 @@
 {
-  "lastUpdated": "07:20:08 AM",
+  "lastUpdated": "07:57:39 AM",
   "breadth": {
-    "advances": 26,
-    "declines": 12,
-    "sentiment": "STRONG BULLISH"
+    "advances": 22,
+    "declines": 16,
+    "sentiment": "BULLISH"
   },
   "leaders": [
     {
-      "symbol": "WIPRO",
+      "symbol": "AXISBANK",
       "type": "CE",
-      "tier": "SPURT",
-      "score": "4/7",
-      "detectTime": "07:20:00",
-      "price": 163.39,
-      "pctChange": "+0.07%",
-      "volumeX": "1.4x",
-      "strike": "160 CE",
+      "tier": "STRONG",
+      "score": "5/7",
+      "detectTime": "07:57:30",
+      "price": 1213.2,
+      "pctChange": "+0.17%",
+      "volumeX": "0.8x",
+      "strike": "1200 CE",
       "premium": "\u20b9--",
-      "sl": 163.24,
-      "t1": 163.61,
-      "rsi": 49.6
+      "sl": 1210.7,
+      "t1": 1216.95,
+      "rsi": 72.7
     }
   ]
 }
