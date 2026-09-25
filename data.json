@@ -1,25 +1,9 @@
 {
-  "lastUpdated": "07:57:39 AM",
+  "lastUpdated": "08:10:54 AM",
   "breadth": {
-    "advances": 22,
-    "declines": 16,
-    "sentiment": "BULLISH"
+    "advances": 38,
+    "declines": 0,
+    "sentiment": "STRONG BULLISH"
   },
-  "leaders": [
-    {
-      "symbol": "AXISBANK",
-      "type": "CE",
-      "tier": "STRONG",
-      "score": "5/7",
-      "detectTime": "07:57:30",
-      "price": 1213.2,
-      "pctChange": "+0.17%",
-      "volumeX": "0.8x",
-      "strike": "1200 CE",
-      "premium": "\u20b9--",
-      "sl": 1210.7,
-      "t1": 1216.95,
-      "rsi": 72.7
-    }
-  ]
+  "leaders": []
 }
