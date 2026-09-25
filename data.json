@@ -1,70 +1,25 @@
 {
-  "lastUpdated": "06:51:26 AM",
+  "lastUpdated": "07:10:45 AM",
   "breadth": {
-    "advances": 22,
-    "declines": 16,
-    "sentiment": "BULLISH"
+    "advances": 38,
+    "declines": 0,
+    "sentiment": "STRONG BULLISH"
   },
   "leaders": [
     {
       "symbol": "HDFCBANK",
       "type": "CE",
-      "tier": "STRONG",
-      "score": "5/7",
-      "detectTime": "06:51:18",
-      "price": 735.05,
-      "pctChange": "+-0.03%",
-      "volumeX": "0.2x",
+      "tier": "SPURT",
+      "score": "4/7",
+      "detectTime": "07:10:37",
+      "price": 734.85,
+      "pctChange": "+0.0%",
+      "volumeX": "0.0x",
       "strike": "750 CE",
       "premium": "\u20b9--",
-      "sl": 735.0,
-      "t1": 735.12,
-      "rsi": 69.5
-    },
-    {
-      "symbol": "TCS",
-      "type": "CE",
-      "tier": "STRONG",
-      "score": "5/7",
-      "detectTime": "06:51:19",
-      "price": 2089.7,
-      "pctChange": "+0.07%",
-      "volumeX": "0.1x",
-      "strike": "2100 CE",
-      "premium": "\u20b9--",
-      "sl": 2088.0,
-      "t1": 2092.25,
-      "rsi": 66.7
-    },
-    {
-      "symbol": "M&M",
-      "type": "CE",
-      "tier": "SPURT",
-      "score": "4/7",
-      "detectTime": "06:51:21",
-      "price": 3012.0,
-      "pctChange": "+-0.03%",
-      "volumeX": "0.3x",
-      "strike": "3000 CE",
-      "premium": "\u20b9--",
-      "sl": 2981.88,
-      "t1": 3057.18,
-      "rsi": 59.4
-    },
-    {
-      "symbol": "PERSISTENT",
-      "type": "CE",
-      "tier": "SPURT",
-      "score": "4/7",
-      "detectTime": "06:51:23",
-      "price": 5324.5,
-      "pctChange": "+0.06%",
-      "volumeX": "0.0x",
-      "strike": "5300 CE",
-      "premium": "\u20b9--",
-      "sl": 5319.0,
-      "t1": 5332.75,
-      "rsi": 64.4
+      "sl": 727.5,
+      "t1": 745.88,
+      "rsi": 58.8
     }
   ]
 }
