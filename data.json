@@ -1,40 +1,40 @@
 {
-  "lastUpdated": "10:17 AM",
+  "lastUpdated": "11:31 AM",
   "breadth": {
-    "advances": 4,
-    "declines": 34,
-    "sentiment": "BEARISH"
+    "advances": 22,
+    "declines": 16,
+    "sentiment": "BULLISH"
   },
   "leaders": [
     {
-      "symbol": "TATASTEEL",
-      "type": "CE",
-      "tier": "SPURT",
-      "score": "4/7",
-      "detectTime": "10:17 AM",
-      "price": 187.75,
-      "pctChange": "+0.19%",
-      "volumeX": "0.2x",
-      "strike": "190 CE",
-      "premium": "Check Broker",
-      "sl": 187.3,
-      "t1": 188.42,
-      "rsi": 60.0
-    },
-    {
       "symbol": "DRREDDY",
       "type": "CE",
-      "tier": "SPURT",
-      "score": "4/7",
-      "detectTime": "10:17 AM",
-      "price": 1216.3,
-      "pctChange": "+-0.02%",
-      "volumeX": "0.2x",
+      "tier": "STRONG",
+      "score": "5/7",
+      "detectTime": "11:31 AM",
+      "price": 1220.9,
+      "pctChange": "+0.21%",
+      "volumeX": "0.1x",
       "strike": "1200 CE",
       "premium": "Check Broker",
-      "sl": 1216.1,
-      "t1": 1216.6,
-      "rsi": 60.0
+      "sl": 1217.9,
+      "t1": 1225.4,
+      "rsi": 64.0
+    },
+    {
+      "symbol": "DIXON",
+      "type": "CE",
+      "tier": "SPURT",
+      "score": "4/7",
+      "detectTime": "11:31 AM",
+      "price": 13537.0,
+      "pctChange": "+-0.08%",
+      "volumeX": "0.1x",
+      "strike": "13550 CE",
+      "premium": "Check Broker",
+      "sl": 13401.63,
+      "t1": 13740.06,
+      "rsi": 85.9
     }
   ]
 }
