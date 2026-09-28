@@ -1,40 +1,70 @@
 {
-  "lastUpdated": "11:31 AM",
+  "lastUpdated": "12:36 PM",
   "breadth": {
-    "advances": 22,
-    "declines": 16,
-    "sentiment": "BULLISH"
+    "advances": 16,
+    "declines": 22,
+    "sentiment": "BEARISH"
   },
   "leaders": [
+    {
+      "symbol": "DIXON",
+      "type": "CE",
+      "tier": "STRONG",
+      "score": "5/7",
+      "detectTime": "12:36 PM",
+      "price": 13714.0,
+      "pctChange": "+0.37%",
+      "volumeX": "0.8x",
+      "strike": "13700 CE",
+      "premium": "Check Broker",
+      "sl": 13659.0,
+      "t1": 13796.5,
+      "rsi": 80.0
+    },
     {
       "symbol": "DRREDDY",
       "type": "CE",
       "tier": "STRONG",
       "score": "5/7",
-      "detectTime": "11:31 AM",
-      "price": 1220.9,
-      "pctChange": "+0.21%",
+      "detectTime": "12:36 PM",
+      "price": 1224.3,
+      "pctChange": "+-0.01%",
       "volumeX": "0.1x",
       "strike": "1200 CE",
       "premium": "Check Broker",
-      "sl": 1217.9,
-      "t1": 1225.4,
-      "rsi": 64.0
+      "sl": 1224.0,
+      "t1": 1224.75,
+      "rsi": 64.9
     },
     {
-      "symbol": "DIXON",
+      "symbol": "VOLTAS",
       "type": "CE",
       "tier": "SPURT",
       "score": "4/7",
-      "detectTime": "11:31 AM",
-      "price": 13537.0,
-      "pctChange": "+-0.08%",
+      "detectTime": "12:36 PM",
+      "price": 1139.0,
+      "pctChange": "+-0.14%",
       "volumeX": "0.1x",
-      "strike": "13550 CE",
+      "strike": "1150 CE",
       "premium": "Check Broker",
-      "sl": 13401.63,
-      "t1": 13740.06,
-      "rsi": 85.9
+      "sl": 1127.61,
+      "t1": 1156.09,
+      "rsi": 76.8
+    },
+    {
+      "symbol": "BEL",
+      "type": "CE",
+      "tier": "SPURT",
+      "score": "4/7",
+      "detectTime": "12:36 PM",
+      "price": 387.6,
+      "pctChange": "+0.13%",
+      "volumeX": "1.2x",
+      "strike": "380 CE",
+      "premium": "Check Broker",
+      "sl": 387.0,
+      "t1": 388.5,
+      "rsi": 74.3
     }
   ]
 }
