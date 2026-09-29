@@ -1,9 +1,55 @@
 {
-  "lastUpdated": "09:17 AM",
+  "lastUpdated": "09:24 AM",
   "breadth": {
-    "advances": 0,
-    "declines": 0,
-    "sentiment": "BULLISH"
+    "advances": 14,
+    "declines": 24,
+    "sentiment": "BEARISH"
   },
-  "leaders": []
+  "leaders": [
+    {
+      "symbol": "PNBHOUSING",
+      "type": "CE",
+      "tier": "STRONG",
+      "score": "5/7",
+      "detectTime": "09:24 AM",
+      "price": 1084.2,
+      "pctChange": "+0.27%",
+      "volumeX": "1.1x",
+      "strike": "1100 CE",
+      "premium": "Check Broker",
+      "sl": 1079.8,
+      "t1": 1090.8,
+      "rsi": 60.0
+    },
+    {
+      "symbol": "POLYCAB",
+      "type": "CE",
+      "tier": "STRONG",
+      "score": "5/7",
+      "detectTime": "09:24 AM",
+      "price": 8227.5,
+      "pctChange": "+0.21%",
+      "volumeX": "0.9x",
+      "strike": "8250 CE",
+      "premium": "Check Broker",
+      "sl": 8210.0,
+      "t1": 8253.75,
+      "rsi": 60.0
+    },
+    {
+      "symbol": "DRREDDY",
+      "type": "CE",
+      "tier": "SPURT",
+      "score": "4/7",
+      "detectTime": "09:24 AM",
+      "price": 1242.2,
+      "pctChange": "+0.1%",
+      "volumeX": "1.0x",
+      "strike": "1250 CE",
+      "premium": "Check Broker",
+      "sl": 1238.0,
+      "t1": 1248.5,
+      "rsi": 60.0
+    }
+  ]
 }
