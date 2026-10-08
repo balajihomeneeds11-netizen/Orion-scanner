@@ -1,9 +1,40 @@
 {
-  "lastUpdated": "09:18 AM",
+  "lastUpdated": "09:25 AM",
   "breadth": {
-    "advances": 0,
+    "advances": 38,
     "declines": 0,
-    "sentiment": "BULLISH"
+    "sentiment": "STRONG BULLISH"
   },
-  "leaders": []
+  "leaders": [
+    {
+      "symbol": "HCLTECH",
+      "type": "CE",
+      "tier": "SPURT",
+      "score": "4/7",
+      "detectTime": "09:25 AM",
+      "price": 1208.6,
+      "pctChange": "+0.0%",
+      "volumeX": "0.0x",
+      "strike": "1200 CE",
+      "premium": "Check Broker",
+      "sl": 1196.51,
+      "t1": 1226.73,
+      "rsi": 60.0
+    },
+    {
+      "symbol": "PNBHOUSING",
+      "type": "CE",
+      "tier": "SPURT",
+      "score": "4/7",
+      "detectTime": "09:25 AM",
+      "price": 1143.3,
+      "pctChange": "+0.0%",
+      "volumeX": "0.0x",
+      "strike": "1150 CE",
+      "premium": "Check Broker",
+      "sl": 1131.87,
+      "t1": 1160.45,
+      "rsi": 60.0
+    }
+  ]
 }
