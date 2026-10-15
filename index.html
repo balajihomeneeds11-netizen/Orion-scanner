@@ -1,157 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ORION Breakout Scanner — 7 Pillars Terminal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { background-color: #0d1117; color: #c9d1d9; font-family: ui-sans-serif, system-ui, sans-serif; }
-    .card-explosive { border-left: 4px solid #ef4444; background: #161b22; }
-    .card-strong { border-left: 4px solid #f97316; background: #161b22; }
-    .card-spurt { border-left: 4px solid #eab308; background: #161b22; }
-    .badge-ce { background: #064e3b; color: #34d399; }
-    .badge-pe { background: #7f1d1d; color: #f87171; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORION 7-PILLARS TERMINAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0b0f17; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .tab-active { background-color: #1e293b; border-bottom: 2px solid #38bdf8; }
+        .glowing-led { box-shadow: 0 0 8px #34d399; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-3 md:p-6 max-w-6xl mx-auto">
 
-  <!-- Header -->
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-gray-800 gap-4">
-    <div>
-      <div class="flex items-center gap-3">
-        <h1 class="text-2xl font-bold tracking-tight text-white">ORION 7-PILLARS TERMINAL</h1>
-                    <span class="pipeline-status px-3 py-1 bg-green-950 text-emerald-300 rounded-full border border-emerald-600 flex items-center gap-2" style="white-space: nowrap;">
-                <div class="glowing-led w-2 h-2 bg-emerald-400 rounded-full" style="box-shadow: 0 0 8px #34d399;"></div>
-                PIPELINE ACTIVE
-            </span>
-      </div>
-      <p class="text-sm text-gray-400">Complete 7-Rule Intraday F&O Breakout System</p>
-    </div>
+    <!-- Top Header -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 border-b border-gray-800 gap-3">
+        <div>
+            <div class="flex items-center gap-3">
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white">ORION 7-PILLARS TERMINAL</h1>
+                <span class="px-2.5 py-0.5 bg-emerald-950 text-emerald-300 rounded-full border border-emerald-600 flex items-center gap-1.5 text-xs font-semibold">
+                    <div class="w-2 h-2 bg-emerald-400 rounded-full glowing-led"></div>
+                    PIPELINE ACTIVE
+                </span>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">Full NSE F&O Universe • 7-Rule Intraday Options Breakout Engine</p>
+        </div>
+        <div id="sync-time" class="text-xs text-gray-400 font-mono">Syncing...</div>
+    </header>
 
-    <!-- Market Mood Breadth Bar -->
-    <div class="bg-gray-900 border border-gray-800 rounded-lg p-3 text-xs flex gap-6">
-      <div>Advances: <span id="adv-count" class="text-emerald-400 font-bold">--</span></div>
-      <div>Declines: <span id="dec-count" class="text-rose-400 font-bold">--</span></div>
-      <div>Sentiment: <span id="sentiment" class="text-emerald-400 font-bold">MONITORING</span></div>
-    </div>
-  </header>
+    <!-- Breadth Bar -->
+    <section class="grid grid-cols-3 gap-2 my-4 bg-gray-900 border border-gray-800 p-2.5 rounded-lg text-center text-xs md:text-sm">
+        <div>Advances: <span id="adv-count" class="font-bold text-emerald-400">0</span></div>
+        <div>Declines: <span id="dec-count" class="font-bold text-rose-400">0</span></div>
+        <div>Sentiment: <span id="sentiment" class="font-bold text-sky-400">NEUTRAL</span></div>
+    </section>
 
-  <!-- Filter Navigation Tabs -->
-  <div class="flex gap-2 my-6 overflow-x-auto">
-    <button onclick="filterCards('ALL')" class="px-3 py-1.5 rounded text-xs font-medium bg-gray-800 text-white hover:bg-gray-700">ALL</button>
-    <button onclick="filterCards('EXPLOSIVE')" class="px-3 py-1.5 rounded text-xs font-medium bg-red-950 text-red-400 border border-red-800">💥 EXPLOSIVE (6-7 Pillars)</button>
-    <button onclick="filterCards('STRONG')" class="px-3 py-1.5 rounded text-xs font-medium bg-orange-950 text-orange-400 border border-orange-800">🔥 STRONG (5 Pillars)</button>
-    <button onclick="filterCards('SPURT')" class="px-3 py-1.5 rounded text-xs font-medium bg-yellow-950 text-yellow-400 border border-yellow-800">⚡ SPURT (4 Pillars)</button>
-  </div>
+    <!-- Navigation Filter Tabs -->
+    <nav class="flex gap-1.5 my-3 overflow-x-auto pb-1 text-xs">
+        <button onclick="filterCards('ALL')" class="px-3 py-1.5 rounded bg-gray-800 font-semibold hover:bg-gray-700">ALL</button>
+        <button onclick="filterCards('BRAHMASTRA')" class="px-3 py-1.5 rounded bg-sky-950 text-sky-300 border border-sky-700 font-semibold">⚡ BRAHMASTRA</button>
+        <button onclick="filterCards('EXPLOSIVE')" class="px-3 py-1.5 rounded bg-rose-950 text-rose-300 border border-rose-700 font-semibold">💥 EXPLOSIVE</button>
+        <button onclick="filterCards('STRONG')" class="px-3 py-1.5 rounded bg-amber-950 text-amber-300 border border-amber-700 font-semibold">🔥 STRONG</button>
+        <button onclick="filterCards('SPURT')" class="px-3 py-1.5 rounded bg-yellow-950 text-yellow-300 border border-yellow-700 font-semibold">⚡ SPURT</button>
+        <button onclick="filterCards('SHORT ZONE')" class="px-3 py-1.5 rounded bg-red-950 text-red-400 border border-red-800 font-semibold">⚠️ SHORT ZONE</button>
+    </nav>
 
-  <!-- Cards Grid -->
-  <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <!-- Dynamic Cards Injected Here -->
-  </div>
+    <!-- Cards Stream Grid -->
+    <main id="cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4"></main>
 
-  <script>
-    async function fetchScannerData() {
-      try {
-        const res = await fetch('data.json?t=' + new Date().getTime());
-        const data = await res.json();
+    <script>
+        let allSetups = [];
 
-        if (data.breadth) {
-          document.getElementById("adv-count").innerText = data.breadth.advances;
-          document.getElementById("dec-count").innerText = data.breadth.declines;
-          if (data.breadth.sentiment) {
-            document.getElementById("sentiment").innerText = data.breadth.sentiment;
-          }
+        async function loadData() {
+            try {
+                const res = await fetch('data.json?t=' + new Date().getTime());
+                const data = await res.json();
+                
+                document.getElementById('sync-time').innerText = 'Last Sync: ' + data.lastUpdated + ' IST';
+                document.getElementById('adv-count').innerText = data.breadth.advances;
+                document.getElementById('dec-count').innerText = data.breadth.declines;
+                document.getElementById('sentiment').innerText = data.breadth.sentiment;
+
+                allSetups = data.leaders || [];
+                renderCards(allSetups);
+            } catch (err) {
+                console.error("Failed to load data.json", err);
+            }
         }
 
-        window.allLeaders = data.leaders || [];
-        renderCards(window.allLeaders);
-      } catch (e) {
-        console.log("Awaiting scan updates...", e);
-      }
-    }
+        function renderCards(cards) {
+            const container = document.getElementById('cards-container');
+            if (!cards.length) {
+                container.innerHTML = `<div class="col-span-full py-12 text-center text-gray-500 text-sm">No active setups matching filter criteria right now.</div>`;
+                return;
+            }
 
-    function renderCards(data) {
-      const container = document.getElementById("cards-container");
-      container.innerHTML = "";
+            container.innerHTML = cards.map(c => {
+                const isPE = c.type === "PE";
+                const badgeColor = c.tier === 'BRAHMASTRA' ? 'bg-sky-600 text-white' :
+                                   c.tier === 'EXPLOSIVE' ? 'bg-rose-600 text-white' :
+                                   c.tier === 'STRONG' ? 'bg-amber-600 text-white' :
+                                   c.tier === 'SHORT ZONE' ? 'bg-red-700 text-white' : 'bg-yellow-600 text-white';
+                
+                const cardBorder = isPE ? 'border-red-900/60 bg-[#160d10]' : 'border-gray-800 bg-[#111622]';
 
-      if (!data || data.length === 0) {
-        container.innerHTML = `<div class="text-gray-500 text-sm p-4 col-span-3">Scanning market for 7-pillar setups...</div>`;
-        return;
-      }
+                return `
+                <div class="border ${cardBorder} rounded-lg p-3.5 relative flex flex-col justify-between shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs px-2 py-0.5 rounded font-bold ${isPE ? 'bg-rose-900 text-rose-200' : 'bg-emerald-900 text-emerald-200'}">${c.type}</span>
+                            <span class="text-xs px-2 py-0.5 rounded font-bold ${badgeColor}">${c.tier}</span>
+                            <span class="text-xs text-gray-400 font-mono">🏆 ${c.score}</span>
+                        </div>
+                        <span class="text-xs font-mono text-gray-400">🕒 ${c.detectTime}</span>
+                    </div>
 
-      data.forEach(item => {
-        const cardClass = item.tier === 'EXPLOSIVE' ? 'card-explosive' : (item.tier === 'STRONG' ? 'card-strong' : 'card-spurt');
-        const badgeClass = item.type === 'CE' ? 'badge-ce' : 'badge-pe';
+                    <div class="flex justify-between items-baseline mb-2">
+                        <h2 class="text-lg font-bold text-white tracking-wide">${c.symbol}</h2>
+                        <div class="text-right">
+                            <span class="font-bold text-white text-base">₹${c.price}</span>
+                            <span class="text-xs font-semibold ml-1 ${c.pctChange.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'}">${c.pctChange}</span>
+                        </div>
+                    </div>
 
-        const tvUrl = `https://in.tradingview.com/chart/?symbol=NSE%3A${item.symbol}`;
-        const kiteUrl = `https://kite.zerodha.com/chart/ext/ciq/NSE/${item.symbol}`;
-        const upstoxUrl = `https://pro.upstox.com/`;
+                    <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-gray-400 bg-black/30 p-2 rounded mb-3 font-mono">
+                        <div>Vol Surge: <b class="text-white">${c.volumeX}</b></div>
+                        <div>RSI (14): <b class="text-white">${c.rsi}</b></div>
+                        <div>Target 1: <b class="text-emerald-400">₹${c.t1}</b></div>
+                        <div>Stop Loss: <b class="text-rose-400">₹${c.sl}</b></div>
+                    </div>
 
-        const card = document.createElement("div");
-        card.className = `${cardClass} p-4 rounded-lg shadow-lg border border-gray-800 transition hover:border-gray-700 flex flex-col justify-between`;
-        card.innerHTML = `
-          <div>
-            <div class="flex justify-between items-center mb-2">
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-semibold px-2 py-0.5 rounded ${badgeClass}">${item.type}</span>
-                <span class="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">🏆 ${item.score || '7/7'}</span>
-              </div>
-              <span class="text-xs text-gray-400">🕐 ${item.detectTime}</span>
-            </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-gray-800 text-xs">
+                        <div>
+                            <span class="text-gray-400">Strike Zone:</span> 
+                            <span class="font-bold text-sky-400">${c.strike}</span> 
+                            <span class="text-gray-500 font-mono">(@ ${c.premium})</span>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <a href="https://in.tradingview.com/chart/?symbol=NSE:${c.symbol}" target="_blank" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-[11px]">Chart</a>
+                            <a href="https://kite.zerodha.com" target="_blank" class="px-2 py-1 bg-amber-950 hover:bg-amber-900 text-amber-200 rounded text-[11px]">Zerodha</a>
+                            <a href="https://upstox.com" target="_blank" class="px-2 py-1 bg-purple-950 hover:bg-purple-900 text-purple-200 rounded text-[11px]">Upstox</a>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
 
-            <div class="flex justify-between items-baseline mb-2">
-              <h2 class="text-xl font-bold text-white tracking-wide">${item.symbol}</h2>
-              <div class="text-right">
-                <span class="text-sm font-semibold text-white">₹${item.price}</span>
-                <span class="text-xs ml-1 ${item.type === 'CE' ? 'text-emerald-400' : 'text-rose-400'} font-bold">${item.pctChange}</span>
-              </div>
-            </div>
+        function filterCards(tier) {
+            if (tier === 'ALL') {
+                renderCards(allSetups);
+            } else {
+                renderCards(allSetups.filter(c => c.tier === tier));
+            }
+        }
 
-            <div class="grid grid-cols-2 gap-2 text-xs bg-gray-900/60 p-2.5 rounded border border-gray-800/80 mb-3">
-              <div>1. Universe: <span class="text-emerald-400 font-bold">F&O</span></div>
-              <div>2. Vol Surge: <span class="text-amber-400 font-bold">${item.volumeX}</span></div>
-              <div>3. ORB High: <span class="text-emerald-400 font-bold">BROKEN</span></div>
-              <div>4. VWAP: <span class="text-emerald-400 font-bold">ABOVE</span></div>
-              <div>5. PDH Break: <span class="text-emerald-400 font-bold">YES</span></div>
-              <div>6. Follow-Thru: <span class="text-emerald-400 font-bold">CONFIRMED</span></div>
-              <div>7. RSI (>60): <span class="text-gray-200 font-bold">${item.rsi}</span></div>
-              <div>Risk Rule: <span class="text-purple-400 font-bold">1% SL LAW</span></div>
-            </div>
-
-            <div class="border-t border-gray-800 pt-3 flex justify-between items-center text-xs mb-3">
-              <div>
-                <p class="text-gray-400">Pillar 7 Strike Zone</p>
-                <p class="font-bold text-white text-sm">${item.strike} <span class="text-gray-400 font-normal">(@ ${item.premium})</span></p>
-              </div>
-              <div class="text-right">
-                <p class="text-gray-400">SL: <span class="text-rose-400 font-semibold">${item.sl}</span></p>
-                <p class="text-gray-400">T1: <span class="text-emerald-400 font-semibold">${item.t1}</span></p>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-3 gap-1.5 pt-2 border-t border-gray-800/70 text-[11px] font-semibold text-center">
-            <a href="${tvUrl}" target="_blank" class="py-1.5 rounded bg-blue-900/40 text-blue-300 hover:bg-blue-800/50 border border-blue-700/50">Chart</a>
-            <a href="${kiteUrl}" target="_blank" class="py-1.5 rounded bg-orange-950/40 text-orange-300 hover:bg-orange-900/50 border border-orange-700/50">Zerodha</a>
-            <a href="${upstoxUrl}" target="_blank" class="py-1.5 rounded bg-purple-950/40 text-purple-300 hover:bg-purple-900/50 border border-purple-700/50">Upstox</a>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function filterCards(tier) {
-      if (!window.allLeaders) return;
-      if (tier === 'ALL') {
-        renderCards(window.allLeaders);
-      } else {
-        renderCards(window.allLeaders.filter(d => d.tier === tier));
-      }
-    }
-
-    fetchScannerData();
-    setInterval(fetchScannerData, 10000);
-  </script>
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
 </body>
 </html>
