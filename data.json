@@ -1,9 +1,12 @@
 {
-  "lastUpdated": "04:38 PM",
-  "scanGeneratedAt": "2026-10-15T16:38:52.528732+05:30",
+  "lastUpdated": "06:30 PM",
+  "scanGeneratedAt": "2026-10-15T18:30:44.579243+05:30",
   "sessionDate": "2026-10-15",
   "marketDataStatus": "SESSION DATA AVAILABLE",
-  "marketDataNote": "Yahoo Finance data may be delayed. Verify quotes and order levels with your broker before trading.",
+  "dataSource": "Yahoo Finance via yfinance (no API key); NSE public F&O underlying list with public GitHub snapshot fallback",
+  "latestCompleted5mBarCloseAt": "2026-10-15T15:30:00+05:30",
+  "staleSourceSymbols": 261,
+  "marketDataNote": "Free, no-key source configuration. Yahoo Finance may be delayed, incomplete or rate-limited; stale candles are flagged, not treated as live quotes. Verify quotes and order levels before trading.",
   "breadth": {
     "advances": 143,
     "declines": 118,
@@ -1506,71 +1509,6 @@
       "rsi": 39.9
     },
     {
-      "symbol": "HYUNDAI",
-      "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "⚡ OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "76% heuristic",
-      "probScore": 76,
-      "detectTime": "09:45",
-      "price": 1985.0,
-      "pctChange": "+0.99%",
-      "absChange": 0.99,
-      "volumeX": "2.24x",
-      "numVol": 2.24,
-      "strike": "2000 CE (approx)",
-      "lotSize": null,
-      "sectorStatus": "General • WATCH",
-      "watchBadge": "★★★ STRONG BUY WATCH",
-      "candleInfo": "body 0.00% • low ▲1.01% • high ▼0.64%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "isNarrowCPR": false,
-      "isNR7": false,
-      "fuelLeft": "48%",
-      "numFuel": 47.7,
-      "alpha": "-0.67%",
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": false
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1967.5,
-      "t1": 2011.25,
-      "rsi": 68.5
-    },
-    {
       "symbol": "AMBER",
       "type": "CE",
       "tier": "STRONG",
@@ -1579,12 +1517,12 @@
       "numScore": 6,
       "prob": "86% heuristic",
       "probScore": 86,
-      "detectTime": "14:55",
+      "detectTime": "15:25",
       "price": 6690.0,
       "pctChange": "+0.68%",
       "absChange": 0.68,
-      "volumeX": "1.84x",
-      "numVol": 1.84,
+      "volumeX": "2.35x",
+      "numVol": 2.35,
       "strike": "6700 CE (approx)",
       "lotSize": null,
       "sectorStatus": "Durables • WATCH",
@@ -1634,6 +1572,71 @@
       "sl": 6605.0,
       "t1": 6817.5,
       "rsi": 62.6
+    },
+    {
+      "symbol": "HYUNDAI",
+      "type": "CE",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "76% heuristic",
+      "probScore": 76,
+      "detectTime": "09:45",
+      "price": 1985.0,
+      "pctChange": "+0.99%",
+      "absChange": 0.99,
+      "volumeX": "2.27x",
+      "numVol": 2.27,
+      "strike": "2000 CE (approx)",
+      "lotSize": null,
+      "sectorStatus": "General • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.00% • low ▲1.01% • high ▼0.64%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "48%",
+      "numFuel": 47.7,
+      "alpha": "-0.67%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 1967.5,
+      "t1": 2011.25,
+      "rsi": 68.5
     },
     {
       "symbol": "ABBOTINDIA",
@@ -1896,36 +1899,36 @@
       "rsi": 40.1
     },
     {
-      "symbol": "BHARATFORG",
-      "type": "CE",
+      "symbol": "ADANIGREEN",
+      "type": "PE",
       "tier": "STRONG",
       "optionTag": "⚡ OPTION",
       "score": "5/7",
       "numScore": 5,
       "prob": "76% heuristic",
       "probScore": 76,
-      "detectTime": "11:30",
-      "price": 1852.4,
-      "pctChange": "+0.74%",
-      "absChange": 0.74,
-      "volumeX": "2.57x",
-      "numVol": 2.57,
-      "strike": "1850 CE (approx)",
+      "detectTime": "09:20",
+      "price": 1307.1,
+      "pctChange": "-0.86%",
+      "absChange": 0.86,
+      "volumeX": "2.64x",
+      "numVol": 2.64,
+      "strike": "1300 PE (approx)",
       "lotSize": null,
-      "sectorStatus": "Auto 🔥 STRONG",
-      "watchBadge": "★★★ STRONG BUY WATCH",
-      "candleInfo": "body 0.00% • low ▲0.98% • high ▼0.57%",
+      "sectorStatus": "General 🔥 STRONG",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.00% • low ▲0.48% • high ▼0.98%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": false,
       "fadeRisk": false,
-      "openedAtLow": true,
+      "openedAtLow": false,
       "isNarrowCPR": false,
       "isNR7": false,
-      "fuelLeft": "44%",
-      "numFuel": 44.0,
-      "alpha": "-0.92%",
+      "fuelLeft": "60%",
+      "numFuel": 60.4,
+      "alpha": "-2.51%",
       "pillars": [
         {
           "name": "Trend",
@@ -1936,12 +1939,12 @@
           "ok": true
         },
         {
-          "name": "PDH",
+          "name": "PDL",
           "ok": false
         },
         {
           "name": "ORB",
-          "ok": true
+          "ok": false
         },
         {
           "name": "Follow",
@@ -1953,12 +1956,12 @@
         },
         {
           "name": "RSI",
-          "ok": false
+          "ok": true
         }
       ],
-      "sl": 1837.3,
-      "t1": 1875.05,
-      "rsi": 47.6
+      "sl": 1320.0,
+      "t1": 1287.75,
+      "rsi": 35.0
     },
     {
       "symbol": "CAMS",
@@ -2168,8 +2171,8 @@
       "price": 573.2,
       "pctChange": "+0.92%",
       "absChange": 0.92,
-      "volumeX": "32.02x",
-      "numVol": 32.02,
+      "volumeX": "32.47x",
+      "numVol": 32.47,
       "strike": "550 CE (approx)",
       "lotSize": null,
       "sectorStatus": "Finance 🔥 STRONG",
@@ -2558,8 +2561,8 @@
       "price": 1047.4,
       "pctChange": "+1.13%",
       "absChange": 1.13,
-      "volumeX": "5.45x",
-      "numVol": 5.45,
+      "volumeX": "5.53x",
+      "numVol": 5.53,
       "strike": "1050 CE (approx)",
       "lotSize": null,
       "sectorStatus": "Energy 🔥 STRONG",
@@ -3143,8 +3146,8 @@
       "price": 72.7,
       "pctChange": "-1.50%",
       "absChange": 1.5,
-      "volumeX": "4.65x",
-      "numVol": 4.65,
+      "volumeX": "4.72x",
+      "numVol": 4.72,
       "strike": "70 PE (approx)",
       "lotSize": null,
       "sectorStatus": "General 🔥 STRONG",
@@ -3196,25 +3199,25 @@
       "rsi": 40.0
     },
     {
-      "symbol": "SWIGGY",
+      "symbol": "NBCC",
       "type": "PE",
       "tier": "SHORT ZONE",
       "optionTag": "⚡ OPTION",
       "score": "7/7",
       "numScore": 7,
-      "prob": "92% heuristic",
-      "probScore": 92,
-      "detectTime": "09:35",
-      "price": 229.0,
-      "pctChange": "-0.84%",
-      "absChange": 0.84,
-      "volumeX": "3.77x",
-      "numVol": 3.77,
-      "strike": "220 PE (approx)",
+      "prob": "88% heuristic",
+      "probScore": 88,
+      "detectTime": "09:25",
+      "price": 75.47,
+      "pctChange": "-0.97%",
+      "absChange": 0.97,
+      "volumeX": "3.79x",
+      "numVol": 3.79,
+      "strike": "80 PE (approx)",
       "lotSize": null,
-      "sectorStatus": "General 🔥 STRONG",
+      "sectorStatus": "Infra • WATCH",
       "watchBadge": "★★★ STRONG SELL WATCH",
-      "candleInfo": "body 0.00% • low ▲0.00% • high ▼1.84%",
+      "candleInfo": "body 0.00% • low ▲0.23% • high ▼1.23%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
@@ -3223,9 +3226,9 @@
       "openedAtLow": false,
       "isNarrowCPR": false,
       "isNR7": true,
-      "fuelLeft": "50%",
-      "numFuel": 50.4,
-      "alpha": "-2.50%",
+      "fuelLeft": "47%",
+      "numFuel": 46.9,
+      "alpha": "-2.63%",
       "pillars": [
         {
           "name": "Trend",
@@ -3256,9 +3259,9 @@
           "ok": true
         }
       ],
-      "sl": 232.4,
-      "t1": 223.9,
-      "rsi": 18.0
+      "sl": 76.41,
+      "t1": 74.06,
+      "rsi": 19.3
     }
   ],
   "gptPowerStocks": [
@@ -3280,7 +3283,7 @@
       "rvolAvailable": true,
       "rsi": 64.0,
       "adx": 20.4,
-      "vwap": 5155.25,
+      "vwap": 5155.27,
       "ema9": 5178.42,
       "ema20": 5173.39,
       "orbHigh": 5099.5,
@@ -3320,7 +3323,11 @@
       "fnoEligible": true,
       "sectorStatus": "Auto 🔥 STRONG",
       "relativeStrength": 2.14,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "YESBANK",
@@ -3379,7 +3386,11 @@
       "fnoEligible": true,
       "sectorStatus": "General 🔥 STRONG",
       "relativeStrength": -16.18,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "BAJAJHLDNG",
@@ -3399,7 +3410,7 @@
       "rvolAvailable": true,
       "rsi": 67.4,
       "adx": 19.9,
-      "vwap": 11124.94,
+      "vwap": 11124.92,
       "ema9": 11205.17,
       "ema20": 11190.43,
       "orbHigh": 10893.0,
@@ -3439,7 +3450,11 @@
       "fnoEligible": true,
       "sectorStatus": "General • WATCH",
       "relativeStrength": 2.53,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "NESTLEIND",
@@ -3498,7 +3513,11 @@
       "fnoEligible": true,
       "sectorStatus": "FMCG 🔥 STRONG",
       "relativeStrength": -9.42,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "POWERINDIA",
@@ -3518,7 +3537,7 @@
       "rvolAvailable": true,
       "rsi": 32.4,
       "adx": 27.4,
-      "vwap": 28986.49,
+      "vwap": 28986.57,
       "ema9": 28878.13,
       "ema20": 28898.56,
       "orbHigh": 29465.0,
@@ -3558,7 +3577,11 @@
       "fnoEligible": true,
       "sectorStatus": "General 🔥 STRONG",
       "relativeStrength": -6.99,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "GVT&D",
@@ -3578,7 +3601,7 @@
       "rvolAvailable": true,
       "rsi": 18.9,
       "adx": 35.8,
-      "vwap": 3992.16,
+      "vwap": 3992.24,
       "ema9": 3955.48,
       "ema20": 3963.81,
       "orbHigh": 4080.1,
@@ -3617,7 +3640,11 @@
       "fnoEligible": true,
       "sectorStatus": "General 🔥 STRONG",
       "relativeStrength": -7.41,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "IDEA",
@@ -3677,7 +3704,11 @@
       "fnoEligible": true,
       "sectorStatus": "Telecom • WATCH",
       "relativeStrength": -2.84,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "TECHM",
@@ -3697,7 +3728,7 @@
       "rvolAvailable": true,
       "rsi": 94.2,
       "adx": 24.2,
-      "vwap": 1630.95,
+      "vwap": 1630.94,
       "ema9": 1644.67,
       "ema20": 1640.64,
       "orbHigh": 1620.1,
@@ -3736,7 +3767,11 @@
       "fnoEligible": true,
       "sectorStatus": "IT 🔥 STRONG",
       "relativeStrength": 3.09,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "CANBK",
@@ -3795,7 +3830,11 @@
       "fnoEligible": true,
       "sectorStatus": "Banking 🔥 STRONG",
       "relativeStrength": -7.78,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "ICICIBANK",
@@ -3854,7 +3893,11 @@
       "fnoEligible": true,
       "sectorStatus": "Banking • WATCH",
       "relativeStrength": 2.14,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "DIXON",
@@ -3874,7 +3917,7 @@
       "rvolAvailable": true,
       "rsi": 24.2,
       "adx": 27.9,
-      "vwap": 12804.59,
+      "vwap": 12804.65,
       "ema9": 12713.32,
       "ema20": 12742.39,
       "orbHigh": 12840.0,
@@ -3914,7 +3957,11 @@
       "fnoEligible": true,
       "sectorStatus": "Durables 🔥 STRONG",
       "relativeStrength": -2.86,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "HINDPETRO",
@@ -3973,7 +4020,11 @@
       "fnoEligible": true,
       "sectorStatus": "Energy 🔥 STRONG",
       "relativeStrength": 3.62,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "RBLBANK",
@@ -4033,7 +4084,11 @@
       "fnoEligible": true,
       "sectorStatus": "Banking 🔥 STRONG",
       "relativeStrength": -4.73,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "CGPOWER",
@@ -4093,7 +4148,11 @@
       "fnoEligible": true,
       "sectorStatus": "General 🔥 STRONG",
       "relativeStrength": -6.87,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "ENRIN",
@@ -4151,7 +4210,11 @@
       "fnoEligible": true,
       "sectorStatus": "General 🔥 STRONG",
       "relativeStrength": -8.16,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "HDFCAMC",
@@ -4209,7 +4272,11 @@
       "fnoEligible": true,
       "sectorStatus": "Finance 🔥 STRONG",
       "relativeStrength": 3.49,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "SOLARINDS",
@@ -4229,7 +4296,7 @@
       "rvolAvailable": true,
       "rsi": 31.5,
       "adx": 19.0,
-      "vwap": 20031.77,
+      "vwap": 20031.91,
       "ema9": 19938.58,
       "ema20": 19954.67,
       "orbHigh": 20137.0,
@@ -4269,7 +4336,11 @@
       "fnoEligible": true,
       "sectorStatus": "General 🔥 STRONG",
       "relativeStrength": -3.16,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "RELIANCE",
@@ -4329,7 +4400,11 @@
       "fnoEligible": true,
       "sectorStatus": "Energy 🔥 STRONG",
       "relativeStrength": 1.78,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "BANKINDIA",
@@ -4389,7 +4464,11 @@
       "fnoEligible": true,
       "sectorStatus": "Banking 🔥 STRONG",
       "relativeStrength": -4.69,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "VBL",
@@ -4409,7 +4488,7 @@
       "rvolAvailable": true,
       "rsi": 36.4,
       "adx": 41.5,
-      "vwap": 434.21,
+      "vwap": 434.2,
       "ema9": 430.1,
       "ema20": 430.91,
       "orbHigh": 443.9,
@@ -4449,7 +4528,11 @@
       "fnoEligible": true,
       "sectorStatus": "FMCG 🔥 STRONG",
       "relativeStrength": -4.68,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "ETERNAL",
@@ -4508,7 +4591,11 @@
       "fnoEligible": true,
       "sectorStatus": "General • WATCH",
       "relativeStrength": 0.56,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "PERSISTENT",
@@ -4528,7 +4615,7 @@
       "rvolAvailable": true,
       "rsi": 47.3,
       "adx": 34.3,
-      "vwap": 5868.26,
+      "vwap": 5868.27,
       "ema9": 5828.83,
       "ema20": 5835.95,
       "orbHigh": 5993.0,
@@ -4567,7 +4654,11 @@
       "fnoEligible": true,
       "sectorStatus": "IT • WATCH",
       "relativeStrength": -2.64,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "CUMMINSIND",
@@ -4587,7 +4678,7 @@
       "rvolAvailable": true,
       "rsi": 60.1,
       "adx": 34.6,
-      "vwap": 4649.72,
+      "vwap": 4649.73,
       "ema9": 4632.76,
       "ema20": 4633.37,
       "orbHigh": 4701.8,
@@ -4626,7 +4717,11 @@
       "fnoEligible": true,
       "sectorStatus": "General 🔥 STRONG",
       "relativeStrength": -4.87,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "BHEL",
@@ -4684,7 +4779,11 @@
       "fnoEligible": true,
       "sectorStatus": "General 🔥 STRONG",
       "relativeStrength": -8.07,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
       "symbol": "INOXWIND",
@@ -4700,7 +4799,7 @@
       "sessionReturn": "-1.66%",
       "gapPct": "-0.19%",
       "alpha": "-3.50%",
-      "rvol": 0.49,
+      "rvol": 0.4,
       "rvolAvailable": true,
       "rsi": 30.1,
       "adx": 32.3,
@@ -4743,12 +4842,17 @@
       "fnoEligible": true,
       "sectorStatus": "General 🔥 STRONG",
       "relativeStrength": -3.5,
-      "marketSessionDate": "2026-10-15"
+      "marketSessionDate": "2026-10-15",
+      "lastSourceBarCloseAt": "2026-10-15T15:30:00+05:30",
+      "sourceBarAgeMinutes": 180.7,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     }
   ],
   "scanSummary": {
     "configuredSymbols": 268,
     "symbolsWithData": 261,
+    "staleSourceSymbols": 261,
     "universeSource": "existing symbol universe + current F&O underlyings",
     "fnoUniverseSource": "official NSE underlying-information API",
     "fnoEligibleSymbols": 213,
@@ -4758,4 +4862,4 @@
     "gptPowerCandidates": 25,
     "powerScoreMeaning": "Relative ranking score out of 100; not a probability or guaranteed prediction."
   }
-}
+}\n
