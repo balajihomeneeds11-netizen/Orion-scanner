@@ -111,7 +111,6 @@ advances = 0
 declines = 0
 sector_trends = {}
 
-# Separate buckets so every category gets properly populated
 buckets = {
     "BRAHMASTRA": [],
     "EXPLOSIVE": [],
@@ -155,34 +154,31 @@ for sym in SYMBOLS:
         df_d = data_daily[sym].dropna()
         df_i = data_intra[sym].dropna()
 
-        if len(df_i) < 2 or len(df_d) < 2:
+        if len(df_i) < 2 or len(df_d) < 3:
             continue
 
         last_bar = df_i.iloc[-1]
-        prev_bar = df_i.iloc[-2]
         prev_close = float(df_d['Close'].iloc[-2])
+        prev_open = float(df_d['Open'].iloc[-2])
         pdh = float(df_d['High'].iloc[-2])
         pdl = float(df_d['Low'].iloc[-2])
         high_52w = float(df_d['High'].max())
 
         clean_symbol = sym.replace(".NS", "")
         close = round(float(last_bar['Close']), 2)
-        open_p = round(float(last_bar['Open']), 2)
         open_day = round(float(df_i['Open'].iloc[0]), 2)
         low_day = round(float(df_i['Low'].min()), 2)
         high_day = round(float(df_i['High'].max()), 2)
         first_bar_close = round(float(df_i['Close'].iloc[0]), 2)
 
-        # Day % Change (vs Previous Close, standard NSE convention)
         pct_change = round(((close - prev_close) / prev_close) * 100, 2)
-        intraday_move = round(((close - open_day) / open_day) * 100, 2)
+        prev_day_bullish = ((prev_close - prev_open) / prev_open) >= 0.008
 
         if pct_change >= 0:
             advances += 1
         else:
             declines += 1
 
-        # Volume calculations: evaluate both current and morning breakout volume
         avg_vol = float(df_i['Volume'].mean())
         cur_vol_x = round(float(last_bar['Volume']) / avg_vol, 2) if avg_vol > 0 else 1.0
         morning_bars = df_i.iloc[:min(12, len(df_i))]
@@ -195,7 +191,7 @@ for sym in SYMBOLS:
         orb_high = float(df_i['High'].iloc[0])
         orb_low = float(df_i['Low'].iloc[0])
 
-        # Find exact breakout candle timestamp in IST (09:15, 09:20, 09:25, etc.)
+        # Exact breakout candle timestamp in IST
         detect_time_str = format_ist_time(df_i.index[0])
         if close >= open_day:
             bo_bars = df_i[df_i['High'] > orb_high]
@@ -230,31 +226,32 @@ for sym in SYMBOLS:
         sector_status = f"{sec_name} 🔥 STRONG" if sector_strong else f"{sec_name} • WATCH"
 
         # 7-Pillars (Bullish)
-        p1 = close > open_day and pct_change > 0         # Trend
-        p2 = close > vwap_val                            # VWAP
-        p3 = close > pdh                                 # PDH Break
-        p4 = close > orb_high                            # ORB Break
-        p5 = from_high <= 0.65                           # Follow-through holding near high
-        p6 = vol_x >= 1.5                                # Volume Surge
-        p7 = rsi_val >= 56.0                             # RSI Momentum
+        p1 = bool(close > open_day and pct_change > 0)   # Trend
+        p2 = bool(close > vwap_val)                      # VWAP
+        p3 = bool(close > pdh)                           # PDH Break
+        p4 = bool(close > orb_high)                      # ORB Break
+        p5 = bool(from_high <= 0.65)                     # Follow-through holding near high
+        p6 = bool(vol_x >= 1.5)                          # Volume Surge
+        p7 = bool(rsi_val >= 56.0)                       # RSI Momentum
         bull_score = sum([p1, p2, p3, p4, p5, p6, p7])
 
         # Bearish Pillars
-        b1 = close < open_day and pct_change < 0
-        b2 = close < vwap_val
-        b3 = close < pdl
-        b4 = close < orb_low
-        b5 = from_low <= 0.65
-        b6 = vol_x >= 1.5
-        b7 = rsi_val <= 44.0
+        b1 = bool(close < open_day and pct_change < 0)
+        b2 = bool(close < vwap_val)
+        b3 = bool(close < pdl)
+        b4 = bool(close < orb_low)
+        b5 = bool(from_low <= 0.65)
+        b6 = bool(vol_x >= 1.5)
+        b7 = bool(rsi_val <= 44.0)
         bear_score = sum([b1, b2, b3, b4, b5, b6, b7])
 
-        opened_at_day_low = (abs(open_day - low_day) / open_day) <= 0.0020 and close > open_day
+        opened_at_day_low = bool((abs(open_day - low_day) / open_day) <= 0.0020 and close > open_day)
+        opened_at_day_high = bool((abs(high_day - open_day) / open_day) <= 0.0020 and close < open_day)
         is_ideal = False
         tier = None
         card_type = "CE"
 
-        # Tier Classification Engine (Ensures all 5 tiers are accurately populated)
+        # Tier Classification
         if (opened_at_day_low and close > vwap_val and pct_change >= 0.8) or (close > orb_high and close > vwap_val and vol_x >= 3.2 and bull_score >= 5):
             tier = "BRAHMASTRA"
             card_type = "CE"
@@ -296,6 +293,50 @@ for sym in SYMBOLS:
 
             score_val = bull_score if card_type == "CE" else bear_score
 
+            # High-Probability RALLY & DROP Detection
+            is_rally = bool(
+                card_type == "CE" and (
+                    pct_change >= 1.5 or
+                    (p3 and p2 and from_high <= 0.45 and (prev_day_bullish or sector_strong))
+                )
+            )
+            is_drop = bool(
+                card_type == "PE" and (
+                    pct_change <= -1.2 or
+                    (b3 and b2 and from_low <= 0.45) or
+                    opened_at_day_high
+                )
+            )
+            fade_risk = bool(card_type == "CE" and from_high >= 0.85)
+
+            # Probability Score Calculation (60% to 94%)
+            prob_score = min(
+                94,
+                55 + (score_val * 4) + (4 if sector_strong else 0) + (4 if is_52w else 0) + (3 if (is_rally or is_drop) else 0)
+            )
+
+            # 7-Pillar Checklist Chips for Frontend
+            if card_type == "CE":
+                pillars_list = [
+                    {"name": "Trend", "ok": p1},
+                    {"name": "VWAP", "ok": p2},
+                    {"name": "PDH", "ok": p3},
+                    {"name": "ORB", "ok": p4},
+                    {"name": "Follow", "ok": p5},
+                    {"name": "Vol", "ok": p6},
+                    {"name": "RSI", "ok": p7}
+                ]
+            else:
+                pillars_list = [
+                    {"name": "Trend", "ok": b1},
+                    {"name": "VWAP", "ok": b2},
+                    {"name": "PDL", "ok": b3},
+                    {"name": "ORB", "ok": b4},
+                    {"name": "Follow", "ok": b5},
+                    {"name": "Vol", "ok": b6},
+                    {"name": "RSI", "ok": b7}
+                ]
+
             card_data = {
                 "symbol": clean_symbol,
                 "type": card_type,
@@ -303,6 +344,7 @@ for sym in SYMBOLS:
                 "optionTag": "⚡ OPTION",
                 "score": f"{score_val}/7",
                 "numScore": score_val,
+                "prob": f"{prob_score}%",
                 "detectTime": detect_time_str,
                 "price": close,
                 "pctChange": f"+{pct_change}%" if pct_change > 0 else f"{pct_change}%",
@@ -313,10 +355,14 @@ for sym in SYMBOLS:
                 "lotSize": lot_qty,
                 "sectorStatus": sector_status,
                 "watchBadge": watch_badge,
-                "candleInfo": f"body {body_pct}% • {candle_quality} • low ▲{from_low}%",
+                "candleInfo": f"body {body_pct}% • {candle_quality} • low ▲{from_low}% • high ▼{from_high}%",
                 "is52W": is_52w,
                 "isIdeal": is_ideal,
+                "isRally": is_rally,
+                "isDrop": is_drop,
+                "fadeRisk": fade_risk,
                 "openedAtLow": opened_at_day_low,
+                "pillars": pillars_list,
                 "sl": sl,
                 "t1": t1,
                 "rsi": rsi_val
@@ -341,13 +387,14 @@ if leaders:
     top = leaders[0]
     if top['tier'] in ["BRAHMASTRA", "EXPLOSIVE"]:
         badge = "⚡ BRAHMASTRA BREAKOUT" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE BREAKOUT"
+        rally_tag = " | 🏆 RALLY" if top.get("isRally") else (" | 📉 DROP" if top.get("isDrop") else "")
         msg = (
-            f"<b>{badge}</b>\n\n"
+            f"<b>{badge}{rally_tag}</b>\n\n"
             f"🎯 <b>Stock:</b> #{top['symbol']} ({top['type']})\n"
             f"⚡ <b>Peak Vol Surge:</b> {top['volumeX']}\n"
             f"💰 <b>LTP:</b> ₹{top['price']} ({top['pctChange']})\n"
             f"🕒 <b>Breakout Candle:</b> {top['detectTime']}\n"
-            f"🏆 <b>Conviction:</b> {top['score']}\n"
+            f"🏆 <b>Conviction:</b> {top['score']} ({top['prob']} Prob)\n"
             f"🏢 <b>Sector:</b> {top['sectorStatus']}\n"
             f"🎯 <b>Strike:</b> {top['strike']} (Lot: {top['lotSize']})\n"
             f"🛑 <b>9:15 SL Law:</b> ₹{top['sl']} | <b>T1:</b> ₹{top['t1']}\n\n"
