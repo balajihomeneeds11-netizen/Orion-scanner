@@ -26,7 +26,7 @@ def send_telegram_alert(message):
     except Exception as err:
         print(f"Telegram dispatch error: {err}")
 
-# Sector Mapping for Orion Confluence Engine
+# Sector Mapping
 SECTOR_MAP = {
     "HDFCBANK": "Banking", "ICICIBANK": "Banking", "SBIN": "Banking", "AXISBANK": "Banking",
     "KOTAKBANK": "Banking", "INDUSINDBK": "Banking", "FEDERALBNK": "Banking", "BANDHANBNK": "Banking",
@@ -93,28 +93,29 @@ SYMBOLS = [
     "VEDL.NS", "VOLTAS.NS", "WIPRO.NS", "ZEEL.NS", "ZYDUSLIFE.NS"
 ]
 
-STICKY_FILE = "brahmastra_sticky.json"
-sticky_brahmastra = {}
-if os.path.exists(STICKY_FILE):
+# Track historical breakout detection times
+TRIGGER_LOG_FILE = "trigger_timestamps.json"
+trigger_cache = {}
+if os.path.exists(TRIGGER_LOG_FILE):
     try:
-        with open(STICKY_FILE, "r") as sf:
-            sticky_brahmastra = json.load(sf)
+        with open(TRIGGER_LOG_FILE, "r") as tf:
+            trigger_cache = json.load(tf)
     except Exception:
-        sticky_brahmastra = {}
+        trigger_cache = {}
 
 ist_now = datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)
 current_ist_time = ist_now.strftime("%I:%M %p")
 today_date_str = ist_now.strftime("%Y-%m-%d")
 
-if sticky_brahmastra.get("date") != today_date_str:
-    sticky_brahmastra = {"date": today_date_str, "cards": {}}
+if trigger_cache.get("date") != today_date_str:
+    trigger_cache = {"date": today_date_str, "timestamps": {}}
 
 leaders = []
 advances = 0
 declines = 0
 sector_trends = {}
 
-print(f"Batch scanning {len(SYMBOLS)} tickers at {current_ist_time} IST...")
+print(f"Scanning F&O universe at {current_ist_time} IST...")
 
 try:
     data_daily = yf.download(SYMBOLS, period="1y", interval="1d", group_by="ticker", threads=True, progress=False)
@@ -207,39 +208,45 @@ for sym in SYMBOLS:
         else:
             sector_status = f"{sec_name} • WEAK" if sec_avg > -0.001 else f"{sec_name} 🔥 STRONG"
 
-        p1 = close > 50 and float(last_bar['Volume']) > 1500
-        p2 = vol_x >= 1.2
-        p3 = close >= orb_high
-        p4 = close > vwap_val
-        p5 = close > pdh
-        p6 = close >= open_p
-        p7 = rsi_val >= 55.0
+        # 7-Pillars Core Alignment
+        p1 = close > 50 and float(last_bar['Volume']) > 2000
+        p2 = vol_x >= 1.5
+        p3 = close > orb_high               # STRICT ORB BREAKOUT MANDATORY
+        p4 = close > vwap_val               # STRICT ABOVE VWAP MANDATORY
+        p5 = close > pdh                    # PDH BREAKOUT
+        p6 = (close > open_p) and (close >= float(prev_bar['High']))
+        p7 = rsi_val >= 58.0                # SOLID INTRADAY MOMENTUM
         bull_score = sum([p1, p2, p3, p4, p5, p6, p7])
 
         bear_score = sum([
             close < pdl,
             close < vwap_val,
             close < orb_low,
-            vol_x >= 1.2,
-            rsi_val <= 45.0,
+            vol_x >= 1.5,
+            rsi_val <= 42.0,
             close < open_p
         ])
 
         tier = None
         card_type = "CE"
 
-        # Dynamically matches OrionScan: captures both volume blasts and opening-drive leaders
-        is_brahmastra = (vol_x >= 3.5) or (pct_change >= 0.40 and from_high <= 0.50 and close > open_day)
-        
-        if is_brahmastra:
+        # WEBINAR BRAHMASTRA CRITERIA:
+        # 1. Volume Blast (vol_x >= 3.0x) OR Open=Low Drive (within 0.15% of low)
+        # 2. MUST trade strictly above VWAP (p4)
+        # 3. MUST be above Opening Range High (p3)
+        # 4. Movement >= +0.60% (eliminates stationary stocks)
+        is_bull_breakout = (close > orb_high) and (close > vwap_val) and (pct_change >= 0.60)
+        opened_at_day_low = (abs(open_day - low_day) / open_day) <= 0.0015
+
+        if is_bull_breakout and ((vol_x >= 3.0) or (opened_at_day_low and vol_x >= 1.5)) and bull_score >= 4:
             tier = "BRAHMASTRA"
-        elif bull_score >= 5 or (vol_x >= 2.0 and pct_change >= 1.0):
+        elif is_bull_breakout and (bull_score >= 5 or vol_x >= 2.5):
             tier = "EXPLOSIVE"
-        elif bull_score >= 3 and pct_change > 0:
+        elif is_bull_breakout and bull_score >= 4:
             tier = "STRONG"
-        elif pct_change > 0:
+        elif is_bull_breakout and bull_score >= 3:
             tier = "SPURT"
-        elif bear_score >= 3 or pct_change <= -1.2:
+        elif (close < orb_low) and (close < vwap_val) and (bear_score >= 4 or pct_change <= -1.5):
             tier = "SHORT ZONE"
             card_type = "PE"
 
@@ -248,6 +255,11 @@ for sym in SYMBOLS:
             target_strike = int(round(close / strike_step) * strike_step)
             strike_label = f"{target_strike} {card_type}"
             lot_qty = LOT_SIZES.get(clean_symbol, 250)
+
+            # Record exact breakout detection time (Dynamic timestamp)
+            if clean_symbol not in trigger_cache["timestamps"]:
+                trigger_cache["timestamps"][clean_symbol] = current_ist_time
+            actual_detect_time = trigger_cache["timestamps"][clean_symbol]
 
             sl = float(df_i['Low'].iloc[0]) if card_type == "CE" else float(df_i['High'].iloc[0])
             sl = round(sl, 2)
@@ -261,7 +273,7 @@ for sym in SYMBOLS:
                 "optionTag": "⚡ OPTION",
                 "score": f"{bull_score}/7" if card_type == "CE" else f"{bear_score}/6",
                 "numScore": bull_score if card_type == "CE" else bear_score,
-                "detectTime": "09:15" if is_brahmastra else current_ist_time,
+                "detectTime": actual_detect_time,
                 "price": close,
                 "pctChange": f"+{pct_change}%" if pct_change > 0 else f"{pct_change}%",
                 "volumeX": f"{vol_x}x",
@@ -269,40 +281,48 @@ for sym in SYMBOLS:
                 "lotSize": lot_qty,
                 "sectorStatus": sector_status,
                 "watchBadge": watch_badge,
-                "candleInfo": f"gap {pct_change}% • body {body_pct}% • {candle_quality} candle",
+                "candleInfo": f"gap +{pct_change}% • body {body_pct}% • {candle_quality} candle",
                 "is52W": is_52w,
+                "openedAtLow": opened_at_day_low,
                 "sl": sl,
                 "t1": t1,
                 "rsi": rsi_val
             }
-
-            if tier == "BRAHMASTRA":
-                sticky_brahmastra["cards"][clean_symbol] = card_data
 
             leaders.append(card_data)
 
     except Exception:
         continue
 
-for s_sym, s_card in sticky_brahmastra.get("cards", {}).items():
-    if not any(c['symbol'] == s_sym for c in leaders):
-        leaders.append(s_card)
+# Save trigger timestamps
+with open(TRIGGER_LOG_FILE, "w") as tf:
+    json.dump(trigger_cache, tf, indent=2)
 
-with open(STICKY_FILE, "w") as sf:
-    json.dump(sticky_brahmastra, sf, indent=2)
+# Sort strictly: High Momentum and High Volume Surge first
+tier_rank = {"BRAHMASTRA": 5, "EXPLOSIVE": 4, "STRONG": 3, "SPURT": 2, "SHORT ZONE": 1}
+leaders = sorted(
+    leaders,
+    key=lambda x: (
+        tier_rank.get(x['tier'], 0),
+        float(x['volumeX'].replace('x', '')),
+        abs(float(x['pctChange'].replace('%', '').replace('+', '')))
+    ),
+    reverse=True
+)
 
-leaders = sorted(leaders, key=lambda x: (x['tier'] == 'BRAHMASTRA', float(x['volumeX'].replace('x', ''))), reverse=True)
+# Cap the output to the top 15 highest-conviction leaders across the market
+leaders = leaders[:15]
 
 if leaders:
     top = leaders[0]
     if top['tier'] in ["BRAHMASTRA", "EXPLOSIVE"]:
-        badge = "⚡ BRAHMASTRA" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE"
+        badge = "⚡ BRAHMASTRA HIGH MOMENTUM" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE BREAKOUT"
         msg = (
             f"<b>{badge}</b>\n\n"
             f"🎯 <b>Stock:</b> #{top['symbol']} ({top['type']})\n"
             f"⚡ <b>Volume Surge:</b> {top['volumeX']}\n"
             f"💰 <b>LTP:</b> ₹{top['price']} ({top['pctChange']})\n"
-            f"🏆 <b>Score:</b> {top['score']}\n"
+            f"🕒 <b>Breakout Time:</b> {top['detectTime']}\n"
             f"🏢 <b>Sector:</b> {top['sectorStatus']}\n"
             f"🎯 <b>Strike:</b> {top['strike']} (Lot: {top['lotSize']})\n"
             f"🛑 <b>9:15 SL Law:</b> ₹{top['sl']} | <b>T1:</b> ₹{top['t1']}\n\n"
@@ -323,4 +343,4 @@ output = {
 with open("data.json", "w") as f:
     json.dump(output, f, indent=2)
 
-print(f"Scan complete. Output {len(leaders)} setups.")
+print(f"Filter applied. Outputting {len(leaders)} high-conviction breakout setups.")
