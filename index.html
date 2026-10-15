@@ -23,7 +23,7 @@
                     PIPELINE ACTIVE
                 </span>
             </div>
-            <p class="text-xs text-gray-400 mt-1">Full NSE F&O Universe • Brahmastra God-Level Strike Engine</p>
+            <p class="text-xs text-gray-400 mt-1">Full NSE F&O Universe • Brahmastra & Rally/Drop Probability Engine</p>
         </div>
         <div id="sync-time" class="text-xs text-gray-400 font-mono">Syncing...</div>
     </header>
@@ -37,12 +37,14 @@
 
     <!-- Navigation Filter Tabs with Live Counts -->
     <nav class="flex gap-1.5 my-3 overflow-x-auto pb-1 text-xs">
-        <button onclick="filterCards('ALL')" class="px-3 py-1.5 rounded bg-gray-800 font-semibold hover:bg-gray-700">ALL (<span id="cnt-ALL">0</span>)</button>
-        <button onclick="filterCards('BRAHMASTRA')" class="px-3 py-1.5 rounded bg-sky-950 text-sky-300 border border-sky-700 font-semibold">⚡ BRAHMASTRA (<span id="cnt-BRAHMASTRA">0</span>)</button>
-        <button onclick="filterCards('EXPLOSIVE')" class="px-3 py-1.5 rounded bg-rose-950 text-rose-300 border border-rose-700 font-semibold">💥 EXPLOSIVE (<span id="cnt-EXPLOSIVE">0</span>)</button>
-        <button onclick="filterCards('STRONG')" class="px-3 py-1.5 rounded bg-amber-950 text-amber-300 border border-amber-700 font-semibold">🔥 STRONG (<span id="cnt-STRONG">0</span>)</button>
-        <button onclick="filterCards('SPURT')" class="px-3 py-1.5 rounded bg-yellow-950 text-yellow-300 border border-yellow-700 font-semibold">⚡ SPURT (<span id="cnt-SPURT">0</span>)</button>
-        <button onclick="filterCards('SHORT ZONE')" class="px-3 py-1.5 rounded bg-red-950 text-red-400 border border-red-800 font-semibold">⚠️ SHORT ZONE (<span id="cnt-SHORT">0</span>)</button>
+        <button onclick="filterCards('ALL')" class="px-3 py-1.5 rounded bg-gray-800 font-semibold hover:bg-gray-700 whitespace-nowrap">ALL (<span id="cnt-ALL">0</span>)</button>
+        <button onclick="filterCards('BRAHMASTRA')" class="px-3 py-1.5 rounded bg-sky-950 text-sky-300 border border-sky-700 font-semibold whitespace-nowrap">⚡ BRAHMASTRA (<span id="cnt-BRAHMASTRA">0</span>)</button>
+        <button onclick="filterCards('EXPLOSIVE')" class="px-3 py-1.5 rounded bg-rose-950 text-rose-300 border border-rose-700 font-semibold whitespace-nowrap">💥 EXPLOSIVE (<span id="cnt-EXPLOSIVE">0</span>)</button>
+        <button onclick="filterCards('STRONG')" class="px-3 py-1.5 rounded bg-amber-950 text-amber-300 border border-amber-700 font-semibold whitespace-nowrap">🔥 STRONG (<span id="cnt-STRONG">0</span>)</button>
+        <button onclick="filterCards('SPURT')" class="px-3 py-1.5 rounded bg-yellow-950 text-yellow-300 border border-yellow-700 font-semibold whitespace-nowrap">⚡ SPURT (<span id="cnt-SPURT">0</span>)</button>
+        <button onclick="filterCards('SHORT ZONE')" class="px-3 py-1.5 rounded bg-red-950 text-red-400 border border-red-800 font-semibold whitespace-nowrap">⚠️ SHORT ZONE (<span id="cnt-SHORT">0</span>)</button>
+        <button onclick="filterCards('RALLY')" class="px-3 py-1.5 rounded bg-yellow-900/60 text-yellow-200 border border-yellow-500 font-bold whitespace-nowrap">🏆 RALLY (<span id="cnt-RALLY">0</span>)</button>
+        <button onclick="filterCards('DROP')" class="px-3 py-1.5 rounded bg-purple-950 text-purple-300 border border-purple-700 font-bold whitespace-nowrap">📉 DROP (<span id="cnt-DROP">0</span>)</button>
     </nav>
 
     <!-- Cards Stream Grid -->
@@ -76,6 +78,8 @@
             document.getElementById('cnt-STRONG').innerText = cards.filter(c => c.tier === 'STRONG').length;
             document.getElementById('cnt-SPURT').innerText = cards.filter(c => c.tier === 'SPURT').length;
             document.getElementById('cnt-SHORT').innerText = cards.filter(c => c.tier === 'SHORT ZONE').length;
+            document.getElementById('cnt-RALLY').innerText = cards.filter(c => c.isRally).length;
+            document.getElementById('cnt-DROP').innerText = cards.filter(c => c.isDrop).length;
         }
 
         function renderConvictionBar(score, total) {
@@ -88,6 +92,17 @@
                 }
             }
             return bars;
+        }
+
+        function renderPillarChips(pillars) {
+            if (!pillars || !pillars.length) return '';
+            return `<div class="flex flex-wrap gap-1 mb-2">` + pillars.map(p => {
+                const cls = p.ok
+                    ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/70'
+                    : 'bg-rose-950/50 text-rose-400/80 border-rose-800/50';
+                const sym = p.ok ? '✓' : '✗';
+                return `<span class="text-[10px] px-1.5 py-0.5 rounded border font-mono ${cls}">${p.name} ${sym}</span>`;
+            }).join('') + `</div>`;
         }
 
         function renderCards(cards) {
@@ -119,9 +134,12 @@
                             <span class="text-xs px-2 py-0.5 rounded font-bold ${isPE ? 'bg-rose-900 text-rose-200' : 'bg-emerald-900 text-emerald-200'}">${c.type}</span>
                             <span class="text-xs px-2 py-0.5 rounded font-bold ${badgeColor}">${c.tier}</span>
 
+                            ${c.isRally ? `<span class="text-[10px] px-2 py-0.5 rounded font-extrabold bg-yellow-400 text-black border border-yellow-200 shadow-xs">🏆 RALLY</span>` : ''}
+                            ${c.isDrop ? `<span class="text-[10px] px-2 py-0.5 rounded font-extrabold bg-purple-600 text-white border border-purple-400 shadow-xs">📉 DROP</span>` : ''}
                             ${c.isIdeal ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-amber-500 text-black border border-amber-300">⭐ IDEAL</span>` : ''}
                             ${c.is52W ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-emerald-950 text-emerald-300 border border-emerald-600">🎯 52W HIGH</span>` : ''}
                             ${c.openedAtLow ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-sky-950 text-sky-300 border border-sky-600">⚓ OPEN=LOW</span>` : ''}
+                            ${c.fadeRisk ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-orange-950 text-orange-300 border border-orange-600">⚠️ FADE RISK</span>` : ''}
                         </div>
                         <span class="text-xs font-mono text-gray-400">🕒 ${c.detectTime}</span>
                     </div>
@@ -155,8 +173,12 @@
                             <span class="text-[10px] text-gray-400">CONVICTION:</span>
                             <span>${renderConvictionBar(c.numScore, 7)}</span>
                             <span class="text-[11px] font-mono font-bold text-white">${c.score}</span>
+                            ${c.prob ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-sky-300 font-mono ml-1">${c.prob}</span>` : ''}
                         </div>
                     </div>
+
+                    <!-- Inline 7-Pillar Checklist Chips -->
+                    ${renderPillarChips(c.pillars)}
 
                     <!-- Candle Quality & Watch Badge -->
                     <div class="flex justify-between items-center text-[11px] px-2 py-1 bg-black/40 rounded mb-2 font-mono">
@@ -195,6 +217,10 @@
         function filterCards(tier) {
             if (tier === 'ALL') {
                 renderCards(allSetups);
+            } else if (tier === 'RALLY') {
+                renderCards(allSetups.filter(c => c.isRally));
+            } else if (tier === 'DROP') {
+                renderCards(allSetups.filter(c => c.isDrop));
             } else {
                 renderCards(allSetups.filter(c => c.tier === tier));
             }
