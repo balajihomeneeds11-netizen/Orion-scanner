@@ -26,6 +26,17 @@ def send_telegram_alert(message):
     except Exception as err:
         print(f"Telegram dispatch error: {err}")
 
+def format_ist_time(ts):
+    """Convert pandas timestamp to IST HH:MM string."""
+    try:
+        if ts.tzinfo is not None:
+            ist_ts = ts.astimezone(datetime.timezone(datetime.timedelta(hours=5, minutes=30)))
+        else:
+            ist_ts = ts + datetime.timedelta(hours=5, minutes=30)
+        return ist_ts.strftime("%H:%M")
+    except Exception:
+        return "09:20"
+
 # Sector Mapping
 SECTOR_MAP = {
     "HDFCBANK": "Banking", "ICICIBANK": "Banking", "SBIN": "Banking", "AXISBANK": "Banking",
@@ -93,29 +104,23 @@ SYMBOLS = [
     "VEDL.NS", "VOLTAS.NS", "WIPRO.NS", "ZEEL.NS", "ZYDUSLIFE.NS"
 ]
 
-# Track historical breakout detection times
-TRIGGER_LOG_FILE = "trigger_timestamps.json"
-trigger_cache = {}
-if os.path.exists(TRIGGER_LOG_FILE):
-    try:
-        with open(TRIGGER_LOG_FILE, "r") as tf:
-            trigger_cache = json.load(tf)
-    except Exception:
-        trigger_cache = {}
-
 ist_now = datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)
 current_ist_time = ist_now.strftime("%I:%M %p")
-today_date_str = ist_now.strftime("%Y-%m-%d")
 
-if trigger_cache.get("date") != today_date_str:
-    trigger_cache = {"date": today_date_str, "timestamps": {}}
-
-leaders = []
 advances = 0
 declines = 0
 sector_trends = {}
 
-print(f"Scanning F&O universe at {current_ist_time} IST...")
+# Separate buckets so every category gets properly populated
+buckets = {
+    "BRAHMASTRA": [],
+    "EXPLOSIVE": [],
+    "STRONG": [],
+    "SPURT": [],
+    "SHORT ZONE": []
+}
+
+print(f"Scanning {len(SYMBOLS)} F&O tickers at {current_ist_time} IST...")
 
 try:
     data_daily = yf.download(SYMBOLS, period="1y", interval="1d", group_by="ticker", threads=True, progress=False)
@@ -155,6 +160,7 @@ for sym in SYMBOLS:
 
         last_bar = df_i.iloc[-1]
         prev_bar = df_i.iloc[-2]
+        prev_close = float(df_d['Close'].iloc[-2])
         pdh = float(df_d['High'].iloc[-2])
         pdl = float(df_d['Low'].iloc[-2])
         high_52w = float(df_d['High'].max())
@@ -162,27 +168,46 @@ for sym in SYMBOLS:
         clean_symbol = sym.replace(".NS", "")
         close = round(float(last_bar['Close']), 2)
         open_p = round(float(last_bar['Open']), 2)
-        low_p = round(float(last_bar['Low']), 2)
-        high_p = round(float(last_bar['High']), 2)
         open_day = round(float(df_i['Open'].iloc[0]), 2)
         low_day = round(float(df_i['Low'].min()), 2)
         high_day = round(float(df_i['High'].max()), 2)
         first_bar_close = round(float(df_i['Close'].iloc[0]), 2)
 
-        pct_change = round(((close - open_day) / open_day) * 100, 2)
-        if close >= open_day:
+        # Day % Change (vs Previous Close, standard NSE convention)
+        pct_change = round(((close - prev_close) / prev_close) * 100, 2)
+        intraday_move = round(((close - open_day) / open_day) * 100, 2)
+
+        if pct_change >= 0:
             advances += 1
         else:
             declines += 1
 
-        avg_vol = df_i['Volume'].mean()
-        vol_x = round(float(last_bar['Volume'] / avg_vol), 1) if avg_vol > 0 else 1.0
+        # Volume calculations: evaluate both current and morning breakout volume
+        avg_vol = float(df_i['Volume'].mean())
+        cur_vol_x = round(float(last_bar['Volume']) / avg_vol, 2) if avg_vol > 0 else 1.0
+        morning_bars = df_i.iloc[:min(12, len(df_i))]
+        peak_vol_x = round(float(morning_bars['Volume'].max()) / avg_vol, 2) if avg_vol > 0 else 1.0
+        vol_x = max(cur_vol_x, peak_vol_x)
 
         cum_vol = df_i['Volume'].cumsum()
         vwap = (df_i['Volume'] * df_i['Close']).cumsum() / cum_vol
         vwap_val = float(vwap.iloc[-1])
         orb_high = float(df_i['High'].iloc[0])
         orb_low = float(df_i['Low'].iloc[0])
+
+        # Find exact breakout candle timestamp in IST (09:15, 09:20, 09:25, etc.)
+        detect_time_str = format_ist_time(df_i.index[0])
+        if close >= open_day:
+            bo_bars = df_i[df_i['High'] > orb_high]
+            if len(bo_bars) > 0:
+                detect_time_str = format_ist_time(bo_bars.index[0])
+            else:
+                max_v_idx = morning_bars['Volume'].idxmax()
+                detect_time_str = format_ist_time(max_v_idx)
+        else:
+            bd_bars = df_i[df_i['Low'] < orb_low]
+            if len(bd_bars) > 0:
+                detect_time_str = format_ist_time(bd_bars.index[0])
 
         delta = df_i['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(14).mean()
@@ -192,62 +217,66 @@ for sym in SYMBOLS:
         rsi_val = round(float(rsi_series.iloc[-1]), 1) if not np.isnan(rsi_series.iloc[-1]) else 50.0
 
         body_pct = round(abs((first_bar_close - open_day) / open_day) * 100, 2)
-        candle_quality = "Strong" if body_pct >= 0.8 else "Moderate"
+        candle_quality = "Strong" if body_pct >= 0.6 else "Moderate"
 
         from_low = round(((close - low_day) / low_day) * 100, 2)
         from_high = round(((high_day - close) / high_day) * 100, 2)
-
         is_52w = close >= (high_52w * 0.985)
 
         sec_name = SECTOR_MAP.get(clean_symbol, "F&O")
         sec_changes = sector_trends.get(sec_name, [])
         sec_avg = (sum(sec_changes) / len(sec_changes)) if sec_changes else 0.0
+        sector_strong = (pct_change >= 0 and sec_avg > 0.0015) or (pct_change < 0 and sec_avg < -0.0015)
+        sector_status = f"{sec_name} 🔥 STRONG" if sector_strong else f"{sec_name} • WATCH"
 
-        if pct_change >= 0:
-            sector_status = f"{sec_name} • WEAK" if sec_avg < 0.001 else f"{sec_name} 🔥 STRONG"
-        else:
-            sector_status = f"{sec_name} • WEAK" if sec_avg > -0.001 else f"{sec_name} 🔥 STRONG"
-
-        # 7-Pillars Core Alignment
-        p1 = close > 50 and float(last_bar['Volume']) > 2000
-        p2 = vol_x >= 1.5
-        p3 = close > orb_high               # STRICT ORB BREAKOUT MANDATORY
-        p4 = close > vwap_val               # STRICT ABOVE VWAP MANDATORY
-        p5 = close > pdh                    # PDH BREAKOUT
-        p6 = (close > open_p) and (close >= float(prev_bar['High']))
-        p7 = rsi_val >= 58.0                # SOLID INTRADAY MOMENTUM
+        # 7-Pillars (Bullish)
+        p1 = close > open_day and pct_change > 0         # Trend
+        p2 = close > vwap_val                            # VWAP
+        p3 = close > pdh                                 # PDH Break
+        p4 = close > orb_high                            # ORB Break
+        p5 = from_high <= 0.65                           # Follow-through holding near high
+        p6 = vol_x >= 1.5                                # Volume Surge
+        p7 = rsi_val >= 56.0                             # RSI Momentum
         bull_score = sum([p1, p2, p3, p4, p5, p6, p7])
 
-        bear_score = sum([
-            close < pdl,
-            close < vwap_val,
-            close < orb_low,
-            vol_x >= 1.5,
-            rsi_val <= 42.0,
-            close < open_p
-        ])
+        # Bearish Pillars
+        b1 = close < open_day and pct_change < 0
+        b2 = close < vwap_val
+        b3 = close < pdl
+        b4 = close < orb_low
+        b5 = from_low <= 0.65
+        b6 = vol_x >= 1.5
+        b7 = rsi_val <= 44.0
+        bear_score = sum([b1, b2, b3, b4, b5, b6, b7])
 
+        opened_at_day_low = (abs(open_day - low_day) / open_day) <= 0.0020 and close > open_day
+        is_ideal = False
         tier = None
         card_type = "CE"
 
-        # WEBINAR BRAHMASTRA CRITERIA:
-        # 1. Volume Blast (vol_x >= 3.0x) OR Open=Low Drive (within 0.15% of low)
-        # 2. MUST trade strictly above VWAP (p4)
-        # 3. MUST be above Opening Range High (p3)
-        # 4. Movement >= +0.60% (eliminates stationary stocks)
-        is_bull_breakout = (close > orb_high) and (close > vwap_val) and (pct_change >= 0.60)
-        opened_at_day_low = (abs(open_day - low_day) / open_day) <= 0.0015
-
-        if is_bull_breakout and ((vol_x >= 3.0) or (opened_at_day_low and vol_x >= 1.5)) and bull_score >= 4:
+        # Tier Classification Engine (Ensures all 5 tiers are accurately populated)
+        if (opened_at_day_low and close > vwap_val and pct_change >= 0.8) or (close > orb_high and close > vwap_val and vol_x >= 3.2 and bull_score >= 5):
             tier = "BRAHMASTRA"
-        elif is_bull_breakout and (bull_score >= 5 or vol_x >= 2.5):
+            card_type = "CE"
+        elif (close > orb_high and close > vwap_val and bull_score >= 5 and pct_change >= 1.0) or (is_52w and close > orb_high and pct_change >= 0.8):
             tier = "EXPLOSIVE"
-        elif is_bull_breakout and bull_score >= 4:
+            card_type = "CE"
+            if bull_score >= 6 and sector_strong:
+                is_ideal = True
+        elif (close > vwap_val and bull_score >= 4 and pct_change >= 0.5):
             tier = "STRONG"
-        elif is_bull_breakout and bull_score >= 3:
-            tier = "SPURT"
-        elif (close < orb_low) and (close < vwap_val) and (bear_score >= 4 or pct_change <= -1.5):
+            card_type = "CE"
+        elif (close < vwap_val and close < orb_low and (bear_score >= 5 or pct_change <= -1.8)):
             tier = "SHORT ZONE"
+            card_type = "PE"
+        elif (close < vwap_val and bear_score >= 4 and pct_change <= -0.8):
+            tier = "STRONG"
+            card_type = "PE"
+        elif (bull_score >= 3 and pct_change >= 0.35 and vol_x >= 1.3):
+            tier = "SPURT"
+            card_type = "CE"
+        elif (bear_score >= 3 and pct_change <= -0.50 and vol_x >= 1.3):
+            tier = "SPURT"
             card_type = "PE"
 
         if tier:
@@ -256,73 +285,69 @@ for sym in SYMBOLS:
             strike_label = f"{target_strike} {card_type}"
             lot_qty = LOT_SIZES.get(clean_symbol, 250)
 
-            # Record exact breakout detection time (Dynamic timestamp)
-            if clean_symbol not in trigger_cache["timestamps"]:
-                trigger_cache["timestamps"][clean_symbol] = current_ist_time
-            actual_detect_time = trigger_cache["timestamps"][clean_symbol]
+            sl = round(float(df_i['Low'].iloc[0]), 2) if card_type == "CE" else round(float(df_i['High'].iloc[0]), 2)
+            risk = abs(close - sl) if abs(close - sl) > 0 else (close * 0.008)
+            t1 = round(close + (risk * 1.5), 2) if card_type == "CE" else round(close - (risk * 1.5), 2)
 
-            sl = float(df_i['Low'].iloc[0]) if card_type == "CE" else float(df_i['High'].iloc[0])
-            sl = round(sl, 2)
-            t1 = round(close + ((close - sl) * 1.5), 2) if card_type == "CE" else round(close - ((sl - close) * 1.5), 2)
-            watch_badge = "★★★ STRONG BUY WATCH" if card_type == "CE" else "★★★ STRONG SELL WATCH"
+            if tier == "SPURT":
+                watch_badge = "★★ MODERATE WATCH"
+            else:
+                watch_badge = "★★★ STRONG BUY WATCH" if card_type == "CE" else "★★★ STRONG SELL WATCH"
+
+            score_val = bull_score if card_type == "CE" else bear_score
 
             card_data = {
                 "symbol": clean_symbol,
                 "type": card_type,
                 "tier": tier,
                 "optionTag": "⚡ OPTION",
-                "score": f"{bull_score}/7" if card_type == "CE" else f"{bear_score}/6",
-                "numScore": bull_score if card_type == "CE" else bear_score,
-                "detectTime": actual_detect_time,
+                "score": f"{score_val}/7",
+                "numScore": score_val,
+                "detectTime": detect_time_str,
                 "price": close,
                 "pctChange": f"+{pct_change}%" if pct_change > 0 else f"{pct_change}%",
+                "absChange": abs(pct_change),
                 "volumeX": f"{vol_x}x",
+                "numVol": vol_x,
                 "strike": strike_label,
                 "lotSize": lot_qty,
                 "sectorStatus": sector_status,
                 "watchBadge": watch_badge,
-                "candleInfo": f"gap +{pct_change}% • body {body_pct}% • {candle_quality} candle",
+                "candleInfo": f"body {body_pct}% • {candle_quality} • low ▲{from_low}%",
                 "is52W": is_52w,
+                "isIdeal": is_ideal,
                 "openedAtLow": opened_at_day_low,
                 "sl": sl,
                 "t1": t1,
                 "rsi": rsi_val
             }
 
-            leaders.append(card_data)
+            buckets[tier].append(card_data)
 
     except Exception:
         continue
 
-# Save trigger timestamps
-with open(TRIGGER_LOG_FILE, "w") as tf:
-    json.dump(trigger_cache, tf, indent=2)
-
-# Sort strictly: High Momentum and High Volume Surge first
-tier_rank = {"BRAHMASTRA": 5, "EXPLOSIVE": 4, "STRONG": 3, "SPURT": 2, "SHORT ZONE": 1}
-leaders = sorted(
-    leaders,
-    key=lambda x: (
-        tier_rank.get(x['tier'], 0),
-        float(x['volumeX'].replace('x', '')),
-        abs(float(x['pctChange'].replace('%', '').replace('+', '')))
-    ),
-    reverse=True
-)
-
-# Cap the output to the top 15 highest-conviction leaders across the market
-leaders = leaders[:15]
+# Sort each bucket by conviction score, volume surge, and % move, keeping top 10 per category
+leaders = []
+for tier_name in ["BRAHMASTRA", "EXPLOSIVE", "STRONG", "SPURT", "SHORT ZONE"]:
+    sorted_tier = sorted(
+        buckets[tier_name],
+        key=lambda x: (x["numScore"], x["numVol"], x["absChange"]),
+        reverse=True
+    )[:10]
+    leaders.extend(sorted_tier)
 
 if leaders:
     top = leaders[0]
     if top['tier'] in ["BRAHMASTRA", "EXPLOSIVE"]:
-        badge = "⚡ BRAHMASTRA HIGH MOMENTUM" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE BREAKOUT"
+        badge = "⚡ BRAHMASTRA BREAKOUT" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE BREAKOUT"
         msg = (
             f"<b>{badge}</b>\n\n"
             f"🎯 <b>Stock:</b> #{top['symbol']} ({top['type']})\n"
-            f"⚡ <b>Volume Surge:</b> {top['volumeX']}\n"
+            f"⚡ <b>Peak Vol Surge:</b> {top['volumeX']}\n"
             f"💰 <b>LTP:</b> ₹{top['price']} ({top['pctChange']})\n"
-            f"🕒 <b>Breakout Time:</b> {top['detectTime']}\n"
+            f"🕒 <b>Breakout Candle:</b> {top['detectTime']}\n"
+            f"🏆 <b>Conviction:</b> {top['score']}\n"
             f"🏢 <b>Sector:</b> {top['sectorStatus']}\n"
             f"🎯 <b>Strike:</b> {top['strike']} (Lot: {top['lotSize']})\n"
             f"🛑 <b>9:15 SL Law:</b> ₹{top['sl']} | <b>T1:</b> ₹{top['t1']}\n\n"
@@ -343,4 +368,8 @@ output = {
 with open("data.json", "w") as f:
     json.dump(output, f, indent=2)
 
-print(f"Filter applied. Outputting {len(leaders)} high-conviction breakout setups.")
+print(
+    f"Scan complete. Counts -> BRAHMASTRA: {len(buckets['BRAHMASTRA'])}, "
+    f"EXPLOSIVE: {len(buckets['EXPLOSIVE'])}, STRONG: {len(buckets['STRONG'])}, "
+    f"SPURT: {len(buckets['SPURT'])}, SHORT ZONE: {len(buckets['SHORT ZONE'])}"
+)
