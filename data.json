@@ -1,154 +1,41 @@
 {
-  "lastUpdated": "01:44 PM",
+  "lastUpdated": "02:39 PM",
   "breadth": {
-    "advances": 108,
-    "declines": 68,
-    "sentiment": "STRONG BULLISH"
+    "advances": 103,
+    "declines": 73,
+    "sentiment": "BULLISH"
   },
   "leaders": [
     {
-      "symbol": "COALINDIA",
+      "symbol": "BALKRISIND",
       "type": "CE",
       "tier": "BRAHMASTRA",
-      "optionTag": "\u26a1 OPTION",
+      "optionTag": "⚡ OPTION",
       "score": "7/7",
       "numScore": 7,
-      "prob": "90%",
-      "detectTime": "10:15",
-      "price": 420.2,
-      "pctChange": "+0.77%",
-      "absChange": 0.77,
-      "volumeX": "11.84x",
-      "numVol": 11.84,
-      "strike": "420 CE",
-      "lotSize": 250,
-      "sectorStatus": "Metals \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.13% \u2022 Moderate \u2022 low \u25b21.22% \u2022 high \u25bc0.02%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 416.3,
-      "t1": 426.05,
-      "rsi": 68.8
-    },
-    {
-      "symbol": "NAUKRI",
-      "type": "CE",
-      "tier": "BRAHMASTRA",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "09:45",
-      "price": 1241.0,
-      "pctChange": "+1.72%",
-      "absChange": 1.72,
-      "volumeX": "6.25x",
-      "numVol": 6.25,
-      "strike": "1250 CE",
-      "lotSize": 250,
-      "sectorStatus": "IT \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.55% \u2022 Moderate \u2022 low \u25b21.72% \u2022 high \u25bc0.49%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": true,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1220.0,
-      "t1": 1272.5,
-      "rsi": 87.4
-    },
-    {
-      "symbol": "SHREECEM",
-      "type": "CE",
-      "tier": "BRAHMASTRA",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "86%",
+      "prob": "96%",
       "detectTime": "09:20",
-      "price": 22400.0,
-      "pctChange": "+0.79%",
-      "absChange": 0.79,
-      "volumeX": "5.32x",
-      "numVol": 5.32,
-      "strike": "22400 CE",
+      "price": 2065.1,
+      "pctChange": "+3.22%",
+      "absChange": 3.22,
+      "volumeX": "9.04x",
+      "numVol": 9.04,
+      "strike": "2050 CE",
       "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.75% \u2022 Strong \u2022 low \u25b21.84% \u2022 high \u25bc0.02%",
+      "sectorStatus": "Auto 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.53% • low ▲3.61% • high ▼0.36%",
       "is52W": false,
       "isIdeal": false,
       "isRally": true,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": true,
+      "isNarrowCPR": true,
+      "isNR7": true,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "+1.61%",
       "pillars": [
         {
           "name": "Trend",
@@ -179,625 +66,360 @@
           "ok": true
         }
       ],
-      "sl": 21995.0,
-      "t1": 23007.5,
-      "rsi": 66.7
+      "sl": 1993.2,
+      "t1": 2172.95,
+      "rsi": 63.1
     },
     {
-      "symbol": "MARUTI",
+      "symbol": "ATUL",
       "type": "CE",
       "tier": "BRAHMASTRA",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "09:25",
-      "price": 11540.0,
-      "pctChange": "+3.24%",
-      "absChange": 3.24,
-      "volumeX": "3.62x",
-      "numVol": 3.62,
-      "strike": "11550 CE",
-      "lotSize": 50,
-      "sectorStatus": "Auto \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.53% \u2022 Moderate \u2022 low \u25b23.53% \u2022 high \u25bc0.08%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": true,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 11146.0,
-      "t1": 12131.0,
-      "rsi": 60.5
-    },
-    {
-      "symbol": "BPCL",
-      "type": "CE",
-      "tier": "BRAHMASTRA",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "10:00",
-      "price": 294.35,
-      "pctChange": "+1.62%",
-      "absChange": 1.62,
-      "volumeX": "3.57x",
-      "numVol": 3.57,
-      "strike": "300 CE",
-      "lotSize": 250,
-      "sectorStatus": "Energy \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.02% \u2022 Moderate \u2022 low \u25b22.51% \u2022 high \u25bc0.07%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 288.55,
-      "t1": 303.05,
-      "rsi": 77.9
-    },
-    {
-      "symbol": "GODREJPROP",
-      "type": "CE",
-      "tier": "BRAHMASTRA",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "86%",
-      "detectTime": "10:00",
-      "price": 1629.9,
-      "pctChange": "+2.23%",
-      "absChange": 2.23,
-      "volumeX": "3.37x",
-      "numVol": 3.37,
-      "strike": "1650 CE",
-      "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.73% \u2022 Strong \u2022 low \u25b23.28% \u2022 high \u25bc0.25%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": true,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1578.1,
-      "t1": 1707.6,
-      "rsi": 81.7
-    },
-    {
-      "symbol": "VOLTAS",
-      "type": "CE",
-      "tier": "BRAHMASTRA",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "86%",
-      "detectTime": "09:50",
-      "price": 1055.8,
-      "pctChange": "+1.42%",
-      "absChange": 1.42,
-      "volumeX": "3.28x",
-      "numVol": 3.28,
-      "strike": "1050 CE",
-      "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.17% \u2022 Moderate \u2022 low \u25b21.75% \u2022 high \u25bc0.38%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1039.7,
-      "t1": 1079.95,
-      "rsi": 71.6
-    },
-    {
-      "symbol": "TECHM",
-      "type": "CE",
-      "tier": "BRAHMASTRA",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "09:30",
-      "price": 1637.3,
-      "pctChange": "+3.94%",
-      "absChange": 3.94,
-      "volumeX": "3.25x",
-      "numVol": 3.25,
-      "strike": "1650 CE",
-      "lotSize": 600,
-      "sectorStatus": "IT \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.17% \u2022 Moderate \u2022 low \u25b22.54% \u2022 high \u25bc0.32%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1596.8,
-      "t1": 1698.05,
-      "rsi": 56.3
-    },
-    {
-      "symbol": "KOTAKBANK",
-      "type": "CE",
-      "tier": "BRAHMASTRA",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "94%",
-      "detectTime": "09:45",
-      "price": 446.2,
-      "pctChange": "+1.86%",
-      "absChange": 1.86,
-      "volumeX": "3.25x",
-      "numVol": 3.25,
-      "strike": "440 CE",
-      "lotSize": 400,
-      "sectorStatus": "Banking \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.07% \u2022 Moderate \u2022 low \u25b21.95% \u2022 high \u25bc0.1%",
-      "is52W": true,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 438.8,
-      "t1": 457.3,
-      "rsi": 69.6
-    },
-    {
-      "symbol": "JSWSTEEL",
-      "type": "CE",
-      "tier": "BRAHMASTRA",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "10:30",
-      "price": 1208.4,
-      "pctChange": "+2.74%",
-      "absChange": 2.74,
-      "volumeX": "3.21x",
-      "numVol": 3.21,
-      "strike": "1200 CE",
-      "lotSize": 250,
-      "sectorStatus": "Metals \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.92% \u2022 Strong \u2022 low \u25b23.16% \u2022 high \u25bc0.07%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1171.4,
-      "t1": 1263.9,
-      "rsi": 76.4
-    },
-    {
-      "symbol": "INDUSTOWER",
-      "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "09:20",
-      "price": 384.75,
-      "pctChange": "+1.58%",
-      "absChange": 1.58,
-      "volumeX": "2.89x",
-      "numVol": 2.89,
-      "strike": "380 CE",
-      "lotSize": 1700,
-      "sectorStatus": "Telecom \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.03% \u2022 Moderate \u2022 low \u25b22.72% \u2022 high \u25bc0.16%",
-      "is52W": false,
-      "isIdeal": true,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 374.55,
-      "t1": 400.05,
-      "rsi": 65.1
-    },
-    {
-      "symbol": "TATASTEEL",
-      "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "10:00",
-      "price": 176.65,
-      "pctChange": "+1.24%",
-      "absChange": 1.24,
-      "volumeX": "2.4x",
-      "numVol": 2.4,
-      "strike": "180 CE",
-      "lotSize": 5500,
-      "sectorStatus": "Metals \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.09% \u2022 Moderate \u2022 low \u25b22.05% \u2022 high \u25bc0.03%",
-      "is52W": false,
-      "isIdeal": true,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 173.1,
-      "t1": 181.98,
-      "rsi": 67.4
-    },
-    {
-      "symbol": "HEROMOTOCO",
-      "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "09:25",
-      "price": 5174.5,
-      "pctChange": "+3.09%",
-      "absChange": 3.09,
-      "volumeX": "2.23x",
-      "numVol": 2.23,
-      "strike": "5150 CE",
-      "lotSize": 250,
-      "sectorStatus": "Auto \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.08% \u2022 Moderate \u2022 low \u25b22.74% \u2022 high \u25bc0.35%",
-      "is52W": false,
-      "isIdeal": true,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 5036.5,
-      "t1": 5381.5,
-      "rsi": 70.4
-    },
-    {
-      "symbol": "ITC",
-      "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "\u26a1 OPTION",
+      "optionTag": "⚡ OPTION",
       "score": "7/7",
       "numScore": 7,
       "prob": "83%",
       "detectTime": "09:20",
-      "price": 265.25,
-      "pctChange": "+1.43%",
-      "absChange": 1.43,
-      "volumeX": "2.15x",
-      "numVol": 2.15,
-      "strike": "260 CE",
+      "price": 6190.0,
+      "pctChange": "+3.65%",
+      "absChange": 3.65,
+      "volumeX": "5.29x",
+      "numVol": 5.29,
+      "strike": "6200 CE",
       "lotSize": 250,
-      "sectorStatus": "FMCG \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.4% \u2022 Moderate \u2022 low \u25b21.36% \u2022 high \u25bc0.06%",
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.64% • low ▲3.65% • high ▼0.06%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": true,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "+2.04%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 5972.0,
+      "t1": 6517.0,
+      "rsi": 73.2
+    },
+    {
+      "symbol": "HCLTECH",
+      "type": "CE",
+      "tier": "BRAHMASTRA",
+      "optionTag": "⚡ OPTION",
+      "score": "7/7",
+      "numScore": 7,
+      "prob": "87%",
+      "detectTime": "09:40",
+      "price": 1367.4,
+      "pctChange": "+3.04%",
+      "absChange": 3.04,
+      "volumeX": "3.58x",
+      "numVol": 3.58,
+      "strike": "1350 CE",
+      "lotSize": 350,
+      "sectorStatus": "IT 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 1.02% • low ▲2.88% • high ▼0.59%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "+1.43%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 1329.1,
+      "t1": 1424.85,
+      "rsi": 60.9
+    },
+    {
+      "symbol": "ANGELONE",
+      "type": "CE",
+      "tier": "BRAHMASTRA",
+      "optionTag": "⚡ OPTION",
+      "score": "7/7",
+      "numScore": 7,
+      "prob": "92%",
+      "detectTime": "09:40",
+      "price": 313.55,
+      "pctChange": "+2.45%",
+      "absChange": 2.45,
+      "volumeX": "3.28x",
+      "numVol": 3.28,
+      "strike": "320 CE",
+      "lotSize": 250,
+      "sectorStatus": "CapitalMkt 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 1.19% • low ▲2.27% • high ▼0.63%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "fuelLeft": "10.1%",
+      "numFuel": 10.1,
+      "alpha": "+0.84%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 307.25,
+      "t1": 323.0,
+      "rsi": 67.3
+    },
+    {
+      "symbol": "COALINDIA",
+      "type": "CE",
+      "tier": "BRAHMASTRA",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "83%",
+      "detectTime": "10:15",
+      "price": 419.55,
+      "pctChange": "+0.61%",
+      "absChange": 0.61,
+      "volumeX": "12.74x",
+      "numVol": 12.74,
+      "strike": "420 CE",
+      "lotSize": 250,
+      "sectorStatus": "Metals 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.13% • low ▲1.06% • high ▼0.18%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "41.0%",
+      "numFuel": 41.0,
+      "alpha": "-1.0%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 416.3,
+      "t1": 424.43,
+      "rsi": 47.8
+    },
+    {
+      "symbol": "WIPRO",
+      "type": "CE",
+      "tier": "BRAHMASTRA",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "88%",
+      "detectTime": "09:15",
+      "price": 173.62,
+      "pctChange": "+1.58%",
+      "absChange": 1.58,
+      "volumeX": "6.6x",
+      "numVol": 6.6,
+      "strike": "170 CE",
+      "lotSize": 1500,
+      "sectorStatus": "IT 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.28% • low ▲0.52% • high ▼0.56%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": true,
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "fuelLeft": "55.1%",
+      "numFuel": 55.1,
+      "alpha": "-0.03%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": false
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 172.72,
+      "t1": 174.97,
+      "rsi": 60.7
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "type": "CE",
+      "tier": "BRAHMASTRA",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "76%",
+      "detectTime": "09:40",
+      "price": 2596.0,
+      "pctChange": "+0.62%",
+      "absChange": 0.62,
+      "volumeX": "5.17x",
+      "numVol": 5.17,
+      "strike": "2600 CE",
+      "lotSize": 250,
+      "sectorStatus": "Finance • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.24% • low ▲1.8% • high ▼0.3%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "11.2%",
+      "numFuel": 11.2,
+      "alpha": "-0.99%",
       "pillars": [
         {
           "name": "Trend",
@@ -809,7 +431,7 @@
         },
         {
           "name": "PDH",
-          "ok": true
+          "ok": false
         },
         {
           "name": "ORB",
@@ -828,212 +450,296 @@
           "ok": true
         }
       ],
-      "sl": 261.7,
-      "t1": 270.58,
-      "rsi": 69.2
+      "sl": 2550.0,
+      "t1": 2665.0,
+      "rsi": 57.8
     },
     {
-      "symbol": "RELIANCE",
+      "symbol": "SHREECEM",
       "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "09:50",
-      "price": 1214.1,
-      "pctChange": "+3.36%",
-      "absChange": 3.36,
-      "volumeX": "1.76x",
-      "numVol": 1.76,
-      "strike": "1200 CE",
-      "lotSize": 250,
-      "sectorStatus": "Energy \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.42% \u2022 Moderate \u2022 low \u25b23.12% \u2022 high \u25bc0.11%",
-      "is52W": false,
-      "isIdeal": true,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1178.7,
-      "t1": 1267.2,
-      "rsi": 66.4
-    },
-    {
-      "symbol": "SUNPHARMA",
-      "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "09:20",
-      "price": 1776.8,
-      "pctChange": "+1.74%",
-      "absChange": 1.74,
-      "volumeX": "1.75x",
-      "numVol": 1.75,
-      "strike": "1800 CE",
-      "lotSize": 250,
-      "sectorStatus": "Pharma \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.37% \u2022 Moderate \u2022 low \u25b22.46% \u2022 high \u25bc0.03%",
-      "is52W": false,
-      "isIdeal": true,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1734.1,
-      "t1": 1840.85,
-      "rsi": 81.5
-    },
-    {
-      "symbol": "HINDPETRO",
-      "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "09:20",
-      "price": 347.0,
-      "pctChange": "+4.82%",
-      "absChange": 4.82,
-      "volumeX": "1.72x",
-      "numVol": 1.72,
-      "strike": "340 CE",
-      "lotSize": 250,
-      "sectorStatus": "Energy \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.5% \u2022 Moderate \u2022 low \u25b24.82% \u2022 high \u25bc0.43%",
-      "is52W": false,
-      "isIdeal": true,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 331.05,
-      "t1": 370.92,
-      "rsi": 59.6
-    },
-    {
-      "symbol": "HDFCAMC",
-      "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "\u26a1 OPTION",
+      "tier": "BRAHMASTRA",
+      "optionTag": "⚡ OPTION",
       "score": "6/7",
       "numScore": 6,
-      "prob": "82%",
+      "prob": "76%",
       "detectTime": "09:20",
-      "price": 2353.9,
-      "pctChange": "+2.48%",
-      "absChange": 2.48,
-      "volumeX": "3.05x",
-      "numVol": 3.05,
-      "strike": "2350 CE",
+      "price": 22365.0,
+      "pctChange": "+0.81%",
+      "absChange": 0.81,
+      "volumeX": "4.79x",
+      "numVol": 4.79,
+      "strike": "22350 CE",
       "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 1.21% \u2022 Strong \u2022 low \u25b22.99% \u2022 high \u25bc0.55%",
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.75% • low ▲1.68% • high ▼0.25%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": true,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "20.3%",
+      "numFuel": 20.3,
+      "alpha": "-0.8%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 21995.0,
+      "t1": 22920.0,
+      "rsi": 50.0
+    },
+    {
+      "symbol": "MARUTI",
+      "type": "CE",
+      "tier": "BRAHMASTRA",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "83%",
+      "detectTime": "09:25",
+      "price": 11483.0,
+      "pctChange": "+2.73%",
+      "absChange": 2.73,
+      "volumeX": "3.87x",
+      "numVol": 3.87,
+      "strike": "11500 CE",
+      "lotSize": 50,
+      "sectorStatus": "Auto 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.53% • low ▲3.02% • high ▼0.57%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": true,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "+1.12%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 11146.0,
+      "t1": 11988.5,
+      "rsi": 29.6
+    },
+    {
+      "symbol": "TECHM",
+      "type": "CE",
+      "tier": "BRAHMASTRA",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "83%",
+      "detectTime": "09:30",
+      "price": 1633.4,
+      "pctChange": "+3.69%",
+      "absChange": 3.69,
+      "volumeX": "3.51x",
+      "numVol": 3.51,
+      "strike": "1650 CE",
+      "lotSize": 600,
+      "sectorStatus": "IT 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.17% • low ▲2.29% • high ▼0.55%",
       "is52W": false,
       "isIdeal": false,
       "isRally": true,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "1.8%",
+      "numFuel": 1.8,
+      "alpha": "+2.08%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 1596.8,
+      "t1": 1688.3,
+      "rsi": 35.5
+    },
+    {
+      "symbol": "FEDERALBNK",
+      "type": "CE",
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
+      "score": "7/7",
+      "numScore": 7,
+      "prob": "85%",
+      "detectTime": "09:30",
+      "price": 334.6,
+      "pctChange": "+1.39%",
+      "absChange": 1.39,
+      "volumeX": "2.4x",
+      "numVol": 2.4,
+      "strike": "340 CE",
+      "lotSize": 250,
+      "sectorStatus": "Banking • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.41% • low ▲1.35% • high ▼0.25%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "fuelLeft": "33.8%",
+      "numFuel": 33.8,
+      "alpha": "-0.22%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 330.25,
+      "t1": 341.13,
+      "rsi": 84.6
+    },
+    {
+      "symbol": "HDFCAMC",
+      "type": "CE",
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "79%",
+      "detectTime": "09:20",
+      "price": 2363.7,
+      "pctChange": "+2.91%",
+      "absChange": 2.91,
+      "volumeX": "3.14x",
+      "numVol": 3.14,
+      "strike": "2350 CE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 1.21% • low ▲3.42% • high ▼0.17%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "+1.3%",
       "pillars": [
         {
           "name": "Trend",
@@ -1065,447 +771,39 @@
         }
       ],
       "sl": 2285.5,
-      "t1": 2456.5,
-      "rsi": 43.6
+      "t1": 2481.0,
+      "rsi": 51.0
     },
     {
-      "symbol": "ZYDUSLIFE",
+      "symbol": "HEROMOTOCO",
       "type": "CE",
       "tier": "EXPLOSIVE",
-      "optionTag": "\u26a1 OPTION",
+      "optionTag": "⚡ OPTION",
       "score": "6/7",
       "numScore": 6,
-      "prob": "86%",
-      "detectTime": "09:35",
-      "price": 1144.0,
-      "pctChange": "+1.72%",
-      "absChange": 1.72,
-      "volumeX": "2.46x",
-      "numVol": 2.46,
-      "strike": "1150 CE",
-      "lotSize": 900,
-      "sectorStatus": "Pharma \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.05% \u2022 Moderate \u2022 low \u25b22.44% \u2022 high \u25bc0.21%",
-      "is52W": false,
-      "isIdeal": true,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": false
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1116.7,
-      "t1": 1184.95,
-      "rsi": 74.3
-    },
-    {
-      "symbol": "M&M",
-      "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "86%",
-      "detectTime": "09:50",
-      "price": 2861.0,
-      "pctChange": "+2.41%",
-      "absChange": 2.41,
-      "volumeX": "2.42x",
-      "numVol": 2.42,
-      "strike": "2850 CE",
-      "lotSize": 350,
-      "sectorStatus": "Auto \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.48% \u2022 Moderate \u2022 low \u25b22.21% \u2022 high \u25bc0.15%",
-      "is52W": false,
-      "isIdeal": true,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": false
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 2804.5,
-      "t1": 2945.75,
-      "rsi": 63.8
-    },
-    {
-      "symbol": "ONGC",
-      "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "12:55",
-      "price": 226.73,
-      "pctChange": "+0.55%",
-      "absChange": 0.55,
-      "volumeX": "2.62x",
-      "numVol": 2.62,
-      "strike": "220 CE",
-      "lotSize": 3850,
-      "sectorStatus": "Energy \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.49% \u2022 Moderate \u2022 low \u25b21.73% \u2022 high \u25bc0.0%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 223.21,
-      "t1": 232.01,
-      "rsi": 90.4
-    },
-    {
-      "symbol": "IOC",
-      "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "10:10",
-      "price": 128.79,
-      "pctChange": "+0.77%",
-      "absChange": 0.77,
-      "volumeX": "2.6x",
-      "numVol": 2.6,
-      "strike": "130 CE",
-      "lotSize": 250,
-      "sectorStatus": "Energy \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.59% \u2022 Moderate \u2022 low \u25b21.75% \u2022 high \u25bc0.06%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 126.91,
-      "t1": 131.61,
-      "rsi": 72.5
-    },
-    {
-      "symbol": "IGL",
-      "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "11:55",
-      "price": 146.2,
-      "pctChange": "+0.77%",
-      "absChange": 0.77,
-      "volumeX": "2.57x",
-      "numVol": 2.57,
-      "strike": "150 CE",
-      "lotSize": 250,
-      "sectorStatus": "Energy \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.46% \u2022 Moderate \u2022 low \u25b22.41% \u2022 high \u25bc0.05%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 143.38,
-      "t1": 150.43,
-      "rsi": 89.9
-    },
-    {
-      "symbol": "SBIN",
-      "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "\u26a1 OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "90%",
-      "detectTime": "10:35",
-      "price": 961.85,
-      "pctChange": "+0.73%",
-      "absChange": 0.73,
-      "volumeX": "1.81x",
-      "numVol": 1.81,
-      "strike": "950 CE",
-      "lotSize": 750,
-      "sectorStatus": "Banking \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.02% \u2022 Moderate \u2022 low \u25b21.48% \u2022 high \u25bc0.16%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 953.1,
-      "t1": 974.98,
-      "rsi": 78.3
-    },
-    {
-      "symbol": "BAJAJ-AUTO",
-      "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "86%",
+      "prob": "88%",
       "detectTime": "09:25",
-      "price": 10387.0,
-      "pctChange": "+0.67%",
-      "absChange": 0.67,
-      "volumeX": "2.36x",
-      "numVol": 2.36,
-      "strike": "10400 CE",
+      "price": 5172.0,
+      "pctChange": "+3.04%",
+      "absChange": 3.04,
+      "volumeX": "2.4x",
+      "numVol": 2.4,
+      "strike": "5150 CE",
       "lotSize": 250,
-      "sectorStatus": "Auto \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.65% \u2022 Strong \u2022 low \u25b21.63% \u2022 high \u25bc0.17%",
+      "sectorStatus": "Auto 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.08% • low ▲2.69% • high ▼0.39%",
       "is52W": false,
-      "isIdeal": false,
+      "isIdeal": true,
       "isRally": true,
       "isDrop": false,
       "fadeRisk": false,
-      "openedAtLow": true,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": false
-        }
-      ],
-      "sl": 10220.0,
-      "t1": 10637.5,
-      "rsi": 54.0
-    },
-    {
-      "symbol": "DLF",
-      "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "79%",
-      "detectTime": "09:55",
-      "price": 672.05,
-      "pctChange": "+0.77%",
-      "absChange": 0.77,
-      "volumeX": "2.06x",
-      "numVol": 2.06,
-      "strike": "650 CE",
-      "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.39% \u2022 Moderate \u2022 low \u25b21.53% \u2022 high \u25bc0.47%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
-      "isDrop": false,
-      "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "+1.43%",
       "pillars": [
         {
           "name": "Trend",
@@ -1517,7 +815,7 @@
         },
         {
           "name": "PDH",
-          "ok": false
+          "ok": true
         },
         {
           "name": "ORB",
@@ -1533,38 +831,43 @@
         },
         {
           "name": "RSI",
-          "ok": true
+          "ok": false
         }
       ],
-      "sl": 662.45,
-      "t1": 686.45,
-      "rsi": 61.3
+      "sl": 5036.5,
+      "t1": 5375.25,
+      "rsi": 49.5
     },
     {
       "symbol": "TVSMOTOR",
       "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "\u26a1 OPTION",
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
       "score": "6/7",
       "numScore": 6,
-      "prob": "83%",
+      "prob": "93%",
       "detectTime": "09:25",
-      "price": 4041.5,
-      "pctChange": "+0.75%",
-      "absChange": 0.75,
-      "volumeX": "2.02x",
-      "numVol": 2.02,
+      "price": 4039.0,
+      "pctChange": "+1.75%",
+      "absChange": 1.75,
+      "volumeX": "2.2x",
+      "numVol": 2.2,
       "strike": "4050 CE",
       "lotSize": 250,
-      "sectorStatus": "Auto \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.05% \u2022 Moderate \u2022 low \u25b22.47% \u2022 high \u25bc0.54%",
+      "sectorStatus": "Auto 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.05% • low ▲2.41% • high ▼0.61%",
       "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
+      "isIdeal": true,
+      "isRally": true,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": true,
+      "fuelLeft": "0.3%",
+      "numFuel": 0.3,
+      "alpha": "+0.14%",
       "pillars": [
         {
           "name": "Trend",
@@ -1596,34 +899,39 @@
         }
       ],
       "sl": 3949.3,
-      "t1": 4179.8,
-      "rsi": 39.9
+      "t1": 4173.55,
+      "rsi": 39.8
     },
     {
-      "symbol": "BALRAMCHIN",
+      "symbol": "ITC",
       "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "\u26a1 OPTION",
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
       "score": "6/7",
       "numScore": 6,
-      "prob": "79%",
-      "detectTime": "10:35",
-      "price": 720.85,
-      "pctChange": "+0.98%",
-      "absChange": 0.98,
-      "volumeX": "1.81x",
-      "numVol": 1.81,
-      "strike": "700 CE",
+      "prob": "86%",
+      "detectTime": "09:20",
+      "price": 264.65,
+      "pctChange": "+1.2%",
+      "absChange": 1.2,
+      "volumeX": "2.12x",
+      "numVol": 2.12,
+      "strike": "260 CE",
       "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.18% \u2022 Moderate \u2022 low \u25b21.96% \u2022 high \u25bc0.29%",
+      "sectorStatus": "FMCG • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.4% • low ▲1.13% • high ▼0.3%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": true,
+      "fuelLeft": "45.2%",
+      "numFuel": 45.2,
+      "alpha": "-0.41%",
       "pillars": [
         {
           "name": "Trend",
@@ -1635,7 +943,7 @@
         },
         {
           "name": "PDH",
-          "ok": false
+          "ok": true
         },
         {
           "name": "ORB",
@@ -1651,38 +959,43 @@
         },
         {
           "name": "RSI",
-          "ok": true
+          "ok": false
         }
       ],
-      "sl": 709.15,
-      "t1": 738.4,
-      "rsi": 58.3
+      "sl": 261.7,
+      "t1": 269.07,
+      "rsi": 43.9
     },
     {
-      "symbol": "AARTIIND",
+      "symbol": "HDFCBANK",
       "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "\u26a1 OPTION",
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
       "score": "6/7",
       "numScore": 6,
-      "prob": "82%",
-      "detectTime": "11:00",
-      "price": 500.55,
-      "pctChange": "+0.53%",
-      "absChange": 0.53,
-      "volumeX": "1.41x",
-      "numVol": 1.41,
-      "strike": "500 CE",
-      "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.17% \u2022 Moderate \u2022 low \u25b22.15% \u2022 high \u25bc0.35%",
+      "prob": "79%",
+      "detectTime": "09:25",
+      "price": 725.0,
+      "pctChange": "+2.01%",
+      "absChange": 2.01,
+      "volumeX": "1.96x",
+      "numVol": 1.96,
+      "strike": "700 CE",
+      "lotSize": 550,
+      "sectorStatus": "Banking • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.36% • low ▲1.98% • high ▼0.36%",
       "is52W": false,
       "isIdeal": false,
       "isRally": true,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "+0.4%",
       "pillars": [
         {
           "name": "Trend",
@@ -1706,160 +1019,111 @@
         },
         {
           "name": "Vol",
-          "ok": false
+          "ok": true
         },
         {
           "name": "RSI",
-          "ok": true
+          "ok": false
         }
       ],
-      "sl": 493.55,
-      "t1": 511.05,
-      "rsi": 60.0
+      "sl": 710.95,
+      "t1": 746.07,
+      "rsi": 38.7
     },
     {
-      "symbol": "ICICIPRULI",
+      "symbol": "ESCORTS",
       "type": "CE",
-      "tier": "STRONG",
-      "optionTag": "\u26a1 OPTION",
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "76%",
+      "detectTime": "10:05",
+      "price": 2726.5,
+      "pctChange": "+1.39%",
+      "absChange": 1.39,
+      "volumeX": "1.87x",
+      "numVol": 1.87,
+      "strike": "2750 CE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.1% • low ▲2.12% • high ▼0.55%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "16.0%",
+      "numFuel": 16.0,
+      "alpha": "-0.22%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 2672.8,
+      "t1": 2807.05,
+      "rsi": 48.6
+    },
+    {
+      "symbol": "M&M",
+      "type": "CE",
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
       "score": "5/7",
       "numScore": 5,
-      "prob": "75%",
-      "detectTime": "09:45",
-      "price": 449.5,
-      "pctChange": "+0.56%",
-      "absChange": 0.56,
-      "volumeX": "4.14x",
-      "numVol": 4.14,
-      "strike": "440 CE",
-      "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG BUY WATCH",
-      "candleInfo": "body 0.07% \u2022 Moderate \u2022 low \u25b20.83% \u2022 high \u25bc0.39%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": false
-        },
-        {
-          "name": "ORB",
-          "ok": false
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 446.8,
-      "t1": 453.55,
-      "rsi": 57.1
-    },
-    {
-      "symbol": "BIOCON",
-      "type": "CE",
-      "tier": "SPURT",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "83%",
-      "detectTime": "09:35",
-      "price": 354.0,
-      "pctChange": "+0.97%",
-      "absChange": 0.97,
-      "volumeX": "3.75x",
-      "numVol": 3.75,
-      "strike": "360 CE",
-      "lotSize": 250,
-      "sectorStatus": "Pharma \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605 MODERATE WATCH",
-      "candleInfo": "body 0.41% \u2022 Moderate \u2022 low \u25b20.71% \u2022 high \u25bc0.63%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": true,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": false
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 351.5,
-      "t1": 357.75,
-      "rsi": 66.7
-    },
-    {
-      "symbol": "JINDALSTEL",
-      "type": "CE",
-      "tier": "SPURT",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "83%",
+      "prob": "79%",
       "detectTime": "09:50",
-      "price": 1033.5,
-      "pctChange": "+0.42%",
-      "absChange": 0.42,
-      "volumeX": "3.15x",
-      "numVol": 3.15,
-      "strike": "1050 CE",
-      "lotSize": 250,
-      "sectorStatus": "Metals \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605 MODERATE WATCH",
-      "candleInfo": "body 0.23% \u2022 Moderate \u2022 low \u25b21.66% \u2022 high \u25bc0.37%",
+      "price": 2854.1,
+      "pctChange": "+2.16%",
+      "absChange": 2.16,
+      "volumeX": "2.62x",
+      "numVol": 2.62,
+      "strike": "2850 CE",
+      "lotSize": 350,
+      "sectorStatus": "Auto 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.48% • low ▲1.96% • high ▼0.39%",
       "is52W": false,
       "isIdeal": false,
-      "isRally": false,
+      "isRally": true,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "1.6%",
+      "numFuel": 1.6,
+      "alpha": "+0.55%",
       "pillars": [
         {
           "name": "Trend",
@@ -1887,38 +1151,235 @@
         },
         {
           "name": "RSI",
-          "ok": true
+          "ok": false
         }
       ],
-      "sl": 1017.7,
-      "t1": 1057.2,
-      "rsi": 59.0
+      "sl": 2804.5,
+      "t1": 2928.5,
+      "rsi": 41.3
     },
     {
-      "symbol": "SHRIRAMFIN",
+      "symbol": "ZYDUSLIFE",
       "type": "CE",
-      "tier": "SPURT",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "83%",
-      "detectTime": "09:25",
-      "price": 954.65,
-      "pctChange": "+0.49%",
-      "absChange": 0.49,
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
+      "score": "5/7",
+      "numScore": 5,
+      "prob": "79%",
+      "detectTime": "09:35",
+      "price": 1144.1,
+      "pctChange": "+1.72%",
+      "absChange": 1.72,
       "volumeX": "2.58x",
       "numVol": 2.58,
-      "strike": "950 CE",
+      "strike": "1150 CE",
+      "lotSize": 900,
+      "sectorStatus": "Pharma 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.05% • low ▲2.45% • high ▼0.5%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "1.5%",
+      "numFuel": 1.5,
+      "alpha": "+0.11%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 1116.7,
+      "t1": 1185.2,
+      "rsi": 51.3
+    },
+    {
+      "symbol": "GAIL",
+      "type": "CE",
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
+      "score": "5/7",
+      "numScore": 5,
+      "prob": "81%",
+      "detectTime": "10:00",
+      "price": 168.98,
+      "pctChange": "+1.21%",
+      "absChange": 1.21,
+      "volumeX": "2.51x",
+      "numVol": 2.51,
+      "strike": "170 CE",
       "lotSize": 250,
-      "sectorStatus": "Finance \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605 MODERATE WATCH",
-      "candleInfo": "body 0.15% \u2022 Moderate \u2022 low \u25b21.86% \u2022 high \u25bc0.22%",
+      "sectorStatus": "Energy 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.21% • low ▲1.86% • high ▼0.66%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "-0.4%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": false
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 166.6,
+      "t1": 172.55,
+      "rsi": 30.4
+    },
+    {
+      "symbol": "SBIN",
+      "type": "CE",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "81%",
+      "detectTime": "10:35",
+      "price": 959.7,
+      "pctChange": "+0.5%",
+      "absChange": 0.5,
+      "volumeX": "1.91x",
+      "numVol": 1.91,
+      "strike": "950 CE",
+      "lotSize": 750,
+      "sectorStatus": "Banking • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.02% • low ▲1.26% • high ▼0.38%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": true,
+      "fuelLeft": "9.6%",
+      "numFuel": 9.6,
+      "alpha": "-1.11%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 953.1,
+      "t1": 969.6,
+      "rsi": 42.3
+    },
+    {
+      "symbol": "PETRONET",
+      "type": "CE",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "76%",
+      "detectTime": "10:10",
+      "price": 294.55,
+      "pctChange": "+0.55%",
+      "absChange": 0.55,
+      "volumeX": "1.68x",
+      "numVol": 1.68,
+      "strike": "300 CE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.22% • low ▲1.22% • high ▼0.17%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "33.9%",
+      "numFuel": 33.9,
+      "alpha": "-1.06%",
       "pillars": [
         {
           "name": "Trend",
@@ -1949,35 +1410,104 @@
           "ok": true
         }
       ],
-      "sl": 937.2,
-      "t1": 980.82,
-      "rsi": 58.7
+      "sl": 291.75,
+      "t1": 298.75,
+      "rsi": 56.8
     },
     {
-      "symbol": "GRANULES",
-      "type": "PE",
-      "tier": "SPURT",
-      "optionTag": "\u26a1 OPTION",
+      "symbol": "TATASTEEL",
+      "type": "CE",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
       "score": "5/7",
       "numScore": 5,
-      "prob": "75%",
-      "detectTime": "09:15",
-      "price": 810.1,
-      "pctChange": "-0.54%",
-      "absChange": 0.54,
-      "volumeX": "9.72x",
-      "numVol": 9.72,
-      "strike": "800 PE",
-      "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605 MODERATE WATCH",
-      "candleInfo": "body 0.89% \u2022 Strong \u2022 low \u25b20.57% \u2022 high \u25bc2.07%",
+      "prob": "86%",
+      "detectTime": "10:00",
+      "price": 175.82,
+      "pctChange": "+0.76%",
+      "absChange": 0.76,
+      "volumeX": "2.43x",
+      "numVol": 2.43,
+      "strike": "180 CE",
+      "lotSize": 5500,
+      "sectorStatus": "Metals 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.09% • low ▲1.57% • high ▼0.58%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": true,
+      "fuelLeft": "18.5%",
+      "numFuel": 18.5,
+      "alpha": "-0.85%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 173.1,
+      "t1": 179.9,
+      "rsi": 28.8
+    },
+    {
+      "symbol": "TATAPOWER",
+      "type": "PE",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
+      "score": "5/7",
+      "numScore": 5,
+      "prob": "72%",
+      "detectTime": "09:20",
+      "price": 350.15,
+      "pctChange": "-0.81%",
+      "absChange": 0.81,
+      "volumeX": "2.22x",
+      "numVol": 2.22,
+      "strike": "360 PE",
+      "lotSize": 250,
+      "sectorStatus": "Energy • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.4% • low ▲0.44% • high ▼0.57%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "54.0%",
+      "numFuel": 54.0,
+      "alpha": "-2.42%",
       "pillars": [
         {
           "name": "Trend",
@@ -2008,35 +1538,40 @@
           "ok": true
         }
       ],
-      "sl": 822.9,
-      "t1": 790.9,
-      "rsi": 33.7
+      "sl": 351.25,
+      "t1": 348.5,
+      "rsi": 30.0
     },
     {
-      "symbol": "PETRONET",
+      "symbol": "BALRAMCHIN",
       "type": "CE",
-      "tier": "SPURT",
-      "optionTag": "\u26a1 OPTION",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
       "score": "5/7",
       "numScore": 5,
-      "prob": "75%",
-      "detectTime": "10:10",
-      "price": 294.3,
-      "pctChange": "+0.46%",
-      "absChange": 0.46,
-      "volumeX": "2.12x",
-      "numVol": 2.12,
-      "strike": "300 CE",
+      "prob": "72%",
+      "detectTime": "10:35",
+      "price": 720.1,
+      "pctChange": "+0.88%",
+      "absChange": 0.88,
+      "volumeX": "1.96x",
+      "numVol": 1.96,
+      "strike": "700 CE",
       "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605 MODERATE WATCH",
-      "candleInfo": "body 0.22% \u2022 Moderate \u2022 low \u25b21.13% \u2022 high \u25bc0.15%",
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.18% • low ▲1.85% • high ▼0.39%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "45.2%",
+      "numFuel": 45.2,
+      "alpha": "-0.73%",
       "pillars": [
         {
           "name": "Trend",
@@ -2067,94 +1602,40 @@
           "ok": false
         }
       ],
-      "sl": 291.75,
-      "t1": 298.12,
-      "rsi": 53.8
+      "sl": 709.15,
+      "t1": 736.53,
+      "rsi": 50.9
     },
     {
-      "symbol": "PIDILITIND",
+      "symbol": "NTPC",
       "type": "CE",
-      "tier": "SPURT",
-      "optionTag": "\u26a1 OPTION",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
       "score": "5/7",
       "numScore": 5,
-      "prob": "75%",
-      "detectTime": "09:20",
-      "price": 1503.5,
-      "pctChange": "+0.39%",
-      "absChange": 0.39,
-      "volumeX": "1.85x",
-      "numVol": 1.85,
-      "strike": "1500 CE",
+      "prob": "84%",
+      "detectTime": "10:05",
+      "price": 316.65,
+      "pctChange": "+0.94%",
+      "absChange": 0.94,
+      "volumeX": "1.07x",
+      "numVol": 1.07,
+      "strike": "320 CE",
       "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605 MODERATE WATCH",
-      "candleInfo": "body 0.27% \u2022 Moderate \u2022 low \u25b20.58% \u2022 high \u25bc0.69%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": true,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": false
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": false
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1494.9,
-      "t1": 1516.4,
-      "rsi": 66.1
-    },
-    {
-      "symbol": "APOLLOTYRE",
-      "type": "CE",
-      "tier": "SPURT",
-      "optionTag": "\u26a1 OPTION",
-      "score": "4/7",
-      "numScore": 4,
-      "prob": "78%",
-      "detectTime": "09:15",
-      "price": 413.2,
-      "pctChange": "+3.31%",
-      "absChange": 3.31,
-      "volumeX": "10.99x",
-      "numVol": 10.99,
-      "strike": "420 CE",
-      "lotSize": 250,
-      "sectorStatus": "Auto \ud83d\udd25 STRONG",
-      "watchBadge": "\u2605\u2605 MODERATE WATCH",
-      "candleInfo": "body 4.45% \u2022 Strong \u2022 low \u25b23.07% \u2022 high \u25bc5.6%",
+      "sectorStatus": "Energy 🔥 STRONG",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.29% • low ▲1.51% • high ▼0.41%",
       "is52W": false,
       "isIdeal": false,
       "isRally": true,
       "isDrop": false,
-      "fadeRisk": true,
-      "openedAtLow": true,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "fuelLeft": "7.3%",
+      "numFuel": 7.3,
+      "alpha": "-0.67%",
       "pillars": [
         {
           "name": "Trend",
@@ -2162,7 +1643,7 @@
         },
         {
           "name": "VWAP",
-          "ok": false
+          "ok": true
         },
         {
           "name": "PDH",
@@ -2170,50 +1651,759 @@
         },
         {
           "name": "ORB",
-          "ok": false
+          "ok": true
         },
         {
           "name": "Follow",
-          "ok": false
+          "ok": true
         },
         {
           "name": "Vol",
-          "ok": true
+          "ok": false
         },
         {
           "name": "RSI",
-          "ok": true
+          "ok": false
         }
       ],
-      "sl": 400.9,
-      "t1": 431.65,
-      "rsi": 77.1
+      "sl": 312.0,
+      "t1": 323.62,
+      "rsi": 30.8
     },
     {
-      "symbol": "OFSS",
+      "symbol": "AARTIIND",
+      "type": "CE",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
+      "score": "5/7",
+      "numScore": 5,
+      "prob": "75%",
+      "detectTime": "11:00",
+      "price": 501.0,
+      "pctChange": "+0.62%",
+      "absChange": 0.62,
+      "volumeX": "0.88x",
+      "numVol": 0.88,
+      "strike": "500 CE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.17% • low ▲2.24% • high ▼0.26%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "33.6%",
+      "numFuel": 33.6,
+      "alpha": "-0.99%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": false
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 493.55,
+      "t1": 512.17,
+      "rsi": 50.0
+    },
+    {
+      "symbol": "VEDL",
       "type": "PE",
-      "tier": "SPURT",
-      "optionTag": "\u26a1 OPTION",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
       "score": "4/7",
       "numScore": 4,
-      "prob": "74%",
+      "prob": "76%",
       "detectTime": "09:30",
-      "price": 10249.0,
-      "pctChange": "-3.67%",
-      "absChange": 3.67,
-      "volumeX": "5.51x",
-      "numVol": 5.51,
-      "strike": "10250 PE",
-      "lotSize": 250,
-      "sectorStatus": "IT \u2022 WATCH",
-      "watchBadge": "\u2605\u2605 MODERATE WATCH",
-      "candleInfo": "body 0.57% \u2022 Moderate \u2022 low \u25b21.44% \u2022 high \u25bc1.54%",
+      "price": 245.15,
+      "pctChange": "-1.94%",
+      "absChange": 1.94,
+      "volumeX": "3.99x",
+      "numVol": 3.99,
+      "strike": "240 PE",
+      "lotSize": 1150,
+      "sectorStatus": "Metals • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.34% • low ▲0.76% • high ▼0.91%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": true,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": true,
+      "fuelLeft": "45.2%",
+      "numFuel": 45.2,
+      "alpha": "-3.55%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": false
+        },
+        {
+          "name": "Follow",
+          "ok": false
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 247.25,
+      "t1": 242.0,
+      "rsi": 49.2
+    },
+    {
+      "symbol": "ADANIENT",
+      "type": "PE",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
+      "score": "4/7",
+      "numScore": 4,
+      "prob": "68%",
+      "detectTime": "09:20",
+      "price": 2696.1,
+      "pctChange": "-0.97%",
+      "absChange": 0.97,
+      "volumeX": "3.59x",
+      "numVol": 3.59,
+      "strike": "2700 PE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.26% • low ▲0.94% • high ▼0.63%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "54.5%",
+      "numFuel": 54.5,
+      "alpha": "-2.58%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": false
+        },
+        {
+          "name": "Follow",
+          "ok": false
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 2708.0,
+      "t1": 2678.25,
+      "rsi": 42.4
+    },
+    {
+      "symbol": "ABB",
+      "type": "PE",
+      "tier": "STRONG",
+      "optionTag": "⚡ OPTION",
+      "score": "4/7",
+      "numScore": 4,
+      "prob": "76%",
+      "detectTime": "10:00",
+      "price": 6824.5,
+      "pctChange": "-2.49%",
+      "absChange": 2.49,
+      "volumeX": "3.27x",
+      "numVol": 3.27,
+      "strike": "6800 PE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.38% • low ▲0.86% • high ▼0.92%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": true,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": true,
+      "fuelLeft": "42.2%",
+      "numFuel": 42.2,
+      "alpha": "-4.1%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": false
+        },
+        {
+          "name": "Follow",
+          "ok": false
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 6879.0,
+      "t1": 6742.75,
+      "rsi": 71.9
+    },
+    {
+      "symbol": "IOC",
+      "type": "CE",
+      "tier": "SPURT",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "80%",
+      "detectTime": "10:10",
+      "price": 128.39,
+      "pctChange": "+0.46%",
+      "absChange": 0.46,
+      "volumeX": "2.71x",
+      "numVol": 2.71,
+      "strike": "130 CE",
+      "lotSize": 250,
+      "sectorStatus": "Energy 🔥 STRONG",
+      "watchBadge": "★★ MODERATE WATCH",
+      "candleInfo": "body 0.59% • low ▲1.43% • high ▼0.58%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "11.9%",
+      "numFuel": 11.9,
+      "alpha": "-1.15%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 126.91,
+      "t1": 130.61,
+      "rsi": 35.8
+    },
+    {
+      "symbol": "SRF",
+      "type": "PE",
+      "tier": "SPURT",
+      "optionTag": "⚡ OPTION",
+      "score": "5/7",
+      "numScore": 5,
+      "prob": "77%",
+      "detectTime": "09:40",
+      "price": 2482.1,
+      "pctChange": "-0.7%",
+      "absChange": 0.7,
+      "volumeX": "3.36x",
+      "numVol": 3.36,
+      "strike": "2500 PE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★ MODERATE WATCH",
+      "candleInfo": "body 0.56% • low ▲0.6% • high ▼1.14%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "fuelLeft": "24.4%",
+      "numFuel": 24.4,
+      "alpha": "-2.31%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": false
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 2499.7,
+      "t1": 2455.7,
+      "rsi": 19.4
+    },
+    {
+      "symbol": "IGL",
+      "type": "CE",
+      "tier": "SPURT",
+      "optionTag": "⚡ OPTION",
+      "score": "5/7",
+      "numScore": 5,
+      "prob": "76%",
+      "detectTime": "11:55",
+      "price": 145.78,
+      "pctChange": "+0.48%",
+      "absChange": 0.48,
+      "volumeX": "2.49x",
+      "numVol": 2.49,
+      "strike": "150 CE",
+      "lotSize": 250,
+      "sectorStatus": "Energy 🔥 STRONG",
+      "watchBadge": "★★ MODERATE WATCH",
+      "candleInfo": "body 0.46% • low ▲2.12% • high ▼0.36%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "13.5%",
+      "numFuel": 13.5,
+      "alpha": "-1.13%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 143.38,
+      "t1": 149.38,
+      "rsi": 42.9
+    },
+    {
+      "symbol": "POWERGRID",
+      "type": "CE",
+      "tier": "SPURT",
+      "optionTag": "⚡ OPTION",
+      "score": "5/7",
+      "numScore": 5,
+      "prob": "81%",
+      "detectTime": "10:15",
+      "price": 249.9,
+      "pctChange": "+0.38%",
+      "absChange": 0.38,
+      "volumeX": "2.21x",
+      "numVol": 2.21,
+      "strike": "240 CE",
+      "lotSize": 250,
+      "sectorStatus": "Energy 🔥 STRONG",
+      "watchBadge": "★★ MODERATE WATCH",
+      "candleInfo": "body 0.0% • low ▲0.89% • high ▼0.52%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "fuelLeft": "36.5%",
+      "numFuel": 36.5,
+      "alpha": "-1.23%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 248.15,
+      "t1": 252.53,
+      "rsi": 33.3
+    },
+    {
+      "symbol": "AXISBANK",
+      "type": "CE",
+      "tier": "SPURT",
+      "optionTag": "⚡ OPTION",
+      "score": "5/7",
+      "numScore": 5,
+      "prob": "84%",
+      "detectTime": "09:20",
+      "price": 1286.8,
+      "pctChange": "+1.76%",
+      "absChange": 1.76,
+      "volumeX": "1.59x",
+      "numVol": 1.59,
+      "strike": "1300 CE",
+      "lotSize": 625,
+      "sectorStatus": "Banking 🔥 STRONG",
+      "watchBadge": "★★ MODERATE WATCH",
+      "candleInfo": "body 0.5% • low ▲1.63% • high ▼0.54%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": true,
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "+0.15%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": false
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 1266.2,
+      "t1": 1317.7,
+      "rsi": 30.2
+    },
+    {
+      "symbol": "IRCTC",
+      "type": "PE",
+      "tier": "SPURT",
+      "optionTag": "⚡ OPTION",
+      "score": "4/7",
+      "numScore": 4,
+      "prob": "68%",
+      "detectTime": "09:30",
+      "price": 474.15,
+      "pctChange": "-0.62%",
+      "absChange": 0.62,
+      "volumeX": "17.89x",
+      "numVol": 17.89,
+      "strike": "480 PE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★ MODERATE WATCH",
+      "candleInfo": "body 0.22% • low ▲0.39% • high ▼0.78%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "48.6%",
+      "numFuel": 48.6,
+      "alpha": "-2.23%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": false
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 476.4,
+      "t1": 470.77,
+      "rsi": 53.6
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "type": "CE",
+      "tier": "SPURT",
+      "optionTag": "⚡ OPTION",
+      "score": "4/7",
+      "numScore": 4,
+      "prob": "72%",
+      "detectTime": "09:35",
+      "price": 79.16,
+      "pctChange": "+0.53%",
+      "absChange": 0.53,
+      "volumeX": "7.12x",
+      "numVol": 7.12,
+      "strike": "80 CE",
+      "lotSize": 250,
+      "sectorStatus": "Banking 🔥 STRONG",
+      "watchBadge": "★★ MODERATE WATCH",
+      "candleInfo": "body 0.34% • low ▲0.96% • high ▼0.48%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "43.2%",
+      "numFuel": 43.2,
+      "alpha": "-1.08%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": false
+        },
+        {
+          "name": "PDH",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 78.41,
+      "t1": 80.28,
+      "rsi": 40.7
+    },
+    {
+      "symbol": "OFSS",
+      "type": "PE",
+      "tier": "SPURT",
+      "optionTag": "⚡ OPTION",
+      "score": "4/7",
+      "numScore": 4,
+      "prob": "71%",
+      "detectTime": "09:30",
+      "price": 10259.0,
+      "pctChange": "-1.55%",
+      "absChange": 1.55,
+      "volumeX": "6.43x",
+      "numVol": 6.43,
+      "strike": "10250 PE",
+      "lotSize": 250,
+      "sectorStatus": "IT • WATCH",
+      "watchBadge": "★★ MODERATE WATCH",
+      "candleInfo": "body 0.57% • low ▲1.53% • high ▼1.44%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": true,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "14.5%",
+      "numFuel": 14.5,
+      "alpha": "-3.16%",
       "pillars": [
         {
           "name": "Trend",
@@ -2245,93 +2435,103 @@
         }
       ],
       "sl": 10409.0,
-      "t1": 10009.0,
-      "rsi": 47.8
+      "t1": 10034.0,
+      "rsi": 59.2
     },
     {
-      "symbol": "LTF",
-      "type": "CE",
+      "symbol": "ABBOTINDIA",
+      "type": "PE",
       "tier": "SPURT",
-      "optionTag": "\u26a1 OPTION",
+      "optionTag": "⚡ OPTION",
       "score": "4/7",
       "numScore": 4,
-      "prob": "74%",
-      "detectTime": "09:25",
-      "price": 264.75,
-      "pctChange": "+2.3%",
-      "absChange": 2.3,
-      "volumeX": "4.77x",
-      "numVol": 4.77,
-      "strike": "260 CE",
+      "prob": "72%",
+      "detectTime": "09:15",
+      "price": 26110.0,
+      "pctChange": "-0.7%",
+      "absChange": 0.7,
+      "volumeX": "6.03x",
+      "numVol": 6.03,
+      "strike": "26100 PE",
       "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605 MODERATE WATCH",
-      "candleInfo": "body 0.38% \u2022 Moderate \u2022 low \u25b21.73% \u2022 high \u25bc0.62%",
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★ MODERATE WATCH",
+      "candleInfo": "body 0.4% • low ▲0.25% • high ▼0.34%",
       "is52W": false,
       "isIdeal": false,
-      "isRally": true,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "74.4%",
+      "numFuel": 74.4,
+      "alpha": "-2.31%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": false
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": false
+        }
+      ],
+      "sl": 26185.0,
+      "t1": 25997.5,
+      "rsi": 44.4
+    },
+    {
+      "symbol": "MGL",
+      "type": "CE",
+      "tier": "SPURT",
+      "optionTag": "⚡ OPTION",
+      "score": "4/7",
+      "numScore": 4,
+      "prob": "72%",
+      "detectTime": "09:50",
+      "price": 1047.2,
+      "pctChange": "+1.11%",
+      "absChange": 1.11,
+      "volumeX": "5.64x",
+      "numVol": 5.64,
+      "strike": "1050 CE",
+      "lotSize": 250,
+      "sectorStatus": "Energy 🔥 STRONG",
+      "watchBadge": "★★ MODERATE WATCH",
+      "candleInfo": "body 0.89% • low ▲0.93% • high ▼0.57%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
       "isDrop": false,
       "fadeRisk": false,
       "openedAtLow": true,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": false
-        },
-        {
-          "name": "PDH",
-          "ok": false
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": false
-        }
-      ],
-      "sl": 260.25,
-      "t1": 271.5,
-      "rsi": 45.6
-    },
-    {
-      "symbol": "TATACONSUM",
-      "type": "CE",
-      "tier": "SPURT",
-      "optionTag": "\u26a1 OPTION",
-      "score": "4/7",
-      "numScore": 4,
-      "prob": "74%",
-      "detectTime": "09:15",
-      "price": 992.9,
-      "pctChange": "+3.43%",
-      "absChange": 3.43,
-      "volumeX": "4.15x",
-      "numVol": 4.15,
-      "strike": "1000 CE",
-      "lotSize": 250,
-      "sectorStatus": "FMCG \u2022 WATCH",
-      "watchBadge": "\u2605\u2605 MODERATE WATCH",
-      "candleInfo": "body 2.08% \u2022 Strong \u2022 low \u25b20.82% \u2022 high \u25bc1.68%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": true,
-      "openedAtLow": true,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "34.5%",
+      "numFuel": 34.5,
+      "alpha": "-0.5%",
       "pillars": [
         {
           "name": "Trend",
@@ -2351,7 +2551,7 @@
         },
         {
           "name": "Follow",
-          "ok": false
+          "ok": true
         },
         {
           "name": "Vol",
@@ -2359,38 +2559,107 @@
         },
         {
           "name": "RSI",
-          "ok": true
+          "ok": false
         }
       ],
-      "sl": 985.65,
-      "t1": 1003.77,
-      "rsi": 58.9
+      "sl": 1037.6,
+      "t1": 1061.6,
+      "rsi": 39.0
     },
     {
-      "symbol": "ZEEL",
+      "symbol": "BERGEPAINT",
       "type": "PE",
       "tier": "SHORT ZONE",
-      "optionTag": "\u26a1 OPTION",
+      "optionTag": "⚡ OPTION",
       "score": "7/7",
       "numScore": 7,
-      "prob": "86%",
-      "detectTime": "09:25",
-      "price": 73.05,
-      "pctChange": "-1.03%",
-      "absChange": 1.03,
-      "volumeX": "7.1x",
-      "numVol": 7.1,
-      "strike": "70 PE",
+      "prob": "83%",
+      "detectTime": "09:20",
+      "price": 467.0,
+      "pctChange": "-1.8%",
+      "absChange": 1.8,
+      "volumeX": "10.21x",
+      "numVol": 10.21,
+      "strike": "460 PE",
       "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG SELL WATCH",
-      "candleInfo": "body 0.34% \u2022 Moderate \u2022 low \u25b20.04% \u2022 high \u25bc2.52%",
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.91% • low ▲0.0% • high ▼2.5%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": true,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "-3.41%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 478.95,
+      "t1": 449.08,
+      "rsi": 23.9
+    },
+    {
+      "symbol": "ZEEL",
+      "type": "PE",
+      "tier": "SHORT ZONE",
+      "optionTag": "⚡ OPTION",
+      "score": "7/7",
+      "numScore": 7,
+      "prob": "93%",
+      "detectTime": "09:25",
+      "price": 72.8,
+      "pctChange": "-1.37%",
+      "absChange": 1.37,
+      "volumeX": "7.42x",
+      "numVol": 7.42,
+      "strike": "70 PE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.34% • low ▲0.11% • high ▼2.86%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": true,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": true,
+      "fuelLeft": "16.2%",
+      "numFuel": 16.2,
+      "alpha": "-2.98%",
       "pillars": [
         {
           "name": "Trend",
@@ -2422,34 +2691,39 @@
         }
       ],
       "sl": 74.94,
-      "t1": 70.22,
-      "rsi": 42.2
+      "t1": 69.59,
+      "rsi": 29.0
     },
     {
-      "symbol": "HINDCOPPER",
+      "symbol": "BHEL",
       "type": "PE",
       "tier": "SHORT ZONE",
-      "optionTag": "\u26a1 OPTION",
+      "optionTag": "⚡ OPTION",
       "score": "7/7",
       "numScore": 7,
-      "prob": "86%",
-      "detectTime": "09:25",
-      "price": 454.9,
-      "pctChange": "-2.73%",
-      "absChange": 2.73,
-      "volumeX": "3.57x",
-      "numVol": 3.57,
-      "strike": "460 PE",
+      "prob": "83%",
+      "detectTime": "10:30",
+      "price": 438.65,
+      "pctChange": "-5.46%",
+      "absChange": 5.46,
+      "volumeX": "7.3x",
+      "numVol": 7.3,
+      "strike": "440 PE",
       "lotSize": 250,
-      "sectorStatus": "Metals \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG SELL WATCH",
-      "candleInfo": "body 0.83% \u2022 Strong \u2022 low \u25b20.04% \u2022 high \u25bc1.72%",
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 1.38% • low ▲0.3% • high ▼3.07%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": true,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "5.8%",
+      "numFuel": 5.8,
+      "alpha": "-7.07%",
       "pillars": [
         {
           "name": "Trend",
@@ -2480,35 +2754,104 @@
           "ok": true
         }
       ],
-      "sl": 462.85,
-      "t1": 442.97,
-      "rsi": 39.7
+      "sl": 452.15,
+      "t1": 418.4,
+      "rsi": 40.7
     },
     {
-      "symbol": "RBLBANK",
+      "symbol": "CANBK",
       "type": "PE",
       "tier": "SHORT ZONE",
-      "optionTag": "\u26a1 OPTION",
+      "optionTag": "⚡ OPTION",
       "score": "7/7",
       "numScore": 7,
-      "prob": "86%",
-      "detectTime": "09:40",
-      "price": 379.0,
-      "pctChange": "-1.81%",
-      "absChange": 1.81,
-      "volumeX": "2.96x",
-      "numVol": 2.96,
-      "strike": "380 PE",
+      "prob": "87%",
+      "detectTime": "09:20",
+      "price": 117.19,
+      "pctChange": "-6.07%",
+      "absChange": 6.07,
+      "volumeX": "6.34x",
+      "numVol": 6.34,
+      "strike": "120 PE",
       "lotSize": 250,
-      "sectorStatus": "Banking \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG SELL WATCH",
-      "candleInfo": "body 0.03% \u2022 Moderate \u2022 low \u25b20.11% \u2022 high \u25bc2.63%",
+      "sectorStatus": "Banking 🔥 STRONG",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 3.21% • low ▲0.31% • high ▼5.02%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": true,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "-7.68%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 123.38,
+      "t1": 107.91,
+      "rsi": 22.2
+    },
+    {
+      "symbol": "RBLBANK",
+      "type": "PE",
+      "tier": "SHORT ZONE",
+      "optionTag": "⚡ OPTION",
+      "score": "7/7",
+      "numScore": 7,
+      "prob": "88%",
+      "detectTime": "09:40",
+      "price": 375.55,
+      "pctChange": "-2.71%",
+      "absChange": 2.71,
+      "volumeX": "3.17x",
+      "numVol": 3.17,
+      "strike": "380 PE",
+      "lotSize": 250,
+      "sectorStatus": "Banking • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.03% • low ▲0.0% • high ▼3.52%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": true,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "-4.32%",
       "pillars": [
         {
           "name": "Trend",
@@ -2540,34 +2883,39 @@
         }
       ],
       "sl": 387.1,
-      "t1": 366.85,
-      "rsi": 31.4
+      "t1": 358.23,
+      "rsi": 13.3
     },
     {
-      "symbol": "MRF",
+      "symbol": "M&MFIN",
       "type": "PE",
       "tier": "SHORT ZONE",
-      "optionTag": "\u26a1 OPTION",
+      "optionTag": "⚡ OPTION",
       "score": "7/7",
       "numScore": 7,
-      "prob": "86%",
-      "detectTime": "09:30",
-      "price": 121620.0,
-      "pctChange": "-0.73%",
-      "absChange": 0.73,
-      "volumeX": "2.76x",
-      "numVol": 2.76,
-      "strike": "121600 PE",
+      "prob": "87%",
+      "detectTime": "09:40",
+      "price": 316.35,
+      "pctChange": "-0.97%",
+      "absChange": 0.97,
+      "volumeX": "2.49x",
+      "numVol": 2.49,
+      "strike": "320 PE",
       "lotSize": 250,
-      "sectorStatus": "Auto \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG SELL WATCH",
-      "candleInfo": "body 0.25% \u2022 Moderate \u2022 low \u25b20.25% \u2022 high \u25bc0.63%",
+      "sectorStatus": "Finance 🔥 STRONG",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.81% • low ▲0.06% • high ▼1.63%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
       "isDrop": true,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "47.5%",
+      "numFuel": 47.5,
+      "alpha": "-2.58%",
       "pillars": [
         {
           "name": "Trend",
@@ -2598,35 +2946,232 @@
           "ok": true
         }
       ],
-      "sl": 122385.0,
-      "t1": 120472.5,
-      "rsi": 28.6
+      "sl": 321.6,
+      "t1": 308.48,
+      "rsi": 17.5
+    },
+    {
+      "symbol": "MFSL",
+      "type": "PE",
+      "tier": "SHORT ZONE",
+      "optionTag": "⚡ OPTION",
+      "score": "7/7",
+      "numScore": 7,
+      "prob": "83%",
+      "detectTime": "13:10",
+      "price": 1274.4,
+      "pctChange": "-0.75%",
+      "absChange": 0.75,
+      "volumeX": "1.81x",
+      "numVol": 1.81,
+      "strike": "1250 PE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.93% • low ▲0.01% • high ▼2.34%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": true,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "30.9%",
+      "numFuel": 30.9,
+      "alpha": "-2.36%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 1298.4,
+      "t1": 1238.4,
+      "rsi": 19.3
+    },
+    {
+      "symbol": "ALKEM",
+      "type": "PE",
+      "tier": "SHORT ZONE",
+      "optionTag": "⚡ OPTION",
+      "score": "7/7",
+      "numScore": 7,
+      "prob": "87%",
+      "detectTime": "09:20",
+      "price": 5149.5,
+      "pctChange": "-0.99%",
+      "absChange": 0.99,
+      "volumeX": "1.72x",
+      "numVol": 1.72,
+      "strike": "5150 PE",
+      "lotSize": 250,
+      "sectorStatus": "Pharma 🔥 STRONG",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.83% • low ▲0.15% • high ▼1.65%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": true,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "19.9%",
+      "numFuel": 19.9,
+      "alpha": "-2.6%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 5236.0,
+      "t1": 5019.75,
+      "rsi": 35.2
+    },
+    {
+      "symbol": "DALBHARAT",
+      "type": "PE",
+      "tier": "SHORT ZONE",
+      "optionTag": "⚡ OPTION",
+      "score": "7/7",
+      "numScore": 7,
+      "prob": "83%",
+      "detectTime": "11:10",
+      "price": 1611.6,
+      "pctChange": "-0.56%",
+      "absChange": 0.56,
+      "volumeX": "1.52x",
+      "numVol": 1.52,
+      "strike": "1600 PE",
+      "lotSize": 250,
+      "sectorStatus": "F&O • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.4% • low ▲0.16% • high ▼1.91%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": true,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "29.0%",
+      "numFuel": 29.0,
+      "alpha": "-2.17%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDL",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 1641.2,
+      "t1": 1567.2,
+      "rsi": 27.8
     },
     {
       "symbol": "EXIDEIND",
       "type": "PE",
       "tier": "SHORT ZONE",
-      "optionTag": "\u26a1 OPTION",
+      "optionTag": "⚡ OPTION",
       "score": "6/7",
       "numScore": 6,
       "prob": "79%",
       "detectTime": "09:20",
-      "price": 378.8,
-      "pctChange": "-1.11%",
-      "absChange": 1.11,
-      "volumeX": "13.53x",
-      "numVol": 13.53,
+      "price": 377.8,
+      "pctChange": "-1.37%",
+      "absChange": 1.37,
+      "volumeX": "14.73x",
+      "numVol": 14.73,
       "strike": "380 PE",
       "lotSize": 250,
-      "sectorStatus": "Auto \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG SELL WATCH",
-      "candleInfo": "body 0.07% \u2022 Moderate \u2022 low \u25b21.24% \u2022 high \u25bc1.73%",
+      "sectorStatus": "Auto • WATCH",
+      "watchBadge": "★★★ STRONG SELL WATCH",
+      "candleInfo": "body 0.07% • low ▲0.98% • high ▼1.98%",
       "is52W": false,
       "isIdeal": false,
       "isRally": false,
-      "isDrop": false,
+      "isDrop": true,
       "fadeRisk": false,
       "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "-2.98%",
       "pillars": [
         {
           "name": "Trend",
@@ -2658,303 +3203,8 @@
         }
       ],
       "sl": 383.15,
-      "t1": 372.28,
-      "rsi": 43.7
-    },
-    {
-      "symbol": "BERGEPAINT",
-      "type": "PE",
-      "tier": "SHORT ZONE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "82%",
-      "detectTime": "09:20",
-      "price": 468.9,
-      "pctChange": "-1.5%",
-      "absChange": 1.5,
-      "volumeX": "8.88x",
-      "numVol": 8.88,
-      "strike": "460 PE",
-      "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG SELL WATCH",
-      "candleInfo": "body 0.91% \u2022 Strong \u2022 low \u25b20.32% \u2022 high \u25bc2.1%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
-      "isDrop": true,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDL",
-          "ok": false
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 478.95,
-      "t1": 453.82,
-      "rsi": 34.7
-    },
-    {
-      "symbol": "DEEPAKNTR",
-      "type": "PE",
-      "tier": "SHORT ZONE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "79%",
-      "detectTime": "09:55",
-      "price": 1616.3,
-      "pctChange": "-0.36%",
-      "absChange": 0.36,
-      "volumeX": "6.38x",
-      "numVol": 6.38,
-      "strike": "1600 PE",
-      "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG SELL WATCH",
-      "candleInfo": "body 0.43% \u2022 Moderate \u2022 low \u25b20.02% \u2022 high \u25bc2.97%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDL",
-          "ok": false
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 1659.9,
-      "t1": 1550.9,
-      "rsi": 16.5
-    },
-    {
-      "symbol": "CANBK",
-      "type": "PE",
-      "tier": "SHORT ZONE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "82%",
-      "detectTime": "09:20",
-      "price": 117.88,
-      "pctChange": "-5.51%",
-      "absChange": 5.51,
-      "volumeX": "5.83x",
-      "numVol": 5.83,
-      "strike": "120 PE",
-      "lotSize": 250,
-      "sectorStatus": "Banking \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG SELL WATCH",
-      "candleInfo": "body 3.21% \u2022 Strong \u2022 low \u25b20.9% \u2022 high \u25bc4.46%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
-      "isDrop": true,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDL",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": false
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 123.38,
-      "t1": 109.63,
-      "rsi": 30.0
-    },
-    {
-      "symbol": "ALKEM",
-      "type": "PE",
-      "tier": "SHORT ZONE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "82%",
-      "detectTime": "09:20",
-      "price": 5162.0,
-      "pctChange": "-0.75%",
-      "absChange": 0.75,
-      "volumeX": "4.76x",
-      "numVol": 4.76,
-      "strike": "5150 PE",
-      "lotSize": 250,
-      "sectorStatus": "Pharma \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG SELL WATCH",
-      "candleInfo": "body 0.83% \u2022 Strong \u2022 low \u25b20.05% \u2022 high \u25bc1.41%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
-      "isDrop": true,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDL",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": false
-        }
-      ],
-      "sl": 5236.0,
-      "t1": 5051.0,
-      "rsi": 48.4
-    },
-    {
-      "symbol": "SIEMENS",
-      "type": "PE",
-      "tier": "SHORT ZONE",
-      "optionTag": "\u26a1 OPTION",
-      "score": "6/7",
-      "numScore": 6,
-      "prob": "82%",
-      "detectTime": "09:25",
-      "price": 3659.9,
-      "pctChange": "-2.19%",
-      "absChange": 2.19,
-      "volumeX": "4.11x",
-      "numVol": 4.11,
-      "strike": "3650 PE",
-      "lotSize": 250,
-      "sectorStatus": "F&O \u2022 WATCH",
-      "watchBadge": "\u2605\u2605\u2605 STRONG SELL WATCH",
-      "candleInfo": "body 1.22% \u2022 Strong \u2022 low \u25b20.41% \u2022 high \u25bc1.93%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": false,
-      "isDrop": true,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDL",
-          "ok": false
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 3732.1,
-      "t1": 3551.6,
-      "rsi": 38.5
+      "t1": 369.78,
+      "rsi": 24.4
     }
   ]
 }
