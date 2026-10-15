@@ -26,125 +26,191 @@ def send_telegram_alert(message):
     except Exception as err:
         print(f"Telegram dispatch error: {err}")
 
-# Broad F&O basket to scan
+# Complete Active NSE F&O Universe (~180+ Stocks)
 SYMBOLS = [
-    "RELIANCE.NS", "HDFCBANK.NS", "ICICIBANK.NS", "SBIN.NS", "AXISBANK.NS", "KOTAKBANK.NS",
-    "TCS.NS", "INFY.NS", "HCLTECH.NS", "WIPRO.NS", "TECHM.NS",
-    "TATAMOTORS.NS", "MARUTI.NS", "M&M.NS", "TATASTEEL.NS", "JINDALSTEL.NS", "HINDALCO.NS",
-    "BHARTIARTL.NS", "ASTRAL.NS", "VOLTAS.NS", "MANAPPURAM.NS", "PNBHOUSING.NS",
-    "KFINTECH.NS", "NAM-INDIA.NS", "DIXON.NS", "POLYCAB.NS", "COFORGE.NS", "PERSISTENT.NS",
-    "CANBK.NS", "FEDERALBNK.NS", "INDUSINDBK.NS", "BAJFINANCE.NS", "BAJAJFINSV.NS",
-    "SUNPHARMA.NS", "CIPLA.NS", "DRREDDY.NS", "LTIM.NS", "LT.NS", "BEL.NS", "HAL.NS"
+    "AARTIIND.NS", "ABB.NS", "ABBOTINDIA.NS", "ABCAPITAL.NS", "ABFRL.NS", "ACC.NS",
+    "ADANIENT.NS", "ADANIPORTS.NS", "ALKEM.NS", "AMBUJACEM.NS", "ANGELONE.NS", "APOLLOHOSP.NS",
+    "APOLLOTYRE.NS", "ASHOKLEY.NS", "ASIANPAINT.NS", "ASTRAL.NS", "ATUL.NS", "AUBANK.NS",
+    "AUROPHARMA.NS", "AXISBANK.NS", "BAJAJ-AUTO.NS", "BAJAJFINSV.NS", "BAJFINANCE.NS",
+    "BALKRISIND.NS", "BALRAMCHIN.NS", "BANDHANBNK.NS", "BANKBARODA.NS", "BATAINDIA.NS",
+    "BEL.NS", "BERGEPAINT.NS", "BHARATFORG.NS", "BHEL.NS", "BPCL.NS", "BHARTIARTL.NS",
+    "BIOCON.NS", "BSOFT.NS", "BOSCHLTD.NS", "BRITANNIA.NS", "CANFINHOME.NS", "CANBK.NS",
+    "CHAMBLFERT.NS", "CHOLAFIN.NS", "CIPLA.NS", "COALINDIA.NS", "COFORGE.NS", "COLPAL.NS",
+    "CONCOR.NS", "COROMANDEL.NS", "CROMPTON.NS", "CUMMINSIND.NS", "DABUR.NS", "DALBHARAT.NS",
+    "DEEPAKNTR.NS", "DELTACORP.NS", "DIVISLAB.NS", "DIXON.NS", "DLF.NS", "DRREDDY.NS",
+    "EICHERMOT.NS", "ESCORTS.NS", "EXIDEIND.NS", "FEDERALBNK.NS", "GAIL.NS", "GLENMARK.NS",
+    "GMRINFRA.NS", "GNFC.NS", "GODREJCP.NS", "GODREJPROP.NS", "GRANULES.NS", "GRASIM.NS",
+    "GUJGASLTD.NS", "HAL.NS", "HAVELLS.NS", "HCLTECH.NS", "HDFCAMC.NS", "HDFCBANK.NS",
+    "HDFCLIFE.NS", "HEROMOTOCO.NS", "HINDALCO.NS", "HINDCOPPER.NS", "HINDPETRO.NS",
+    "HINDUNILVR.NS", "ICICIBANK.NS", "ICICIGI.NS", "ICICIPRULI.NS", "IDFC.NS", "IDFCFIRSTB.NS",
+    "IEX.NS", "IGL.NS", "INDHOTEL.NS", "INDIACEM.NS", "INDIAMART.NS", "INDIGO.NS",
+    "INDUSINDBK.NS", "INDUSTOWER.NS", "INFY.NS", "IOC.NS", "IPCALAB.NS", "IRCTC.NS",
+    "ITC.NS", "JINDALSTEL.NS", "JKCEMENT.NS", "JSWSTEEL.NS", "JUBLFOOD.NS", "KOTAKBANK.NS",
+    "LALPATHLAB.NS", "LAURUSLABS.NS", "LICHSGFIN.NS", "LT.NS", "LTIM.NS", "LTF.NS",
+    "LUPIN.NS", "M&M.NS", "M&MFIN.NS", "MANAPPURAM.NS", "MARICO.NS", "MARUTI.NS",
+    "MCX.NS", "METROPOLIS.NS", "MFSL.NS", "MGL.NS", "MOTHERSON.NS", "MPHASIS.NS",
+    "MRF.NS", "MUTHOOTFIN.NS", "NATIONALUM.NS", "NAUKRI.NS", "NAVINFLUOR.NS", "NESTLEIND.NS",
+    "NMDC.NS", "NTPC.NS", "OBEROIRLTY.NS", "OFSS.NS", "ONGC.NS", "PAGEIND.NS",
+    "PEL.NS", "PERSISTENT.NS", "PETRONET.NS", "PFC.NS", "PIDILITIND.NS", "PIIND.NS",
+    "PNB.NS", "POLYCAB.NS", "POONAWALLA.NS", "POWERGRID.NS", "PVRINOX.NS", "RAMCOCEM.NS",
+    "RBLBANK.NS", "RECLTD.NS", "RELIANCE.NS", "SAIL.NS", "SBICARD.NS", "SBILIFE.NS",
+    "SBIN.NS", "SHREECEM.NS", "SHRIRAMFIN.NS", "SIEMENS.NS", "SRF.NS", "SUNPHARMA.NS",
+    "SUNTV.NS", "SYNGENE.NS", "TATACHEM.NS", "TATACOMM.NS", "TATACONSUM.NS", "TATAMOTORS.NS",
+    "TATAPOWER.NS", "TATASTEEL.NS", "TCS.NS", "TECHM.NS", "TITAN.NS", "TORNTPHARM.NS",
+    "TRENT.NS", "TVSMOTOR.NS", "UBL.NS", "ULTRACEMCO.NS", "UNIONBANK.NS", "UPL.NS",
+    "VEDL.NS", "VOLTAS.NS", "WIPRO.NS", "ZEEL.NS", "ZYDUSLIFE.NS"
 ]
 
 leaders = []
 advances = 0
 declines = 0
 
-print("Scanning broad F&O universe across 7 Pillars...")
-
-# Convert UTC server time to Indian Standard Time (IST)
 ist_now = datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)
 current_ist_time = ist_now.strftime("%I:%M %p")
 
+print(f"Executing batch scan on {len(SYMBOLS)} F&O tickers at {current_ist_time} IST...")
+
+try:
+    # Batch download past 5 days daily and intraday 5m data
+    data_daily = yf.download(SYMBOLS, period="5d", interval="1d", group_by="ticker", threads=True, progress=False)
+    data_intra = yf.download(SYMBOLS, period="1d", interval="5m", group_by="ticker", threads=True, progress=False)
+except Exception as e:
+    print(f"Batch fetch error: {e}")
+    data_daily = None
+    data_intra = None
+
 for sym in SYMBOLS:
     try:
-        ticker = yf.Ticker(sym)
-        df_daily = ticker.history(period="5d", interval="1d")
-        df_intra = ticker.history(period="1d", interval="5m")
+        if data_daily is None or data_intra is None:
+            break
+            
+        df_d = data_daily[sym].dropna()
+        df_i = data_intra[sym].dropna()
 
-        if len(df_intra) < 2 or len(df_daily) < 2:
+        if len(df_i) < 2 or len(df_d) < 2:
             continue
 
-        last_bar = df_intra.iloc[-1]
-        prev_bar = df_intra.iloc[-2]
-        pdh = float(df_daily['High'].iloc[-2])
+        last_bar = df_i.iloc[-1]
+        prev_bar = df_i.iloc[-2]
+        pdh = float(df_d['High'].iloc[-2])
+        pdl = float(df_d['Low'].iloc[-2])
 
         clean_symbol = sym.replace(".NS", "")
         close = round(float(last_bar['Close']), 2)
         open_p = round(float(last_bar['Open']), 2)
         low_p = round(float(last_bar['Low']), 2)
+        high_p = round(float(last_bar['High']), 2)
+        open_day = round(float(df_i['Open'].iloc[0]), 2)
 
-        if close >= open_p:
+        pct_change = round(((close - open_day) / open_day) * 100, 2)
+        if close >= open_day:
             advances += 1
         else:
             declines += 1
 
-        # 7-Pillars Matrix
-        p1_liquidity = (close > 50) and (float(last_bar['Volume']) > 5000)
-        
-        avg_vol = df_intra['Volume'].mean()
+        # Intraday Relative Volume
+        avg_vol = df_i['Volume'].mean()
         vol_x = round(float(last_bar['Volume'] / avg_vol), 1) if avg_vol > 0 else 1.0
-        p2_volume = vol_x >= 2.5
 
-        p3_orb = close >= float(df_intra['High'].iloc[0])
+        # Calculations
+        cum_vol = df_i['Volume'].cumsum()
+        vwap = (df_i['Volume'] * df_i['Close']).cumsum() / cum_vol
+        vwap_val = float(vwap.iloc[-1])
+        orb_high = float(df_i['High'].iloc[0])
 
-        cum_vol = df_intra['Volume'].cumsum()
-        vwap = (df_intra['Volume'] * df_intra['Close']).cumsum() / cum_vol
-        p4_vwap = close > float(vwap.iloc[-1])
-
-        p5_pdh = close > pdh
-
-        p6_follow = (close > open_p) and (close > float(prev_bar['High']))
-
-        delta = df_intra['Close'].diff()
+        delta = df_i['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(14).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
         rs = gain / loss
         rsi_series = 100 - (100 / (1 + rs))
-        rsi_val = round(float(rsi_series.iloc[-1]), 1) if not np.isnan(rsi_series.iloc[-1]) else 60.0
-        p7_rsi = rsi_val >= 58.0
+        rsi_val = round(float(rsi_series.iloc[-1]), 1) if not np.isnan(rsi_series.iloc[-1]) else 50.0
 
-        pillars_passed = sum([p1_liquidity, p2_volume, p3_orb, p4_vwap, p5_pdh, p6_follow, p7_rsi])
+        # 7-Pillar Checks
+        p1 = close > 50 and float(last_bar['Volume']) > 2000
+        p2 = vol_x >= 2.0
+        p3 = close >= orb_high
+        p4 = close > vwap_val
+        p5 = close > pdh
+        p6 = (close > open_p) and (close >= float(prev_bar['High']))
+        p7 = rsi_val >= 58.0
+        bull_score = sum([p1, p2, p3, p4, p5, p6, p7])
 
-        if pillars_passed >= 4:
-            if pillars_passed >= 6 and vol_x >= 4.0:
-                tier = "EXPLOSIVE"
-            elif pillars_passed >= 5:
-                tier = "STRONG"
-            else:
-                tier = "SPURT"
+        # Short Zone Checks (Bearish Breakdown)
+        bear_score = sum([
+            close < pdl,
+            close < vwap_val,
+            vol_x >= 2.0,
+            rsi_val <= 42.0,
+            close < open_p
+        ])
 
+        # Determine Tier / Section matching Orion Dashboard
+        tier = None
+        card_type = "CE"
+
+        if vol_x >= 4.0 and bull_score >= 5:
+            tier = "BRAHMASTRA"
+        elif bull_score >= 6:
+            tier = "EXPLOSIVE"
+        elif bull_score == 5:
+            tier = "STRONG"
+        elif bull_score == 4:
+            tier = "SPURT"
+        elif bear_score >= 4 or (pct_change <= -1.8 and vol_x >= 2.0):
+            tier = "SHORT ZONE"
+            card_type = "PE"
+
+        if tier:
             strike_step = 50 if close >= 500 else (20 if close >= 200 else 10)
-            atm_strike = int(round(close / strike_step) * strike_step)
-            sl = low_p if low_p < close else round(close * 0.99, 2)
-            t1 = round(close + ((close - sl) * 1.5), 2)
+            if card_type == "CE":
+                target_strike = int(round(close / strike_step) * strike_step)
+                strike_label = f"{target_strike} CE"
+                sl = low_p if low_p < close else round(close * 0.99, 2)
+                t1 = round(close + ((close - sl) * 1.5), 2)
+            else:
+                target_strike = int(round(close / strike_step) * strike_step)
+                strike_label = f"{target_strike} PE"
+                sl = high_p if high_p > close else round(close * 1.01, 2)
+                t1 = round(close - ((sl - close) * 1.5), 2)
 
             leaders.append({
                 "symbol": clean_symbol,
-                "type": "CE",
+                "type": card_type,
                 "tier": tier,
-                "score": f"{pillars_passed}/7",
+                "score": f"{bull_score}/7" if card_type == "CE" else f"{bear_score}/5",
                 "detectTime": current_ist_time,
                 "price": close,
-                "pctChange": f"+{round(((close - open_p) / open_p) * 100, 2)}%",
+                "pctChange": f"+{pct_change}%" if pct_change > 0 else f"{pct_change}%",
                 "volumeX": f"{vol_x}x",
-                "strike": f"{atm_strike} CE",
+                "strike": strike_label,
                 "premium": "Check Broker",
                 "sl": sl,
                 "t1": t1,
                 "rsi": rsi_val
             })
     except Exception as e:
-        print(f"Skipping {sym}: {e}")
+        continue
 
-leaders = sorted(leaders, key=lambda x: int(x['score'].split('/')[0]), reverse=True)
+# Sort by volume multiple
+leaders = sorted(leaders, key=lambda x: float(x['volumeX'].replace('x', '')), reverse=True)
 
+# Send alert if top Brahmastra or Explosive found
 if leaders:
-    top_pick = leaders[0]
-    badge = "💥 EXPLOSIVE" if top_pick['tier'] == 'EXPLOSIVE' else "🔥 STRONG"
-    msg = (
-        f"<b>{badge} BREAKOUT DETECTED</b>\n\n"
-        f"🎯 <b>Stock:</b> #{top_pick['symbol']} ({top_pick['type']})\n"
-        f"🏆 <b>Score:</b> {top_pick['score']} Pillars Matched\n"
-        f"💰 <b>LTP:</b> ₹{top_pick['price']} ({top_pick['pctChange']})\n"
-        f"⚡ <b>Volume Surge:</b> {top_pick['volumeX']}\n"
-        f"📈 <b>RSI:</b> {top_pick['rsi']}\n"
-        f"🎯 <b>Strike:</b> {top_pick['strike']}\n"
-        f"🛑 <b>SL:</b> ₹{top_pick['sl']} | <b>T1:</b> ₹{top_pick['t1']}\n\n"
-        f"🌐 <a href='https://balajihomeneeds11-netizen.github.io/Orion-scanner/'>Open Live Terminal</a>"
-    )
-    send_telegram_alert(msg)
+    top = leaders[0]
+    if top['tier'] in ["BRAHMASTRA", "EXPLOSIVE"]:
+        badge = "⚡ BRAHMASTRA VOLUME BLAST" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE BREAKOUT"
+        msg = (
+            f"<b>{badge}</b>\n\n"
+            f"🎯 <b>Stock:</b> #{top['symbol']} ({top['type']})\n"
+            f"⚡ <b>Volume Surge:</b> {top['volumeX']}\n"
+            f"💰 <b>LTP:</b> ₹{top['price']} ({top['pctChange']})\n"
+            f"🏆 <b>Score:</b> {top['score']}\n"
+            f"📈 <b>RSI:</b> {top['rsi']}\n"
+            f"🎯 <b>Strike:</b> {top['strike']}\n"
+            f"🛑 <b>SL:</b> ₹{top['sl']} | <b>T1:</b> ₹{top['t1']}\n\n"
+            f"🌐 <a href='https://balajihomeneeds11-netizen.github.io/Orion-scanner/'>Open Live Terminal</a>"
+        )
+        send_telegram_alert(msg)
 
 output = {
     "lastUpdated": current_ist_time,
@@ -159,4 +225,4 @@ output = {
 with open("data.json", "w") as f:
     json.dump(output, f, indent=2)
 
-print(f"Updated data.json with {len(leaders)} setups.")
+print(f"Scan complete. Found {len(leaders)} setups out of {len(SYMBOLS)} F&O tickers.")
