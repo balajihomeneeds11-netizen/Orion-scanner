@@ -117,52 +117,33 @@ buckets = {
     "SHORT ZONE": []
 }
 
-print(f"Scanning {len(SYMBOLS)} F&O tickers at {current_ist_time} IST...")
+print(f"Scanning {len(SYMBOLS)} F&O tickers individually at {current_ist_time} IST...")
 
-data_daily = None
-data_intra = None
 nifty_chg = 0.0
-
 try:
-    data_daily = yf.download(SYMBOLS, period="1y", interval="1d", group_by="ticker", threads=True, progress=False)
-    data_intra = yf.download(SYMBOLS, period="1d", interval="5m", group_by="ticker", threads=True, progress=False)
     nifty_d = yf.download("^NSEI", period="5d", interval="1d", progress=False)
     if nifty_d is not None and len(nifty_d) >= 2:
         nifty_chg = float((nifty_d['Close'].iloc[-1] - nifty_d['Close'].iloc[-2]) / nifty_d['Close'].iloc[-2]) * 100
-except Exception as e:
-    print(f"Batch download exception: {e}")
-
-if data_intra is not None and not data_intra.empty:
-    for sym in SYMBOLS:
-        try:
-            if sym in data_intra.columns.levels[0] if isinstance(data_intra.columns, pd.MultiIndex) else sym in data_intra:
-                df_i = data_intra[sym].dropna() if isinstance(data_intra.columns, pd.MultiIndex) else data_intra.dropna()
-                if len(df_i) < 2:
-                    continue
-                clean = sym.replace(".NS", "")
-                sec = SECTOR_MAP.get(clean, "General")
-                c = float(df_i['Close'].iloc[-1])
-                o = float(df_i['Open'].iloc[0])
-                chg = (c - o) / o
-                if sec not in sector_trends:
-                    sector_trends[sec] = []
-                sector_trends[sec].append(chg)
-        except Exception:
-            continue
+except Exception:
+    pass
 
 for sym in SYMBOLS:
     try:
-        if data_daily is None or data_intra is None:
-            break
-            
-        try:
-            df_d = data_daily[sym].dropna() if isinstance(data_daily.columns, pd.MultiIndex) else data_daily.dropna()
-            df_i = data_intra[sym].dropna() if isinstance(data_intra.columns, pd.MultiIndex) else data_intra.dropna()
-        except Exception:
+        t = yf.Ticker(sym)
+        df_d = t.history(period="1y", interval="1d")
+        df_i = t.history(period="1d", interval="5m")
+
+        if df_d is None or df_i is None or len(df_i) < 2 or len(df_d) < 14:
             continue
 
-        if len(df_i) < 2 or len(df_d) < 14:
-            continue
+        clean = sym.replace(".NS", "")
+        sec = SECTOR_MAP.get(clean, "General")
+        c = float(df_i['Close'].iloc[-1])
+        o = float(df_i['Open'].iloc[0])
+        chg = (c - o) / o
+        if sec not in sector_trends:
+            sector_trends[sec] = []
+        sector_trends[sec].append(chg)
 
         last_bar = df_i.iloc[-1]
         prev_close = float(df_d['Close'].iloc[-2])
@@ -193,7 +174,7 @@ for sym in SYMBOLS:
         if np.isnan(atr14) or atr14 <= 0:
             atr14 = 1.0
         
-        clean_symbol = sym.replace(".NS", "")
+        clean_symbol = clean
         close = round(float(last_bar['Close']), 2)
         open_day = round(float(df_i['Open'].iloc[0]), 2)
         low_day = round(float(df_i['Low'].min()), 2)
