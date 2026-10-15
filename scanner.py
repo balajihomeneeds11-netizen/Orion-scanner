@@ -27,7 +27,6 @@ def send_telegram_alert(message):
         print(f"Telegram dispatch error: {err}")
 
 def format_ist_time(ts):
-    """Convert pandas timestamp to IST HH:MM string."""
     try:
         if ts.tzinfo is not None:
             ist_ts = ts.astimezone(datetime.timezone(datetime.timedelta(hours=5, minutes=30)))
@@ -37,7 +36,6 @@ def format_ist_time(ts):
     except Exception:
         return "09:20"
 
-# Sector Mapping
 SECTOR_MAP = {
     "HDFCBANK": "Banking", "ICICIBANK": "Banking", "SBIN": "Banking", "AXISBANK": "Banking",
     "KOTAKBANK": "Banking", "INDUSINDBK": "Banking", "FEDERALBNK": "Banking", "BANDHANBNK": "Banking",
@@ -124,10 +122,16 @@ print(f"Scanning {len(SYMBOLS)} F&O tickers at {current_ist_time} IST...")
 try:
     data_daily = yf.download(SYMBOLS, period="1y", interval="1d", group_by="ticker", threads=True, progress=False)
     data_intra = yf.download(SYMBOLS, period="1d", interval="5m", group_by="ticker", threads=True, progress=False)
+    # Fetch Nifty 50 for Alpha calculations
+    nifty_d = yf.download("^NSEI", period="5d", interval="1d", progress=False)
+    nifty_chg = 0.0
+    if len(nifty_d) >= 2:
+        nifty_chg = float((nifty_d['Close'].iloc[-1] - nifty_d['Close'].iloc[-2]) / nifty_d['Close'].iloc[-2]) * 100
 except Exception as e:
     print(f"Batch fetch error: {e}")
     data_daily = None
     data_intra = None
+    nifty_chg = 0.0
 
 if data_intra is not None:
     for sym in SYMBOLS:
@@ -154,7 +158,7 @@ for sym in SYMBOLS:
         df_d = data_daily[sym].dropna()
         df_i = data_intra[sym].dropna()
 
-        if len(df_i) < 2 or len(df_d) < 3:
+        if len(df_i) < 2 or len(df_d) < 14:
             continue
 
         last_bar = df_i.iloc[-1]
@@ -164,12 +168,39 @@ for sym in SYMBOLS:
         pdl = float(df_d['Low'].iloc[-2])
         high_52w = float(df_d['High'].max())
 
+        # 1. CPR Width Calculation (Pre-market compression)
+        cpr_h = float(df_d['High'].iloc[-2])
+        cpr_l = float(df_d['Low'].iloc[-2])
+        cpr_c = float(df_d['Close'].iloc[-2])
+        pivot = (cpr_h + cpr_l + cpr_c) / 3.0
+        bc = (cpr_h + cpr_l) / 2.0
+        tc = (pivot - bc) + pivot
+        cpr_width_pct = round((abs(tc - bc) / pivot) * 100, 3)
+        is_narrow_cpr = cpr_width_pct <= 0.18
+
+        # 2. NR4 / NR7 Range Compression Calculation
+        recent_ranges = (df_d['High'] - df_d['Low']).iloc[-8:-1]
+        yesterday_range = recent_ranges.iloc[-1]
+        is_nr7 = yesterday_range <= recent_ranges.min()
+
+        # 3. ATR 14 & Fuel Left % Calculation
+        tr = pd.concat([
+            df_d['High'] - df_d['Low'],
+            (df_d['High'] - df_d['Close'].shift()).abs(),
+            (df_d['Low'] - df_d['Close'].shift()).abs()
+        ], axis=1).max(axis=1)
+        atr14 = float(tr.rolling(14).mean().iloc[-1])
+        
         clean_symbol = sym.replace(".NS", "")
         close = round(float(last_bar['Close']), 2)
         open_day = round(float(df_i['Open'].iloc[0]), 2)
         low_day = round(float(df_i['Low'].min()), 2)
         high_day = round(float(df_i['High'].max()), 2)
         first_bar_close = round(float(df_i['Close'].iloc[0]), 2)
+
+        today_range = high_day - low_day
+        atr_used_pct = round((today_range / atr14) * 100, 1) if atr14 > 0 else 50.0
+        fuel_left_pct = max(0, round(100.0 - atr_used_pct, 1))
 
         pct_change = round(((close - prev_close) / prev_close) * 100, 2)
         prev_day_bullish = ((prev_close - prev_open) / prev_open) >= 0.008
@@ -191,7 +222,6 @@ for sym in SYMBOLS:
         orb_high = float(df_i['High'].iloc[0])
         orb_low = float(df_i['Low'].iloc[0])
 
-        # Exact breakout candle timestamp in IST
         detect_time_str = format_ist_time(df_i.index[0])
         if close >= open_day:
             bo_bars = df_i[df_i['High'] > orb_high]
@@ -219,6 +249,9 @@ for sym in SYMBOLS:
         from_high = round(((high_day - close) / high_day) * 100, 2)
         is_52w = close >= (high_52w * 0.985)
 
+        # 5. Pre-Breakout Alpha vs Nifty 50
+        intraday_alpha = round(pct_change - nifty_chg, 2)
+
         sec_name = SECTOR_MAP.get(clean_symbol, "F&O")
         sec_changes = sector_trends.get(sec_name, [])
         sec_avg = (sum(sec_changes) / len(sec_changes)) if sec_changes else 0.0
@@ -226,13 +259,13 @@ for sym in SYMBOLS:
         sector_status = f"{sec_name} 🔥 STRONG" if sector_strong else f"{sec_name} • WATCH"
 
         # 7-Pillars (Bullish)
-        p1 = bool(close > open_day and pct_change > 0)   # Trend
-        p2 = bool(close > vwap_val)                      # VWAP
-        p3 = bool(close > pdh)                           # PDH Break
-        p4 = bool(close > orb_high)                      # ORB Break
-        p5 = bool(from_high <= 0.65)                     # Follow-through holding near high
-        p6 = bool(vol_x >= 1.5)                          # Volume Surge
-        p7 = bool(rsi_val >= 56.0)                       # RSI Momentum
+        p1 = bool(close > open_day and pct_change > 0)
+        p2 = bool(close > vwap_val)
+        p3 = bool(close > pdh)
+        p4 = bool(close > orb_high)
+        p5 = bool(from_high <= 0.65)
+        p6 = bool(vol_x >= 1.5)
+        p7 = bool(rsi_val >= 56.0)
         bull_score = sum([p1, p2, p3, p4, p5, p6, p7])
 
         # Bearish Pillars
@@ -246,12 +279,10 @@ for sym in SYMBOLS:
         bear_score = sum([b1, b2, b3, b4, b5, b6, b7])
 
         opened_at_day_low = bool((abs(open_day - low_day) / open_day) <= 0.0020 and close > open_day)
-        opened_at_day_high = bool((abs(high_day - open_day) / open_day) <= 0.0020 and close < open_day)
         is_ideal = False
         tier = None
         card_type = "CE"
 
-        # Tier Classification
         if (opened_at_day_low and close > vwap_val and pct_change >= 0.8) or (close > orb_high and close > vwap_val and vol_x >= 3.2 and bull_score >= 5):
             tier = "BRAHMASTRA"
             card_type = "CE"
@@ -293,7 +324,6 @@ for sym in SYMBOLS:
 
             score_val = bull_score if card_type == "CE" else bear_score
 
-            # High-Probability RALLY & DROP Detection
             is_rally = bool(
                 card_type == "CE" and (
                     pct_change >= 1.5 or
@@ -303,19 +333,17 @@ for sym in SYMBOLS:
             is_drop = bool(
                 card_type == "PE" and (
                     pct_change <= -1.2 or
-                    (b3 and b2 and from_low <= 0.45) or
-                    opened_at_day_high
+                    (b3 and b2 and from_low <= 0.45)
                 )
             )
             fade_risk = bool(card_type == "CE" and from_high >= 0.85)
 
-            # Probability Score Calculation (60% to 94%)
+            # Probability Score boosted by Pre-Move calculations (CPR, NR7, Fuel)
             prob_score = min(
-                94,
-                55 + (score_val * 4) + (4 if sector_strong else 0) + (4 if is_52w else 0) + (3 if (is_rally or is_drop) else 0)
+                96,
+                52 + (score_val * 4) + (5 if is_narrow_cpr else 0) + (5 if is_nr7 else 0) + (4 if fuel_left_pct >= 65 else 0) + (4 if sector_strong else 0) + (3 if (is_rally or is_drop) else 0)
             )
 
-            # 7-Pillar Checklist Chips for Frontend
             if card_type == "CE":
                 pillars_list = [
                     {"name": "Trend", "ok": p1},
@@ -355,13 +383,18 @@ for sym in SYMBOLS:
                 "lotSize": lot_qty,
                 "sectorStatus": sector_status,
                 "watchBadge": watch_badge,
-                "candleInfo": f"body {body_pct}% • {candle_quality} • low ▲{from_low}% • high ▼{from_high}%",
+                "candleInfo": f"body {body_pct}% • low ▲{from_low}% • high ▼{from_high}%",
                 "is52W": is_52w,
                 "isIdeal": is_ideal,
                 "isRally": is_rally,
                 "isDrop": is_drop,
                 "fadeRisk": fade_risk,
                 "openedAtLow": opened_at_day_low,
+                "isNarrowCPR": is_narrow_cpr,
+                "isNR7": is_nr7,
+                "fuelLeft": f"{fuel_left_pct}%",
+                "numFuel": fuel_left_pct,
+                "alpha": f"+{intraday_alpha}%" if intraday_alpha > 0 else f"{intraday_alpha}%",
                 "pillars": pillars_list,
                 "sl": sl,
                 "t1": t1,
@@ -373,12 +406,11 @@ for sym in SYMBOLS:
     except Exception:
         continue
 
-# Sort each bucket by conviction score, volume surge, and % move, keeping top 10 per category
 leaders = []
 for tier_name in ["BRAHMASTRA", "EXPLOSIVE", "STRONG", "SPURT", "SHORT ZONE"]:
     sorted_tier = sorted(
         buckets[tier_name],
-        key=lambda x: (x["numScore"], x["numVol"], x["absChange"]),
+        key=lambda x: (x["numScore"], x["numVol"], x["numFuel"], x["absChange"]),
         reverse=True
     )[:10]
     leaders.extend(sorted_tier)
@@ -386,13 +418,12 @@ for tier_name in ["BRAHMASTRA", "EXPLOSIVE", "STRONG", "SPURT", "SHORT ZONE"]:
 if leaders:
     top = leaders[0]
     if top['tier'] in ["BRAHMASTRA", "EXPLOSIVE"]:
-        badge = "⚡ BRAHMASTRA BREAKOUT" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE BREAKOUT"
-        rally_tag = " | 🏆 RALLY" if top.get("isRally") else (" | 📉 DROP" if top.get("isDrop") else "")
+        badge = "⚡ BRAHMASTRA HIGH MOMENTUM" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE BREAKOUT"
         msg = (
-            f"<b>{badge}{rally_tag}</b>\n\n"
+            f"<b>{badge}</b>\n\n"
             f"🎯 <b>Stock:</b> #{top['symbol']} ({top['type']})\n"
-            f"⚡ <b>Peak Vol Surge:</b> {top['volumeX']}\n"
-            f"💰 <b>LTP:</b> ₹{top['price']} ({top['pctChange']})\n"
+            f"⚡ <b>Vol Surge:</b> {top['volumeX']} | ⛽ <b>Fuel Left:</b> {top['fuelLeft']}\n"
+            f"💰 <b>LTP:</b> ₹{top['price']} ({top['pctChange']}) | <b>Alpha:</b> {top['alpha']}\n"
             f"🕒 <b>Breakout Candle:</b> {top['detectTime']}\n"
             f"🏆 <b>Conviction:</b> {top['score']} ({top['prob']} Prob)\n"
             f"🏢 <b>Sector:</b> {top['sectorStatus']}\n"
