@@ -119,33 +119,34 @@ buckets = {
 
 print(f"Scanning {len(SYMBOLS)} F&O tickers at {current_ist_time} IST...")
 
+data_daily = None
+data_intra = None
+nifty_chg = 0.0
+
 try:
     data_daily = yf.download(SYMBOLS, period="1y", interval="1d", group_by="ticker", threads=True, progress=False)
     data_intra = yf.download(SYMBOLS, period="1d", interval="5m", group_by="ticker", threads=True, progress=False)
     nifty_d = yf.download("^NSEI", period="5d", interval="1d", progress=False)
-    nifty_chg = 0.0
     if nifty_d is not None and len(nifty_d) >= 2:
         nifty_chg = float((nifty_d['Close'].iloc[-1] - nifty_d['Close'].iloc[-2]) / nifty_d['Close'].iloc[-2]) * 100
 except Exception as e:
-    print(f"Batch fetch error: {e}")
-    data_daily = None
-    data_intra = None
-    nifty_chg = 0.0
+    print(f"Batch download exception: {e}")
 
-if data_intra is not None:
+if data_intra is not None and not data_intra.empty:
     for sym in SYMBOLS:
         try:
-            df_i = data_intra[sym].dropna()
-            if len(df_i) < 2:
-                continue
-            clean = sym.replace(".NS", "")
-            sec = SECTOR_MAP.get(clean, "General")
-            c = float(df_i['Close'].iloc[-1])
-            o = float(df_i['Open'].iloc[0])
-            chg = (c - o) / o
-            if sec not in sector_trends:
-                sector_trends[sec] = []
-            sector_trends[sec].append(chg)
+            if sym in data_intra.columns.levels[0] if isinstance(data_intra.columns, pd.MultiIndex) else sym in data_intra:
+                df_i = data_intra[sym].dropna() if isinstance(data_intra.columns, pd.MultiIndex) else data_intra.dropna()
+                if len(df_i) < 2:
+                    continue
+                clean = sym.replace(".NS", "")
+                sec = SECTOR_MAP.get(clean, "General")
+                c = float(df_i['Close'].iloc[-1])
+                o = float(df_i['Open'].iloc[0])
+                chg = (c - o) / o
+                if sec not in sector_trends:
+                    sector_trends[sec] = []
+                sector_trends[sec].append(chg)
         except Exception:
             continue
 
@@ -154,8 +155,11 @@ for sym in SYMBOLS:
         if data_daily is None or data_intra is None:
             break
             
-        df_d = data_daily[sym].dropna()
-        df_i = data_intra[sym].dropna()
+        try:
+            df_d = data_daily[sym].dropna() if isinstance(data_daily.columns, pd.MultiIndex) else data_daily.dropna()
+            df_i = data_intra[sym].dropna() if isinstance(data_intra.columns, pd.MultiIndex) else data_intra.dropna()
+        except Exception:
+            continue
 
         if len(df_i) < 2 or len(df_d) < 14:
             continue
@@ -409,24 +413,6 @@ for tier_name in ["BRAHMASTRA", "EXPLOSIVE", "STRONG", "SPURT", "SHORT ZONE"]:
     )[:10]
     leaders.extend(sorted_tier)
 
-if leaders:
-    top = leaders[0]
-    if top['tier'] in ["BRAHMASTRA", "EXPLOSIVE"]:
-        badge = "⚡ BRAHMASTRA HIGH MOMENTUM" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE BREAKOUT"
-        msg = (
-            f"<b>{badge}</b>\n\n"
-            f"🎯 <b>Stock:</b> #{top['symbol']} ({top['type']})\n"
-            f"⚡ <b>Vol Surge:</b> {top['volumeX']} | ⛽ <b>Fuel Left:</b> {top['fuelLeft']}\n"
-            f"💰 <b>LTP:</b> ₹{top['price']} ({top['pctChange']}) | <b>Alpha:</b> {top['alpha']}\n"
-            f"🕒 <b>Breakout Candle:</b> {top['detectTime']}\n"
-            f"🏆 <b>Conviction:</b> {top['score']} ({top['prob']} Prob)\n"
-            f"🏢 <b>Sector:</b> {top['sectorStatus']}\n"
-            f"🎯 <b>Strike:</b> {top['strike']} (Lot: {top['lotSize']})\n"
-            f"🛑 <b>9:15 SL Law:</b> ₹{top['sl']} | <b>T1:</b> ₹{top['t1']}\n\n"
-            f"🌐 <a href='https://balajihomeneeds11-netizen.github.io/Orion-scanner/'>Open Live Terminal</a>"
-        )
-        send_telegram_alert(msg)
-
 output = {
     "lastUpdated": current_ist_time,
     "breadth": {
@@ -440,4 +426,4 @@ output = {
 with open("data.json", "w") as f:
     json.dump(output, f, indent=2)
 
-print("Scan successfully completed and saved.")
+print("Scan completed successfully.")
