@@ -117,29 +117,23 @@ buckets = {
     "SHORT ZONE": []
 }
 
-print(f"Batch downloading data for {len(SYMBOLS)} tickers at {current_ist_time} IST...")
+print(f"Downloading market data for {len(SYMBOLS)} tickers at {current_ist_time} IST...")
 
 nifty_chg = 0.0
 try:
-    nifty_d = yf.download("^NSEI", period="5d", interval="1d", progress=False)
+    nifty_d = yf.download("^NSEI", period="5d", interval="1d", progress=False, multi_level_index=False)
     if nifty_d is not None and not nifty_d.empty:
         nifty_chg = float((nifty_d['Close'].iloc[-1] - nifty_d['Close'].iloc[-2]) / nifty_d['Close'].iloc[-2]) * 100
 except Exception:
     pass
 
-data_daily = yf.download(SYMBOLS, period="1y", interval="1d", group_by="ticker", threads=True, progress=False)
-data_intra = yf.download(SYMBOLS, period="1d", interval="5m", group_by="ticker", threads=True, progress=False)
-
 for sym in SYMBOLS:
     try:
         clean = sym.replace(".NS", "")
-        if data_daily is not None and sym in data_daily.columns.levels[0] if isinstance(data_daily.columns, pd.MultiIndex) else sym in data_daily:
-            df_d = data_daily[sym].dropna() if isinstance(data_daily.columns, pd.MultiIndex) else data_daily.dropna()
-            df_i = data_intra[sym].dropna() if isinstance(data_intra.columns, pd.MultiIndex) else data_intra.dropna()
-        else:
-            continue
+        df_d = yf.download(sym, period="1y", interval="1d", progress=False, multi_level_index=False)
+        df_i = yf.download(sym, period="1d", interval="5m", progress=False, multi_level_index=False)
 
-        if len(df_i) < 2 or len(df_d) < 14:
+        if df_d is None or df_i is None or df_i.empty or df_d.empty or len(df_i) < 2 or len(df_d) < 14:
             continue
 
         sec = SECTOR_MAP.get(clean, "General")
@@ -411,4 +405,4 @@ output = {
 with open("data.json", "w") as f:
     json.dump(output, f, indent=2)
 
-print("Scan completed successfully.")
+print("Scan completed successfully with multi_level_index=False.")
