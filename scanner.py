@@ -26,7 +26,7 @@ def send_telegram_alert(message):
     except Exception as err:
         print(f"Telegram dispatch error: {err}")
 
-# Complete Active NSE F&O Universe (~180+ Stocks)
+# Complete Active NSE Stock Options Universe (~180+ Underlyings)
 SYMBOLS = [
     "AARTIIND.NS", "ABB.NS", "ABBOTINDIA.NS", "ABCAPITAL.NS", "ABFRL.NS", "ACC.NS",
     "ADANIENT.NS", "ADANIPORTS.NS", "ALKEM.NS", "AMBUJACEM.NS", "ANGELONE.NS", "APOLLOHOSP.NS",
@@ -68,10 +68,9 @@ declines = 0
 ist_now = datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)
 current_ist_time = ist_now.strftime("%I:%M %p")
 
-print(f"Executing batch scan on {len(SYMBOLS)} F&O tickers at {current_ist_time} IST...")
+print(f"Batch scanning {len(SYMBOLS)} F&O tickers at {current_ist_time} IST...")
 
 try:
-    # Batch download past 5 days daily and intraday 5m data
     data_daily = yf.download(SYMBOLS, period="5d", interval="1d", group_by="ticker", threads=True, progress=False)
     data_intra = yf.download(SYMBOLS, period="1d", interval="5m", group_by="ticker", threads=True, progress=False)
 except Exception as e:
@@ -108,11 +107,9 @@ for sym in SYMBOLS:
         else:
             declines += 1
 
-        # Intraday Relative Volume
         avg_vol = df_i['Volume'].mean()
         vol_x = round(float(last_bar['Volume'] / avg_vol), 1) if avg_vol > 0 else 1.0
 
-        # Calculations
         cum_vol = df_i['Volume'].cumsum()
         vwap = (df_i['Volume'] * df_i['Close']).cumsum() / cum_vol
         vwap_val = float(vwap.iloc[-1])
@@ -125,7 +122,7 @@ for sym in SYMBOLS:
         rsi_series = 100 - (100 / (1 + rs))
         rsi_val = round(float(rsi_series.iloc[-1]), 1) if not np.isnan(rsi_series.iloc[-1]) else 50.0
 
-        # 7-Pillar Checks
+        # Bullish 7-Pillar Checks
         p1 = close > 50 and float(last_bar['Volume']) > 2000
         p2 = vol_x >= 2.0
         p3 = close >= orb_high
@@ -135,7 +132,7 @@ for sym in SYMBOLS:
         p7 = rsi_val >= 58.0
         bull_score = sum([p1, p2, p3, p4, p5, p6, p7])
 
-        # Short Zone Checks (Bearish Breakdown)
+        # Bearish Breakdown Checks
         bear_score = sum([
             close < pdl,
             close < vwap_val,
@@ -144,7 +141,6 @@ for sym in SYMBOLS:
             close < open_p
         ])
 
-        # Determine Tier / Section matching Orion Dashboard
         tier = None
         card_type = "CE"
 
@@ -162,20 +158,20 @@ for sym in SYMBOLS:
 
         if tier:
             strike_step = 50 if close >= 500 else (20 if close >= 200 else 10)
+            target_strike = int(round(close / strike_step) * strike_step)
+            strike_label = f"{target_strike} {card_type}"
+            
             if card_type == "CE":
-                target_strike = int(round(close / strike_step) * strike_step)
-                strike_label = f"{target_strike} CE"
                 sl = low_p if low_p < close else round(close * 0.99, 2)
                 t1 = round(close + ((close - sl) * 1.5), 2)
             else:
-                target_strike = int(round(close / strike_step) * strike_step)
-                strike_label = f"{target_strike} PE"
                 sl = high_p if high_p > close else round(close * 1.01, 2)
                 t1 = round(close - ((sl - close) * 1.5), 2)
 
             leaders.append({
                 "symbol": clean_symbol,
                 "type": card_type,
+                "optionTag": "⚡ OPTION",
                 "tier": tier,
                 "score": f"{bull_score}/7" if card_type == "CE" else f"{bear_score}/5",
                 "detectTime": current_ist_time,
@@ -188,19 +184,17 @@ for sym in SYMBOLS:
                 "t1": t1,
                 "rsi": rsi_val
             })
-    except Exception as e:
+    except Exception:
         continue
 
-# Sort by volume multiple
 leaders = sorted(leaders, key=lambda x: float(x['volumeX'].replace('x', '')), reverse=True)
 
-# Send alert if top Brahmastra or Explosive found
 if leaders:
     top = leaders[0]
     if top['tier'] in ["BRAHMASTRA", "EXPLOSIVE"]:
         badge = "⚡ BRAHMASTRA VOLUME BLAST" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE BREAKOUT"
         msg = (
-            f"<b>{badge}</b>\n\n"
+            f"<b>{badge} (F&O OPTION)</b>\n\n"
             f"🎯 <b>Stock:</b> #{top['symbol']} ({top['type']})\n"
             f"⚡ <b>Volume Surge:</b> {top['volumeX']}\n"
             f"💰 <b>LTP:</b> ₹{top['price']} ({top['pctChange']})\n"
@@ -225,4 +219,4 @@ output = {
 with open("data.json", "w") as f:
     json.dump(output, f, indent=2)
 
-print(f"Scan complete. Found {len(leaders)} setups out of {len(SYMBOLS)} F&O tickers.")
+print(f"Scan complete. Found {len(leaders)} active setups.")
