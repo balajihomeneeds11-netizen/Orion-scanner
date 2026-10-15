@@ -122,10 +122,9 @@ print(f"Scanning {len(SYMBOLS)} F&O tickers at {current_ist_time} IST...")
 try:
     data_daily = yf.download(SYMBOLS, period="1y", interval="1d", group_by="ticker", threads=True, progress=False)
     data_intra = yf.download(SYMBOLS, period="1d", interval="5m", group_by="ticker", threads=True, progress=False)
-    # Fetch Nifty 50 for Alpha calculations
     nifty_d = yf.download("^NSEI", period="5d", interval="1d", progress=False)
     nifty_chg = 0.0
-    if len(nifty_d) >= 2:
+    if nifty_d is not None and len(nifty_d) >= 2:
         nifty_chg = float((nifty_d['Close'].iloc[-1] - nifty_d['Close'].iloc[-2]) / nifty_d['Close'].iloc[-2]) * 100
 except Exception as e:
     print(f"Batch fetch error: {e}")
@@ -168,28 +167,27 @@ for sym in SYMBOLS:
         pdl = float(df_d['Low'].iloc[-2])
         high_52w = float(df_d['High'].max())
 
-        # 1. CPR Width Calculation (Pre-market compression)
         cpr_h = float(df_d['High'].iloc[-2])
         cpr_l = float(df_d['Low'].iloc[-2])
         cpr_c = float(df_d['Close'].iloc[-2])
         pivot = (cpr_h + cpr_l + cpr_c) / 3.0
         bc = (cpr_h + cpr_l) / 2.0
         tc = (pivot - bc) + pivot
-        cpr_width_pct = round((abs(tc - bc) / pivot) * 100, 3)
+        cpr_width_pct = round((abs(tc - bc) / pivot) * 100, 3) if pivot > 0 else 0.1
         is_narrow_cpr = cpr_width_pct <= 0.18
 
-        # 2. NR4 / NR7 Range Compression Calculation
         recent_ranges = (df_d['High'] - df_d['Low']).iloc[-8:-1]
-        yesterday_range = recent_ranges.iloc[-1]
-        is_nr7 = yesterday_range <= recent_ranges.min()
+        yesterday_range = recent_ranges.iloc[-1] if len(recent_ranges) > 0 else 0.0
+        is_nr7 = yesterday_range <= recent_ranges.min() if len(recent_ranges) > 0 else False
 
-        # 3. ATR 14 & Fuel Left % Calculation
         tr = pd.concat([
             df_d['High'] - df_d['Low'],
             (df_d['High'] - df_d['Close'].shift()).abs(),
             (df_d['Low'] - df_d['Close'].shift()).abs()
         ], axis=1).max(axis=1)
-        atr14 = float(tr.rolling(14).mean().iloc[-1])
+        atr14 = float(tr.rolling(14).mean().iloc[-1]) if len(tr) >= 14 else 1.0
+        if np.isnan(atr14) or atr14 <= 0:
+            atr14 = 1.0
         
         clean_symbol = sym.replace(".NS", "")
         close = round(float(last_bar['Close']), 2)
@@ -199,7 +197,7 @@ for sym in SYMBOLS:
         first_bar_close = round(float(df_i['Close'].iloc[0]), 2)
 
         today_range = high_day - low_day
-        atr_used_pct = round((today_range / atr14) * 100, 1) if atr14 > 0 else 50.0
+        atr_used_pct = round((today_range / atr14) * 100, 1)
         fuel_left_pct = max(0, round(100.0 - atr_used_pct, 1))
 
         pct_change = round(((close - prev_close) / prev_close) * 100, 2)
@@ -249,7 +247,6 @@ for sym in SYMBOLS:
         from_high = round(((high_day - close) / high_day) * 100, 2)
         is_52w = close >= (high_52w * 0.985)
 
-        # 5. Pre-Breakout Alpha vs Nifty 50
         intraday_alpha = round(pct_change - nifty_chg, 2)
 
         sec_name = SECTOR_MAP.get(clean_symbol, "F&O")
@@ -258,7 +255,6 @@ for sym in SYMBOLS:
         sector_strong = (pct_change >= 0 and sec_avg > 0.0015) or (pct_change < 0 and sec_avg < -0.0015)
         sector_status = f"{sec_name} 🔥 STRONG" if sector_strong else f"{sec_name} • WATCH"
 
-        # 7-Pillars (Bullish)
         p1 = bool(close > open_day and pct_change > 0)
         p2 = bool(close > vwap_val)
         p3 = bool(close > pdh)
@@ -268,7 +264,6 @@ for sym in SYMBOLS:
         p7 = bool(rsi_val >= 56.0)
         bull_score = sum([p1, p2, p3, p4, p5, p6, p7])
 
-        # Bearish Pillars
         b1 = bool(close < open_day and pct_change < 0)
         b2 = bool(close < vwap_val)
         b3 = bool(close < pdl)
@@ -338,7 +333,6 @@ for sym in SYMBOLS:
             )
             fade_risk = bool(card_type == "CE" and from_high >= 0.85)
 
-            # Probability Score boosted by Pre-Move calculations (CPR, NR7, Fuel)
             prob_score = min(
                 96,
                 52 + (score_val * 4) + (5 if is_narrow_cpr else 0) + (5 if is_nr7 else 0) + (4 if fuel_left_pct >= 65 else 0) + (4 if sector_strong else 0) + (3 if (is_rally or is_drop) else 0)
@@ -446,8 +440,4 @@ output = {
 with open("data.json", "w") as f:
     json.dump(output, f, indent=2)
 
-print(
-    f"Scan complete. Counts -> BRAHMASTRA: {len(buckets['BRAHMASTRA'])}, "
-    f"EXPLOSIVE: {len(buckets['EXPLOSIVE'])}, STRONG: {len(buckets['STRONG'])}, "
-    f"SPURT: {len(buckets['SPURT'])}, SHORT ZONE: {len(buckets['SHORT ZONE'])}"
-)
+print("Scan successfully completed and saved.")
