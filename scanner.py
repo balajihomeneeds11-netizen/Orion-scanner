@@ -26,7 +26,7 @@ def send_telegram_alert(message):
     except Exception as err:
         print(f"Telegram dispatch error: {err}")
 
-# Sector Mapping
+# Sector Mapping for Orion Confluence Engine
 SECTOR_MAP = {
     "HDFCBANK": "Banking", "ICICIBANK": "Banking", "SBIN": "Banking", "AXISBANK": "Banking",
     "KOTAKBANK": "Banking", "INDUSINDBK": "Banking", "FEDERALBNK": "Banking", "BANDHANBNK": "Banking",
@@ -46,7 +46,8 @@ SECTOR_MAP = {
     "HINDUNILVR": "FMCG", "ITC": "FMCG", "NESTLEIND": "FMCG", "BRITANNIA": "FMCG", "TATACONSUM": "FMCG", "DABUR": "FMCG", "MARICO": "FMCG", "GODREJCP": "FMCG", "COLPAL": "FMCG",
     "BAJFINANCE": "Finance", "BAJAJFINSV": "Finance", "CHOLAFIN": "Finance", "SHRIRAMFIN": "Finance", "MUTHOOTFIN": "Finance",
     "M&MFIN": "Finance", "LICHSGFIN": "Finance", "RECLTD": "Finance", "PFC": "Finance", "MANAPPURAM": "Finance", "PAYTM": "New Age",
-    "LT": "Infra", "BEL": "Defense", "HAL": "Defense", "COCHINSHIP": "Industrials", "DIXON": "Durables", "POLYCAB": "Durables", "ASTRAL": "Pipes"
+    "LT": "Infra", "BEL": "Defense", "HAL": "Defense", "COCHINSHIP": "Industrials", "DIXON": "Durables", "POLYCAB": "Durables",
+    "ASTRAL": "Industrials", "INDUSTOWER": "Telecom", "ANGELONE": "CapitalMkt", "INDHOTEL": "Hotels", "ICICIGI": "Finance"
 }
 
 LOT_SIZES = {
@@ -54,7 +55,8 @@ LOT_SIZES = {
     "TCS": 175, "INFY": 400, "HCLTECH": 350, "WIPRO": 1500, "TECHM": 600, "LTIM": 150, "COFORGE": 150,
     "TATAMOTORS": 550, "MARUTI": 50, "M&M": 350, "TATASTEEL": 5500, "VEDL": 1150, "HINDALCO": 1400,
     "MANAPPURAM": 3000, "DIXON": 50, "COCHINSHIP": 350, "PAYTM": 500, "ONGC": 3850, "ASTRAL": 275,
-    "INDUSTOWER": 1700, "MPHASIS": 275, "BHARTIARTL": 475, "BEL": 2850, "HAL": 150, "PNB": 8000, "ZYDUSLIFE": 900
+    "INDUSTOWER": 1700, "MPHASIS": 275, "BHARTIARTL": 475, "BEL": 2850, "HAL": 150, "PNB": 8000,
+    "ZYDUSLIFE": 900, "ANGELONE": 250, "INDHOTEL": 1000, "ICICIGI": 250
 }
 
 SYMBOLS = [
@@ -91,7 +93,6 @@ SYMBOLS = [
     "VEDL.NS", "VOLTAS.NS", "WIPRO.NS", "ZEEL.NS", "ZYDUSLIFE.NS"
 ]
 
-# Sticky Brahmastra storage
 STICKY_FILE = "brahmastra_sticky.json"
 sticky_brahmastra = {}
 if os.path.exists(STICKY_FILE):
@@ -105,7 +106,6 @@ ist_now = datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)
 current_ist_time = ist_now.strftime("%I:%M %p")
 today_date_str = ist_now.strftime("%Y-%m-%d")
 
-# Clear sticky history on a fresh trading day
 if sticky_brahmastra.get("date") != today_date_str:
     sticky_brahmastra = {"date": today_date_str, "cards": {}}
 
@@ -165,6 +165,7 @@ for sym in SYMBOLS:
         high_p = round(float(last_bar['High']), 2)
         open_day = round(float(df_i['Open'].iloc[0]), 2)
         low_day = round(float(df_i['Low'].min()), 2)
+        high_day = round(float(df_i['High'].max()), 2)
         first_bar_close = round(float(df_i['Close'].iloc[0]), 2)
 
         pct_change = round(((close - open_day) / open_day) * 100, 2)
@@ -192,58 +193,53 @@ for sym in SYMBOLS:
         body_pct = round(abs((first_bar_close - open_day) / open_day) * 100, 2)
         candle_quality = "Strong" if body_pct >= 0.8 else "Moderate"
 
-        # Bullish 52W Breakout Rule
+        from_low = round(((close - low_day) / low_day) * 100, 2)
+        from_high = round(((high_day - close) / high_day) * 100, 2)
+
         is_52w = close >= (high_52w * 0.985)
 
-        # Sector Confluence
         sec_name = SECTOR_MAP.get(clean_symbol, "F&O")
         sec_changes = sector_trends.get(sec_name, [])
         sec_avg = (sum(sec_changes) / len(sec_changes)) if sec_changes else 0.0
 
         if pct_change >= 0:
-            sector_status = f"{sec_name} 🔥 STRONG" if sec_avg > 0.003 else f"{sec_name} • WATCH"
+            sector_status = f"{sec_name} • WEAK" if sec_avg < 0.001 else f"{sec_name} 🔥 STRONG"
         else:
-            sector_status = f"{sec_name} 🔥 STRONG" if sec_avg < -0.003 else f"{sec_name} • WATCH"
+            sector_status = f"{sec_name} • WEAK" if sec_avg > -0.001 else f"{sec_name} 🔥 STRONG"
 
-        # 7-Pillar Tests
-        p1 = close > 50 and float(last_bar['Volume']) > 2000
-        p2 = vol_x >= 2.0
+        p1 = close > 50 and float(last_bar['Volume']) > 1500
+        p2 = vol_x >= 1.2
         p3 = close >= orb_high
         p4 = close > vwap_val
         p5 = close > pdh
-        p6 = (close > open_p) and (close >= float(prev_bar['High']))
-        p7 = rsi_val >= 58.0
+        p6 = close >= open_p
+        p7 = rsi_val >= 55.0
         bull_score = sum([p1, p2, p3, p4, p5, p6, p7])
 
         bear_score = sum([
             close < pdl,
             close < vwap_val,
             close < orb_low,
-            vol_x >= 2.0,
-            rsi_val <= 42.0,
+            vol_x >= 1.2,
+            rsi_val <= 45.0,
             close < open_p
         ])
 
         tier = None
         card_type = "CE"
-        is_ideal = False
 
-        # WEBINAR BRAHMASTRA RULE:
-        # Opened at Day's Low (open within 0.15% of low) + Volume Surge >= 3.5x + Bull score >= 5
-        opened_at_day_low = abs(open_day - low_day) / open_day <= 0.0018
-
-        if (opened_at_day_low and vol_x >= 3.0 and bull_score >= 5) or (vol_x >= 4.5 and bull_score >= 6):
+        # Dynamically matches OrionScan: captures both volume blasts and opening-drive leaders
+        is_brahmastra = (vol_x >= 3.5) or (pct_change >= 0.40 and from_high <= 0.50 and close > open_day)
+        
+        if is_brahmastra:
             tier = "BRAHMASTRA"
-        elif bull_score >= 6:
+        elif bull_score >= 5 or (vol_x >= 2.0 and pct_change >= 1.0):
             tier = "EXPLOSIVE"
-            # WEBINAR IDEAL ★: First candle > 1.2% body and steady follow-through
-            if body_pct >= 1.0 and vol_x >= 3.0 and "STRONG" in sector_status:
-                is_ideal = True
-        elif bull_score == 5:
+        elif bull_score >= 3 and pct_change > 0:
             tier = "STRONG"
-        elif bull_score == 4:
+        elif pct_change > 0:
             tier = "SPURT"
-        elif bear_score >= 4 or (pct_change <= -1.8 and vol_x >= 2.0):
+        elif bear_score >= 3 or pct_change <= -1.2:
             tier = "SHORT ZONE"
             card_type = "PE"
 
@@ -253,15 +249,10 @@ for sym in SYMBOLS:
             strike_label = f"{target_strike} {card_type}"
             lot_qty = LOT_SIZES.get(clean_symbol, 250)
 
-            # Execution Stop-loss rule from webinar: 9:15 candle low
             sl = float(df_i['Low'].iloc[0]) if card_type == "CE" else float(df_i['High'].iloc[0])
             sl = round(sl, 2)
-            if card_type == "CE":
-                t1 = round(close + ((close - sl) * 1.5), 2)
-                watch_badge = "★★★ STRONG BUY WATCH"
-            else:
-                t1 = round(close - ((sl - close) * 1.5), 2)
-                watch_badge = "★★★ STRONG SELL WATCH"
+            t1 = round(close + ((close - sl) * 1.5), 2) if card_type == "CE" else round(close - ((sl - close) * 1.5), 2)
+            watch_badge = "★★★ STRONG BUY WATCH" if card_type == "CE" else "★★★ STRONG SELL WATCH"
 
             card_data = {
                 "symbol": clean_symbol,
@@ -270,7 +261,7 @@ for sym in SYMBOLS:
                 "optionTag": "⚡ OPTION",
                 "score": f"{bull_score}/7" if card_type == "CE" else f"{bear_score}/6",
                 "numScore": bull_score if card_type == "CE" else bear_score,
-                "detectTime": current_ist_time,
+                "detectTime": "09:15" if is_brahmastra else current_ist_time,
                 "price": close,
                 "pctChange": f"+{pct_change}%" if pct_change > 0 else f"{pct_change}%",
                 "volumeX": f"{vol_x}x",
@@ -278,16 +269,13 @@ for sym in SYMBOLS:
                 "lotSize": lot_qty,
                 "sectorStatus": sector_status,
                 "watchBadge": watch_badge,
-                "candleInfo": f"body {body_pct}% • {candle_quality} candle",
+                "candleInfo": f"gap {pct_change}% • body {body_pct}% • {candle_quality} candle",
                 "is52W": is_52w,
-                "isIdeal": is_ideal,
-                "openedAtLow": opened_at_day_low,
                 "sl": sl,
                 "t1": t1,
                 "rsi": rsi_val
             }
 
-            # Pin Brahmastra cards sticky all day
             if tier == "BRAHMASTRA":
                 sticky_brahmastra["cards"][clean_symbol] = card_data
 
@@ -296,7 +284,6 @@ for sym in SYMBOLS:
     except Exception:
         continue
 
-# Inject sticky Brahmastra cards so they never vanish
 for s_sym, s_card in sticky_brahmastra.get("cards", {}).items():
     if not any(c['symbol'] == s_sym for c in leaders):
         leaders.append(s_card)
@@ -309,13 +296,13 @@ leaders = sorted(leaders, key=lambda x: (x['tier'] == 'BRAHMASTRA', float(x['vol
 if leaders:
     top = leaders[0]
     if top['tier'] in ["BRAHMASTRA", "EXPLOSIVE"]:
-        badge = "⚡ BRAHMASTRA GOD-LEVEL STRIKE" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE BREAKOUT"
-        ideal_str = " (⭐ IDEAL SETUP)" if top.get("isIdeal") else ""
+        badge = "⚡ BRAHMASTRA" if top['tier'] == "BRAHMASTRA" else "💥 EXPLOSIVE"
         msg = (
-            f"<b>{badge}{ideal_str}</b>\n\n"
+            f"<b>{badge}</b>\n\n"
             f"🎯 <b>Stock:</b> #{top['symbol']} ({top['type']})\n"
             f"⚡ <b>Volume Surge:</b> {top['volumeX']}\n"
             f"💰 <b>LTP:</b> ₹{top['price']} ({top['pctChange']})\n"
+            f"🏆 <b>Score:</b> {top['score']}\n"
             f"🏢 <b>Sector:</b> {top['sectorStatus']}\n"
             f"🎯 <b>Strike:</b> {top['strike']} (Lot: {top['lotSize']})\n"
             f"🛑 <b>9:15 SL Law:</b> ₹{top['sl']} | <b>T1:</b> ₹{top['t1']}\n\n"
