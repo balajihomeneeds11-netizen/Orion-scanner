@@ -26,7 +26,38 @@ def send_telegram_alert(message):
     except Exception as err:
         print(f"Telegram dispatch error: {err}")
 
-# Complete Active NSE Stock Options Universe (~180+ Underlyings)
+# Sector Mapping for Orion Sector Confluence Engine
+SECTOR_MAP = {
+    "HDFCBANK": "Banking", "ICICIBANK": "Banking", "SBIN": "Banking", "AXISBANK": "Banking",
+    "KOTAKBANK": "Banking", "INDUSINDBK": "Banking", "FEDERALBNK": "Banking", "BANDHANBNK": "Banking",
+    "IDFCFIRSTB": "Banking", "RBLBANK": "Banking", "AUBANK": "Banking", "BANKBARODA": "Banking",
+    "CANBK": "Banking", "PNB": "Banking", "UNIONBANK": "Banking",
+    "TCS": "IT", "INFY": "IT", "HCLTECH": "IT", "WIPRO": "IT", "TECHM": "IT", "LTIM": "IT",
+    "COFORGE": "IT", "PERSISTENT": "IT", "MPHASIS": "IT", "BSOFT": "IT", "OFSS": "IT", "NAUKRI": "IT",
+    "TATAMOTORS": "Auto", "MARUTI": "Auto", "M&M": "Auto", "BAJAJ-AUTO": "Auto", "HEROMOTOCO": "Auto",
+    "EICHERMOT": "Auto", "TVSMOTOR": "Auto", "ASHOKLEY": "Auto", "BHARATFORG": "Auto", "BALKRISIND": "Auto",
+    "APOLLOTYRE": "Auto", "MRF": "Auto", "MOTHERSON": "Auto", "BOSCHLTD": "Auto", "EXIDEIND": "Auto",
+    "RELIANCE": "Energy", "ONGC": "Energy", "BPCL": "Energy", "IOC": "Energy", "HINDPETRO": "Energy",
+    "GAIL": "Energy", "IGL": "Energy", "MGL": "Energy", "NTPC": "Energy", "POWERGRID": "Energy", "TATAPOWER": "Energy",
+    "TATASTEEL": "Metals", "JSWSTEEL": "Metals", "JINDALSTEL": "Metals", "SAIL": "Metals", "HINDALCO": "Metals",
+    "VEDL": "Metals", "NATIONALUM": "Metals", "HINDCOPPER": "Metals", "NMDC": "Metals", "COALINDIA": "Metals",
+    "SUNPHARMA": "Pharma", "DRREDDY": "Pharma", "CIPLA": "Pharma", "DIVISLAB": "Pharma", "LUPIN": "Pharma",
+    "AUROPHARMA": "Pharma", "ALKEM": "Pharma", "TORNTPHARM": "Pharma", "GLENMARK": "Pharma", "ZYDUSLIFE": "Pharma", "BIOCON": "Pharma",
+    "HINDUNILVR": "FMCG", "ITC": "FMCG", "NESTLEIND": "FMCG", "BRITANNIA": "FMCG", "TATACONSUM": "FMCG", "DABUR": "FMCG", "MARICO": "FMCG", "GODREJCP": "FMCG", "COLPAL": "FMCG",
+    "BAJFINANCE": "Finance", "BAJAJFINSV": "Finance", "CHOLAFIN": "Finance", "SHRIRAMFIN": "Finance", "MUTHOOTFIN": "Finance",
+    "M&MFIN": "Finance", "LICHSGFIN": "Finance", "RECLTD": "Finance", "PFC": "Finance", "MANAPPURAM": "Finance", "PAYTM": "New Age",
+    "LT": "Infra", "BEL": "Defense", "HAL": "Defense", "COCHINSHIP": "Industrials", "DIXON": "Durables", "POLYCAB": "Durables", "ASTRAL": "Pipes"
+}
+
+# Standard Active Lot Sizes for Key NSE F&O Underlyings
+LOT_SIZES = {
+    "RELIANCE": 250, "HDFCBANK": 550, "ICICIBANK": 700, "SBIN": 750, "AXISBANK": 625, "KOTAKBANK": 400,
+    "TCS": 175, "INFY": 400, "HCLTECH": 350, "WIPRO": 1500, "TECHM": 600, "LTIM": 150, "COFORGE": 150,
+    "TATAMOTORS": 550, "MARUTI": 50, "M&M": 350, "TATASTEEL": 5500, "VEDL": 1150, "HINDALCO": 1400,
+    "MANAPPURAM": 3000, "DIXON": 50, "COCHINSHIP": 350, "PAYTM": 500, "ONGC": 3850, "ASTRAL": 275,
+    "INDUSTOWER": 1700, "MPHASIS": 275, "BHARTIARTL": 475, "BEL": 2850, "HAL": 150
+}
+
 SYMBOLS = [
     "AARTIIND.NS", "ABB.NS", "ABBOTINDIA.NS", "ABCAPITAL.NS", "ABFRL.NS", "ACC.NS",
     "ADANIENT.NS", "ADANIPORTS.NS", "ALKEM.NS", "AMBUJACEM.NS", "ANGELONE.NS", "APOLLOHOSP.NS",
@@ -64,6 +95,7 @@ SYMBOLS = [
 leaders = []
 advances = 0
 declines = 0
+sector_trends = {}
 
 ist_now = datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)
 current_ist_time = ist_now.strftime("%I:%M %p")
@@ -71,12 +103,30 @@ current_ist_time = ist_now.strftime("%I:%M %p")
 print(f"Batch scanning {len(SYMBOLS)} F&O tickers at {current_ist_time} IST...")
 
 try:
-    data_daily = yf.download(SYMBOLS, period="5d", interval="1d", group_by="ticker", threads=True, progress=False)
+    data_daily = yf.download(SYMBOLS, period="1y", interval="1d", group_by="ticker", threads=True, progress=False)
     data_intra = yf.download(SYMBOLS, period="1d", interval="5m", group_by="ticker", threads=True, progress=False)
 except Exception as e:
     print(f"Batch fetch error: {e}")
     data_daily = None
     data_intra = None
+
+# Pre-calculate Sector Breath
+if data_intra is not None:
+    for sym in SYMBOLS:
+        try:
+            df_i = data_intra[sym].dropna()
+            if len(df_i) < 2:
+                continue
+            clean = sym.replace(".NS", "")
+            sec = SECTOR_MAP.get(clean, "General")
+            c = float(df_i['Close'].iloc[-1])
+            o = float(df_i['Open'].iloc[0])
+            change = (c - o) / o
+            if sec not in sector_trends:
+                sector_trends[sec] = []
+            sector_trends[sec].append(change)
+        except Exception:
+            continue
 
 for sym in SYMBOLS:
     try:
@@ -93,6 +143,7 @@ for sym in SYMBOLS:
         prev_bar = df_i.iloc[-2]
         pdh = float(df_d['High'].iloc[-2])
         pdl = float(df_d['Low'].iloc[-2])
+        high_52w = float(df_d['High'].max())
 
         clean_symbol = sym.replace(".NS", "")
         close = round(float(last_bar['Close']), 2)
@@ -100,6 +151,7 @@ for sym in SYMBOLS:
         low_p = round(float(last_bar['Low']), 2)
         high_p = round(float(last_bar['High']), 2)
         open_day = round(float(df_i['Open'].iloc[0]), 2)
+        first_bar_close = round(float(df_i['Close'].iloc[0]), 2)
 
         pct_change = round(((close - open_day) / open_day) * 100, 2)
         if close >= open_day:
@@ -114,6 +166,7 @@ for sym in SYMBOLS:
         vwap = (df_i['Volume'] * df_i['Close']).cumsum() / cum_vol
         vwap_val = float(vwap.iloc[-1])
         orb_high = float(df_i['High'].iloc[0])
+        orb_low = float(df_i['Low'].iloc[0])
 
         delta = df_i['Close'].diff()
         gain = (delta.where(delta > 0, 0)).rolling(14).mean()
@@ -122,7 +175,24 @@ for sym in SYMBOLS:
         rsi_series = 100 - (100 / (1 + rs))
         rsi_val = round(float(rsi_series.iloc[-1]), 1) if not np.isnan(rsi_series.iloc[-1]) else 50.0
 
-        # Bullish 7-Pillar Checks
+        # Webinar Candle Anatomy: Body % calculation on 9:15 candle
+        body_pct = round(abs((first_bar_close - open_day) / open_day) * 100, 2)
+        candle_quality = "Strong" if body_pct >= 0.8 else "Moderate"
+
+        # Webinar 52-Week Zone Bonus check
+        is_52w = close >= (high_52w * 0.98)
+
+        # Webinar Sector Confluence check (STRONG vs WATCH)
+        sec_name = SECTOR_MAP.get(clean_symbol, "F&O")
+        sec_changes = sector_trends.get(sec_name, [])
+        sec_avg = (sum(sec_changes) / len(sec_changes)) if sec_changes else 0.0
+
+        if pct_change >= 0:
+            sector_status = f"{sec_name} 🔥 STRONG" if sec_avg > 0.003 else f"{sec_name} • WATCH"
+        else:
+            sector_status = f"{sec_name} 🔥 STRONG" if sec_avg < -0.003 else f"{sec_name} • WATCH"
+
+        # 7-Pillar Calculation
         p1 = close > 50 and float(last_bar['Volume']) > 2000
         p2 = vol_x >= 2.0
         p3 = close >= orb_high
@@ -132,10 +202,11 @@ for sym in SYMBOLS:
         p7 = rsi_val >= 58.0
         bull_score = sum([p1, p2, p3, p4, p5, p6, p7])
 
-        # Bearish Breakdown Checks
+        # Short Zone Checks
         bear_score = sum([
             close < pdl,
             close < vwap_val,
+            close < orb_low,
             vol_x >= 2.0,
             rsi_val <= 42.0,
             close < open_p
@@ -144,6 +215,7 @@ for sym in SYMBOLS:
         tier = None
         card_type = "CE"
 
+        # Orion Webinar Rule Hierarchy: BRAHMASTRA > EXPLOSIVE > STRONG > SPURT
         if vol_x >= 4.0 and bull_score >= 5:
             tier = "BRAHMASTRA"
         elif bull_score >= 6:
@@ -160,26 +232,34 @@ for sym in SYMBOLS:
             strike_step = 50 if close >= 500 else (20 if close >= 200 else 10)
             target_strike = int(round(close / strike_step) * strike_step)
             strike_label = f"{target_strike} {card_type}"
-            
+            lot_qty = LOT_SIZES.get(clean_symbol, 250)
+
             if card_type == "CE":
                 sl = low_p if low_p < close else round(close * 0.99, 2)
                 t1 = round(close + ((close - sl) * 1.5), 2)
+                watch_badge = "★★★ STRONG BUY WATCH"
             else:
                 sl = high_p if high_p > close else round(close * 1.01, 2)
                 t1 = round(close - ((sl - close) * 1.5), 2)
+                watch_badge = "★★★ STRONG SELL WATCH"
 
             leaders.append({
                 "symbol": clean_symbol,
                 "type": card_type,
-                "optionTag": "⚡ OPTION",
                 "tier": tier,
-                "score": f"{bull_score}/7" if card_type == "CE" else f"{bear_score}/5",
+                "optionTag": "⚡ OPTION",
+                "score": f"{bull_score}/7" if card_type == "CE" else f"{bear_score}/6",
+                "numScore": bull_score if card_type == "CE" else bear_score,
                 "detectTime": current_ist_time,
                 "price": close,
                 "pctChange": f"+{pct_change}%" if pct_change > 0 else f"{pct_change}%",
                 "volumeX": f"{vol_x}x",
                 "strike": strike_label,
-                "premium": "Check Broker",
+                "lotSize": lot_qty,
+                "sectorStatus": sector_status,
+                "watchBadge": watch_badge,
+                "candleInfo": f"body {body_pct}% • {candle_quality} candle",
+                "is52W": is_52w,
                 "sl": sl,
                 "t1": t1,
                 "rsi": rsi_val
@@ -199,8 +279,9 @@ if leaders:
             f"⚡ <b>Volume Surge:</b> {top['volumeX']}\n"
             f"💰 <b>LTP:</b> ₹{top['price']} ({top['pctChange']})\n"
             f"🏆 <b>Score:</b> {top['score']}\n"
+            f"🏢 <b>Sector:</b> {top['sectorStatus']}\n"
             f"📈 <b>RSI:</b> {top['rsi']}\n"
-            f"🎯 <b>Strike:</b> {top['strike']}\n"
+            f"🎯 <b>Strike:</b> {top['strike']} (Lot: {top['lotSize']})\n"
             f"🛑 <b>SL:</b> ₹{top['sl']} | <b>T1:</b> ₹{top['t1']}\n\n"
             f"🌐 <a href='https://balajihomeneeds11-netizen.github.io/Orion-scanner/'>Open Live Terminal</a>"
         )
