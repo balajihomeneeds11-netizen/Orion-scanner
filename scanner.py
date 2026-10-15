@@ -117,26 +117,31 @@ buckets = {
     "SHORT ZONE": []
 }
 
-print(f"Scanning {len(SYMBOLS)} F&O tickers individually at {current_ist_time} IST...")
+print(f"Batch downloading data for {len(SYMBOLS)} tickers at {current_ist_time} IST...")
 
 nifty_chg = 0.0
 try:
     nifty_d = yf.download("^NSEI", period="5d", interval="1d", progress=False)
-    if nifty_d is not None and len(nifty_d) >= 2:
+    if nifty_d is not None and not nifty_d.empty:
         nifty_chg = float((nifty_d['Close'].iloc[-1] - nifty_d['Close'].iloc[-2]) / nifty_d['Close'].iloc[-2]) * 100
 except Exception:
     pass
 
+data_daily = yf.download(SYMBOLS, period="1y", interval="1d", group_by="ticker", threads=True, progress=False)
+data_intra = yf.download(SYMBOLS, period="1d", interval="5m", group_by="ticker", threads=True, progress=False)
+
 for sym in SYMBOLS:
     try:
-        t = yf.Ticker(sym)
-        df_d = t.history(period="1y", interval="1d")
-        df_i = t.history(period="1d", interval="5m")
-
-        if df_d is None or df_i is None or len(df_i) < 2 or len(df_d) < 14:
+        clean = sym.replace(".NS", "")
+        if data_daily is not None and sym in data_daily.columns.levels[0] if isinstance(data_daily.columns, pd.MultiIndex) else sym in data_daily:
+            df_d = data_daily[sym].dropna() if isinstance(data_daily.columns, pd.MultiIndex) else data_daily.dropna()
+            df_i = data_intra[sym].dropna() if isinstance(data_intra.columns, pd.MultiIndex) else data_intra.dropna()
+        else:
             continue
 
-        clean = sym.replace(".NS", "")
+        if len(df_i) < 2 or len(df_d) < 14:
+            continue
+
         sec = SECTOR_MAP.get(clean, "General")
         c = float(df_i['Close'].iloc[-1])
         o = float(df_i['Open'].iloc[0])
@@ -174,7 +179,6 @@ for sym in SYMBOLS:
         if np.isnan(atr14) or atr14 <= 0:
             atr14 = 1.0
         
-        clean_symbol = clean
         close = round(float(last_bar['Close']), 2)
         open_day = round(float(df_i['Open'].iloc[0]), 2)
         low_day = round(float(df_i['Low'].min()), 2)
@@ -234,7 +238,7 @@ for sym in SYMBOLS:
 
         intraday_alpha = round(pct_change - nifty_chg, 2)
 
-        sec_name = SECTOR_MAP.get(clean_symbol, "F&O")
+        sec_name = SECTOR_MAP.get(clean, "F&O")
         sec_changes = sector_trends.get(sec_name, [])
         sec_avg = (sum(sec_changes) / len(sec_changes)) if sec_changes else 0.0
         sector_strong = (pct_change >= 0 and sec_avg > 0.0015) or (pct_change < 0 and sec_avg < -0.0015)
@@ -291,7 +295,7 @@ for sym in SYMBOLS:
             strike_step = 50 if close >= 500 else (20 if close >= 200 else 10)
             target_strike = int(round(close / strike_step) * strike_step)
             strike_label = f"{target_strike} {card_type}"
-            lot_qty = LOT_SIZES.get(clean_symbol, 250)
+            lot_qty = LOT_SIZES.get(clean, 250)
 
             sl = round(float(df_i['Low'].iloc[0]), 2) if card_type == "CE" else round(float(df_i['High'].iloc[0]), 2)
             risk = abs(close - sl) if abs(close - sl) > 0 else (close * 0.008)
@@ -345,7 +349,7 @@ for sym in SYMBOLS:
                 ]
 
             card_data = {
-                "symbol": clean_symbol,
+                "symbol": clean,
                 "type": card_type,
                 "tier": tier,
                 "optionTag": "⚡ OPTION",
