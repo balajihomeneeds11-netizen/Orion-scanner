@@ -23,7 +23,7 @@
                     PIPELINE ACTIVE
                 </span>
             </div>
-            <p class="text-xs text-gray-400 mt-1">Full NSE F&O Universe • Brahmastra & Rally/Drop Probability Engine</p>
+            <p class="text-xs text-gray-400 mt-1">Full NSE F&O Universe • Pre-Move Coil, Fuel & Probability Engine</p>
         </div>
         <div id="sync-time" class="text-xs text-gray-400 font-mono">Syncing...</div>
     </header>
@@ -136,6 +136,7 @@
 
                             ${c.isRally ? `<span class="text-[10px] px-2 py-0.5 rounded font-extrabold bg-yellow-400 text-black border border-yellow-200 shadow-xs">🏆 RALLY</span>` : ''}
                             ${c.isDrop ? `<span class="text-[10px] px-2 py-0.5 rounded font-extrabold bg-purple-600 text-white border border-purple-400 shadow-xs">📉 DROP</span>` : ''}
+                            ${(c.isNarrowCPR || c.isNR7) ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-indigo-950 text-indigo-300 border border-indigo-600">🌀 COIL</span>` : ''}
                             ${c.isIdeal ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-amber-500 text-black border border-amber-300">⭐ IDEAL</span>` : ''}
                             ${c.is52W ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-emerald-950 text-emerald-300 border border-emerald-600">🎯 52W HIGH</span>` : ''}
                             ${c.openedAtLow ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-sky-950 text-sky-300 border border-sky-600">⚓ OPEN=LOW</span>` : ''}
@@ -170,7 +171,7 @@
                     <div class="flex justify-between items-center text-xs mb-2">
                         <span class="font-semibold ${secColor}">${c.sectorStatus}</span>
                         <div class="flex items-center gap-1">
-                            <span class="text-[10px] text-gray-400">CONVICTION:</span>
+                            <span class="text-[10px] text-gray-400">CONV:</span>
                             <span>${renderConvictionBar(c.numScore, 7)}</span>
                             <span class="text-[11px] font-mono font-bold text-white">${c.score}</span>
                             ${c.prob ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-sky-300 font-mono ml-1">${c.prob}</span>` : ''}
@@ -180,16 +181,16 @@
                     <!-- Inline 7-Pillar Checklist Chips -->
                     ${renderPillarChips(c.pillars)}
 
-                    <!-- Candle Quality & Watch Badge -->
+                    <!-- Candle Quality & Fuel Meter -->
                     <div class="flex justify-between items-center text-[11px] px-2 py-1 bg-black/40 rounded mb-2 font-mono">
                         <span class="text-gray-400">${c.candleInfo}</span>
-                        <span class="${isPE ? 'text-rose-400' : 'text-emerald-400'} font-bold">${c.watchBadge}</span>
+                        <span class="text-emerald-300 font-bold">⛽ FUEL: ${c.fuelLeft}</span>
                     </div>
 
                     <!-- Stats Grid -->
                     <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-gray-400 bg-black/30 p-2 rounded mb-3 font-mono">
                         <div>Vol Surge: <b class="text-white">${c.volumeX}</b></div>
-                        <div>RSI (14): <b class="text-white">${c.rsi}</b></div>
+                        <div>Intraday Alpha: <b class="text-emerald-400">${c.alpha}</b></div>
                         <div>Target 1: <b class="text-emerald-400">₹${c.t1}</b></div>
                         <div>9:15 SL Law: <b class="text-rose-400">₹${c.sl}</b></div>
                     </div>
