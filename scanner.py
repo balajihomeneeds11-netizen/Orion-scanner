@@ -1083,6 +1083,245 @@ def legacy_signal_time(m: dict, final_tier: str, final_side: str, sector_strong:
     return stamp.tz_convert(IST).strftime("%H:%M") if stamp.tzinfo else stamp.strftime("%H:%M")
 
 
+
+def _breaker_wilder_rma(values: pd.Series, length: int) -> pd.Series:
+    """Wilder-style RMA used to approximate Pine Script ta.atr()."""
+    x = pd.to_numeric(values, errors="coerce").astype(float)
+    out = pd.Series(np.nan, index=x.index, dtype=float)
+    if len(x) < length:
+        return out
+    arr = x.to_numpy(dtype=float)
+    first = None
+    for i in range(length - 1, len(arr)):
+        window = arr[i - length + 1:i + 1]
+        if np.isfinite(window).all():
+            first = i
+            out.iloc[i] = float(window.mean())
+            break
+    if first is None:
+        return out
+    previous = float(out.iloc[first])
+    for i in range(first + 1, len(arr)):
+        value = arr[i]
+        if not np.isfinite(value):
+            continue
+        previous = ((previous * (length - 1)) + float(value)) / length
+        out.iloc[i] = previous
+    return out
+
+
+def _breaker_resistance_crosses(bars: pd.DataFrame, atr14: pd.Series,
+                                left_bars: int = 10, right_bars: int = 10,
+                                max_lines: int = 5) -> pd.Series:
+    """Approximate the provided Pine S/R engine: confirmed pivots, merged levels, single-fire breaks."""
+    result = pd.Series(False, index=bars.index, dtype=bool)
+    if len(bars) < left_bars + right_bars + 2:
+        return result
+    highs = pd.to_numeric(bars["High"], errors="coerce").to_numpy(dtype=float)
+    closes = pd.to_numeric(bars["Close"], errors="coerce").to_numpy(dtype=float)
+    active: list[dict[str, Any]] = []
+
+    for i in range(len(bars)):
+        pivot_idx = i - right_bars
+        if pivot_idx >= left_bars:
+            window = highs[pivot_idx - left_bars:pivot_idx + right_bars + 1]
+            pivot_high = highs[pivot_idx]
+            if len(window) and np.isfinite(pivot_high) and pivot_high >= np.nanmax(window):
+                current_atr = safe_float(atr14.iloc[i], 0.0)
+                tolerance = current_atr * 0.20
+                found = False
+                for item in active:
+                    if abs(item["level"] - pivot_high) <= tolerance:
+                        item["level"] = (item["level"] + pivot_high) / 2.0
+                        found = True
+                        break
+                if not found:
+                    active.append({"level": float(pivot_high), "broken": False})
+                    if len(active) > max_lines:
+                        active.pop(0)
+
+        if i == 0 or not np.isfinite(closes[i]) or not np.isfinite(closes[i - 1]):
+            continue
+        for item in active:
+            level = item["level"]
+            crossed = closes[i] > level and closes[i - 1] <= level
+            if crossed and not item["broken"]:
+                result.iloc[i] = True
+                item["broken"] = True
+    return result
+
+
+def calculate_breaker_setup(m: dict) -> Optional[dict]:
+    """Apply the user's Pine bullish 4-point matrix and both BUY-signal definitions.
+
+    BREAKER includes a stock when it scores 3/4 or 4/4 on the latest completed candle,
+    OR when either of the script's BUY signals occurred during the current session.
+    The score alone is a watch condition, not an entry signal.
+    """
+    try:
+        bars = to_ist_index(m.get("allIntraday", pd.DataFrame()))
+        today = to_ist_index(m.get("today", pd.DataFrame()))
+        if bars.empty or today.empty or len(bars) < 22:
+            return None
+
+        session_date = dt.date.fromisoformat(str(m.get("sessionDate")))
+        today = bars.loc[[stamp.date() == session_date for stamp in bars.index]].copy()
+        if today.empty:
+            return None
+
+        close = bars["Close"].astype(float)
+        high = bars["High"].astype(float)
+        low = bars["Low"].astype(float)
+        volume = bars["Volume"].astype(float)
+        previous_close = close.shift(1)
+        true_range = pd.concat([
+            high - low,
+            (high - previous_close).abs(),
+            (low - previous_close).abs(),
+        ], axis=1).max(axis=1, skipna=True)
+        atr10 = _breaker_wilder_rma(true_range, 10)
+        atr14 = _breaker_wilder_rma(true_range, 14)
+        vol_ma = volume.rolling(20, min_periods=20).mean()
+        ema21 = close.ewm(span=21, adjust=False).mean()
+        vwma20 = (close.mul(volume).rolling(20, min_periods=20).sum() /
+                  volume.rolling(20, min_periods=20).sum().replace(0, np.nan))
+
+        # Pine ta.vwap(close) for the R-Factor setup, reset every trading session.
+        session_keys = pd.Series(bars.index.date, index=bars.index)
+        cum_vol = volume.groupby(session_keys).cumsum().replace(0, np.nan)
+        rf_vwap = close.mul(volume).groupby(session_keys).cumsum() / cum_vol
+
+        mid_hl = (high + low) / 2.0
+        upper = mid_hl + (3.0 * atr10)
+        lower = mid_hl - (3.0 * atr10)
+        st_values = np.full(len(bars), np.nan, dtype=float)
+        dir_up_values = np.full(len(bars), True, dtype=bool)
+        c_arr = close.to_numpy(dtype=float)
+        u_arr = upper.to_numpy(dtype=float)
+        l_arr = lower.to_numpy(dtype=float)
+        for i in range(len(bars)):
+            if not np.isfinite(u_arr[i]) or not np.isfinite(l_arr[i]):
+                continue
+            if i == 0 or not np.isfinite(st_values[i - 1]):
+                st_values[i] = l_arr[i] if c_arr[i] > u_arr[i] else u_arr[i]
+                dir_up_values[i] = c_arr[i] > u_arr[i]
+            elif c_arr[i] > st_values[i - 1]:
+                st_values[i] = max(l_arr[i], st_values[i - 1])
+                dir_up_values[i] = True
+            else:
+                st_values[i] = min(u_arr[i], st_values[i - 1])
+                dir_up_values[i] = False
+        supertrend = pd.Series(st_values, index=bars.index)
+
+        highest_previous_15 = high.shift(1).rolling(15, min_periods=15).max()
+        res_cross = _breaker_resistance_crosses(bars, atr14)
+        breakout_condition = res_cross | (close > highest_previous_15)
+        high_volume = volume >= (vol_ma * 1.5)
+        above_pdh = close > safe_float(m.get("context", {}).get("pdh"), 0.0)
+        range_gt_atr = (high - low) > atr14
+        bull_score_series = (
+            breakout_condition.astype(int) + high_volume.astype(int) +
+            above_pdh.astype(int) + range_gt_atr.astype(int)
+        )
+
+        # Exact volume-decomposition idea in the Pine script, evaluated per bar.
+        candle_range = (high - low).replace(0, np.nan)
+        buy_ratio = ((close - low) / candle_range).fillna(0.5)
+        bought_vol = np.floor(volume * buy_ratio + 0.5)
+        sold_vol = np.floor(volume * (1.0 - buy_ratio) + 0.5)
+        buyer_dominant = bought_vol > (sold_vol * 1.3)
+        volume_breakout_buy = res_cross & high_volume & buyer_dominant
+
+        # R-Factor strong BUY logic: above EMA21, close-based VWAP, VWMA20 and custom ST;
+        # volume over its 20-bar average; 9:30–14:45 time gate; 0.80x relative-volume gate;
+        # only the first qualifying BUY per day is considered a fresh R-Factor signal.
+        r_factor_buy_time = None
+        signal_taken_today = False
+        today_positions = bars.index.get_indexer(today.index)
+        for i in today_positions:
+            stamp = bars.index[i]
+            cur_minutes = stamp.hour * 60 + stamp.minute
+            time_ok = (9 * 60 + 30) <= cur_minutes <= (14 * 60 + 45)
+            volume_average = safe_float(vol_ma.iloc[i], 0.0)
+            rv_ok = volume_average > 0 and safe_float(volume.iloc[i]) / volume_average >= 0.80
+            st_value = safe_float(supertrend.iloc[i], float("nan"))
+            # Requiring finite indicators avoids treating warm-up bars as confirmed buys.
+            indicators_ready = (pd.notna(ema21.iloc[i]) and pd.notna(rf_vwap.iloc[i]) and
+                                pd.notna(vwma20.iloc[i]) and math.isfinite(st_value) and
+                                pd.notna(vol_ma.iloc[i]))
+            raw_buy = bool(
+                indicators_ready and safe_float(close.iloc[i]) > safe_float(ema21.iloc[i]) and
+                safe_float(close.iloc[i]) > safe_float(rf_vwap.iloc[i]) and
+                safe_float(close.iloc[i]) > safe_float(vwma20.iloc[i]) and
+                safe_float(close.iloc[i]) > st_value and
+                safe_float(volume.iloc[i]) > volume_average
+            )
+            if (not signal_taken_today and time_ok and rv_ok and raw_buy):
+                r_factor_buy_time = (stamp + pd.Timedelta(minutes=INTRADAY_INTERVAL_MINUTES)).strftime("%H:%M")
+                signal_taken_today = True
+
+        volume_breakout_buy_times = []
+        for i in today_positions:
+            if bool(volume_breakout_buy.iloc[i]):
+                stamp = bars.index[i]
+                volume_breakout_buy_times.append(
+                    (stamp + pd.Timedelta(minutes=INTRADAY_INTERVAL_MINUTES)).strftime("%H:%M")
+                )
+        volume_buy_time = volume_breakout_buy_times[-1] if volume_breakout_buy_times else None
+
+        last_idx = len(bars) - 1
+        score = int(safe_float(bull_score_series.iloc[last_idx], 0))
+        latest_close = safe_float(close.iloc[last_idx])
+        latest_vol_ma = safe_float(vol_ma.iloc[last_idx], 0.0)
+        recent_vol_x = safe_float(volume.iloc[last_idx]) / latest_vol_ma if latest_vol_ma > 0 else 0.0
+        conds = [
+            {"name": "Breakout", "ok": bool(breakout_condition.iloc[last_idx]),
+             "detail": "Swing resistance cross or close above previous 15-bar high"},
+            {"name": "High volume", "ok": bool(high_volume.iloc[last_idx]),
+             "detail": "Current volume ≥ 1.5 × 20-bar average"},
+            {"name": "Above PDH", "ok": bool(above_pdh.iloc[last_idx]),
+             "detail": "Close above previous-day high"},
+            {"name": "Range > ATR14", "ok": bool(range_gt_atr.iloc[last_idx]),
+             "detail": "Current candle high-low range exceeds ATR(14)"},
+        ]
+        has_rfactor_buy = r_factor_buy_time is not None
+        has_volume_buy = volume_buy_time is not None
+        has_buy_signal = has_rfactor_buy or has_volume_buy
+        if score < 3 and not has_buy_signal:
+            return None
+
+        pct_change = safe_float(m.get("pctChangeNum"), 0.0)
+        latest_stamp = bars.index[last_idx]
+        return {
+            "symbol": str(m.get("symbol", "")),
+            "tier": "BREAKER",
+            "type": "BUY",
+            "price": round(latest_close, 2),
+            "pctChange": f"{pct_change:+.2f}%",
+            "score": score,
+            "scoreLabel": f"{score}/4",
+            "conditions": conds,
+            "hasBuySignal": bool(has_buy_signal),
+            "rFactorBuySignal": bool(has_rfactor_buy),
+            "rFactorBuyTime": r_factor_buy_time,
+            "volumeBreakoutBuySignal": bool(has_volume_buy),
+            "volumeBreakoutBuyTime": volume_buy_time,
+            "volumeMultiple": round(recent_vol_x, 2),
+            "pdh": round(safe_float(m.get("context", {}).get("pdh")), 2),
+            "candleRange": round(safe_float((high - low).iloc[last_idx]), 2),
+            "atr14": round(safe_float(atr14.iloc[last_idx]), 2),
+            "sourceBarFresh": bool(m.get("sourceBarFresh", False)),
+            "sourceBarCloseAt": m.get("lastSourceBarCloseAt"),
+            "sourceBarAgeMinutes": m.get("sourceBarAgeMinutes"),
+            "sessionDate": m.get("sessionDate"),
+            "lastPriceTimestamp": latest_stamp.isoformat(),
+            "dataWarning": ("SOURCE CANDLE STALE — verify price before acting" if not m.get("sourceBarFresh", False)
+                            else "Yahoo Finance source; not guaranteed real-time"),
+        }
+    except Exception as exc:
+        print(f"BREAKER calculation skipped for {m.get('symbol', 'UNKNOWN')}: {type(exc).__name__}: {exc}")
+        return None
+
 def to_json_safe(value: Any) -> Any:
     if isinstance(value, dict):
         return {str(k): to_json_safe(v) for k, v in value.items()}
@@ -1358,6 +1597,19 @@ def main() -> None:
     gpt_power_stocks.sort(key=lambda x: (x["powerScore"], x["rvol"], abs(float(x["pctChange"].replace("%", "")))), reverse=True)
     gpt_power_stocks = gpt_power_stocks[:POWER_MAX_CARDS]
 
+    # BREAKER uses the user's Pine Script bullish four-condition matrix plus its BUY markers.
+    # Keep 3/4 and 4/4 scores, and also include stocks with either BUY signal from today.
+    breaker_stocks = []
+    for m in snapshots:
+        breaker = calculate_breaker_setup(m)
+        if breaker:
+            breaker["fnoEligible"] = m["symbol"] in FNO_SYMBOL_SET
+            breaker_stocks.append(breaker)
+    breaker_stocks.sort(
+        key=lambda x: (x["score"] >= 3, x["score"], x["hasBuySignal"], x["volumeMultiple"]),
+        reverse=True,
+    )
+
     scan_session = max(session_dates) if session_dates else None
     status = "SESSION DATA AVAILABLE" if scan_session == now.date().isoformat() else "LAST AVAILABLE SESSION DATA"
     source_bar_times = [m["lastSourceBarCloseAt"] for m in snapshots if m.get("lastSourceBarCloseAt")]
@@ -1411,6 +1663,7 @@ def main() -> None:
         "breadth": {"advances": int(advances), "declines": int(declines), "sentiment": sentiment},
         "leaders": leaders,
         "gptPowerStocks": gpt_power_stocks,
+        "breakerStocks": breaker_stocks,
         "paperTradeCandidates": paper_candidates,
         "priceSnapshots": price_snapshots,
         "paperTradeTracker": paper_tracker,
@@ -1423,6 +1676,7 @@ def main() -> None:
             "fnoEligibleScanned": sum(1 for m in snapshots if m["symbol"] in FNO_SYMBOL_SET),
             "gptPowerFnoOnly": True,
             "legacySignals": len(leaders), "gptPowerCandidates": len(gpt_power_stocks),
+            "breakerCandidates": len(breaker_stocks),
             "powerScoreMeaning": "Relative ranking score out of 100; not a probability or guaranteed prediction."
         }
     }
