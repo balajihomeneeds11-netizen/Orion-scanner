@@ -1362,8 +1362,15 @@ def calculate_breaker_setup(m: dict) -> Optional[dict]:
         high_volume = volume >= (vol_ma * 1.5)
         pdh = safe_float(m.get("context", {}).get("pdh"), 0.0)
         pdl = safe_float(m.get("context", {}).get("pdl"), 0.0)
-        above_pdh = close > pdh
-        below_pdl = close < pdl
+        above_pdh = (close > pdh) if pdh > 0 else pd.Series(False, index=bars.index)
+        below_pdl = (close < pdl) if pdl > 0 else pd.Series(False, index=bars.index)
+        # A confirmed intraday level break requires a completed candle to cross the prior-day
+        # level, volume at/above 1.5x MA20 on that breakout candle, and price to remain beyond
+        # the level on the latest completed candle. This is stricter than merely trading above/below it.
+        pdh_cross_up = ((close > pdh) & (close.shift(1) <= pdh)) if pdh > 0 else pd.Series(False, index=bars.index)
+        pdl_cross_down = ((close < pdl) & (close.shift(1) >= pdl)) if pdl > 0 else pd.Series(False, index=bars.index)
+        pdh_breakout_volume_event = bool((pdh_cross_up & high_volume).loc[today.index].any())
+        pdl_breakdown_volume_event = bool((pdl_cross_down & high_volume).loc[today.index].any())
         range_gt_atr = (high - low) > atr14
         day_low_series = low.groupby(session_keys).cummin()
         at_day_low = close <= day_low_series
@@ -1443,6 +1450,8 @@ def calculate_breaker_setup(m: dict) -> Optional[dict]:
         ]
         bull_score = sum(1 for x in bull_conditions if x["ok"])
         bear_score = sum(1 for x in bear_conditions if x["ok"])
+        pdh_breakout_confirmed = bool(pdh > 0 and latest_close > pdh and pdh_breakout_volume_event)
+        pdl_breakdown_confirmed = bool(pdl > 0 and latest_close < pdl and pdl_breakdown_volume_event)
         r_factor_buy = r_factor_buy_time is not None
         r_factor_sell = r_factor_sell_time is not None
         volume_buy = volume_buy_time is not None
@@ -1475,6 +1484,10 @@ def calculate_breaker_setup(m: dict) -> Optional[dict]:
                 "bearScore": bear_score, "bearScoreLabel": f"{bear_score}/6",
                 "conditions": bull_conditions, "bullConditions": bull_conditions, "bearConditions": bear_conditions,
                 "hasBuySignal": bool(buy_signal), "hasSellSignal": bool(sell_signal),
+                "pdhBreakoutConfirmed": pdh_breakout_confirmed,
+                "pdhBreakoutVolumeConfirmed": pdh_breakout_volume_event,
+                "pdlBreakdownConfirmed": pdl_breakdown_confirmed,
+                "pdlBreakdownVolumeConfirmed": pdl_breakdown_volume_event,
                 "buySetupSignal": bull_setup_signal, "sellSetupSignal": bear_setup_signal,
                 "rFactorBuySignal": r_factor_buy, "rFactorBuyTime": r_factor_buy_time,
                 "rFactorSellSignal": r_factor_sell, "rFactorSellTime": r_factor_sell_time,
@@ -1796,20 +1809,41 @@ def main() -> None:
     gpt_power_stocks.sort(key=lambda x: (x["powerScore"], x["rvol"], abs(float(x["pctChange"].replace("%", "")))), reverse=True)
     gpt_power_stocks = gpt_power_stocks[:POWER_MAX_CARDS]
 
-    # BREAKER is an additive 6-condition bullish/bearish matrix, with Pine BUY/SELL events.
-    # Keep 4/6, 5/6 and 6/6 setups plus actual R-Factor / volume-breakout signals.
-    breaker_stocks = []
+    # BREAKER high-potential shortlist (maximum 10): exclude stale data and low-confluence rows.
+    # Primary focus is confirmed PDH breakouts with 1.5x volume on the breakout candle and at
+    # least 4/6 bullish rules. Include at most two bearish candidates, and only for confirmed
+    # PDL breakdown + breakout-candle volume + at least 4/6 bearish rules. GPT/BRAHMASTRA logic
+    # is not modified; BREAKER is a filtered, additive view over its own calculation.
+    breaker_bull_candidates = []
+    breaker_bear_candidates = []
     for m in snapshots:
         breaker = calculate_breaker_setup(m)
-        if breaker:
-            breaker["fnoEligible"] = m["symbol"] in FNO_SYMBOL_SET
-            breaker_stocks.append(breaker)
-    breaker_stocks.sort(
-        key=lambda x: (max(x.get("bullScore", 0), x.get("bearScore", 0)) >= 4,
-                       x.get("hasBuySignal", False) or x.get("hasSellSignal", False),
-                       max(x.get("bullScore", 0), x.get("bearScore", 0)), x.get("volumeMultiple", 0)),
-        reverse=True,
-    )
+        if not breaker or not breaker.get("sourceBarFresh", False):
+            continue
+        breaker["fnoEligible"] = m["symbol"] in FNO_SYMBOL_SET
+        if (breaker.get("pdhBreakoutConfirmed") and breaker.get("pdhBreakoutVolumeConfirmed")
+                and int(breaker.get("bullScore", 0)) >= 4):
+            breaker_bull_candidates.append(breaker)
+        elif (breaker.get("pdlBreakdownConfirmed") and breaker.get("pdlBreakdownVolumeConfirmed")
+              and int(breaker.get("bearScore", 0)) >= 4):
+            breaker_bear_candidates.append(breaker)
+
+    breaker_bull_candidates.sort(
+        key=lambda x: (int(x.get("bullScore", 0)), bool(x.get("hasBuySignal", False)),
+                       bool(x.get("rf15mBullAligned", False)), float(x.get("volumeMultiple", 0)),
+                       abs(safe_float(x.get("pctChange", "0").replace("%", "")))), reverse=True)
+    breaker_bear_candidates.sort(
+        key=lambda x: (int(x.get("bearScore", 0)), bool(x.get("hasSellSignal", False)),
+                       bool(x.get("rf15mBearAligned", False)), float(x.get("volumeMultiple", 0)),
+                       abs(safe_float(x.get("pctChange", "0").replace("%", "")))), reverse=True)
+
+    # Strong bullish setups dominate; bearish setups are capped at two of the ten slots.
+    breaker_stocks = breaker_bull_candidates[:8] + breaker_bear_candidates[:2]
+    if len(breaker_stocks) < 10:
+        chosen = {str(x.get("symbol", "")).upper() for x in breaker_stocks}
+        remaining_bulls = [x for x in breaker_bull_candidates[8:] if str(x.get("symbol", "")).upper() not in chosen]
+        breaker_stocks.extend(remaining_bulls[:10 - len(breaker_stocks)])
+    breaker_stocks = breaker_stocks[:10]
 
     scan_session = max(session_dates) if session_dates else None
     status = "SESSION DATA AVAILABLE" if scan_session == now.date().isoformat() else "LAST AVAILABLE SESSION DATA"
