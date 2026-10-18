@@ -142,7 +142,7 @@
       return;
     }
     if (activeTab === 'BREAKER') {
-      desc.innerText = 'Bidirectional 6-condition matrix: 4/6 = WATCH, 5/6 = qualified setup, 6/6 = full confluence. BUY/SELL labels require a ≥5/6 directional score plus a current breakout/breakdown or a Pine-style signal. Order blocks are a documented heuristic.';
+      desc.innerText = 'High-potential BREAKER shortlist (max 10): fresh source candles only; bullish stocks require a confirmed PDH breakout, at least 1.5× volume on the breakout candle, and BULL 4/6 or higher. At most two bearish stocks qualify, requiring a confirmed PDL breakdown, volume confirmation, and BEAR 4/6 or higher. Stale data and weak setups are filtered out.';
       renderBreakerCards(allBreakerStocks);
       return;
     }
@@ -223,7 +223,7 @@
   function renderBreakerCards(cards) {
     const container = document.getElementById('cards-container');
     if (!cards.length) {
-      container.innerHTML = `<div class="col-span-full py-12 text-center text-gray-500 text-sm border border-gray-800 rounded-lg">No BREAKER candidate met 4/6 on either side and no Pine-style BUY/SELL event was detected.</div>`;
+      container.innerHTML = `<div class="col-span-full py-12 text-center text-gray-500 text-sm border border-gray-800 rounded-lg">No fresh high-potential BREAKER setup currently meets the confirmed PDH/PDL breakout + volume rules and 4/6 minimum score. Stale and weak candidates are intentionally hidden.</div>`;
       return;
     }
     const renderConditions = items => (Array.isArray(items) ? items : []).map(condition => {
@@ -237,7 +237,7 @@
       const bullTone = bull >= 5 ? 'border-emerald-600 bg-emerald-950/50 text-emerald-200' : bull === 4 ? 'border-cyan-700 bg-cyan-950/40 text-cyan-200' : 'border-gray-700 bg-gray-900 text-gray-400';
       const bearTone = bear >= 5 ? 'border-rose-600 bg-rose-950/50 text-rose-200' : bear === 4 ? 'border-orange-700 bg-orange-950/40 text-orange-200' : 'border-gray-700 bg-gray-900 text-gray-400';
       const sigClass = c.hasBuySignal ? 'bg-emerald-950 text-emerald-200 border-emerald-700' : c.hasSellSignal ? 'bg-rose-950 text-rose-200 border-rose-700' : 'bg-gray-900 text-gray-300 border-gray-700';
-      const sourcePill = c.sourceBarFresh ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">SOURCE BAR FRESH</span>' : '<span class="text-[10px] px-1.5 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">STALE DATA</span>';
+      const sourcePill = '<span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">FRESH DATA</span>' + (c.pdhBreakoutConfirmed ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-200 border border-emerald-800">PDH + VOLUME CONFIRMED</span>' : c.pdlBreakdownConfirmed ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-950 text-rose-200 border border-rose-800">PDL + VOLUME CONFIRMED</span>' : '');
       const tvUrl = `https://in.tradingview.com/chart/?symbol=${encodeURIComponent('NSE:' + c.symbol)}`;
       const signalText = c.hasBuySignal ? 'BUY SIGNAL' : c.hasSellSignal ? 'SELL SIGNAL' : maxScore >= 4 ? 'WATCH SETUP' : 'NO SIGNAL';
       const sourceSignals = [];
