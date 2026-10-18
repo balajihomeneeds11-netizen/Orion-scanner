@@ -45,6 +45,7 @@
   <nav class="flex gap-1.5 my-3 overflow-x-auto pb-2 text-xs" aria-label="Stock filters">
     <button data-tab="ALL" onclick="filterCards('ALL')" class="tab-btn active px-3 py-2 rounded bg-gray-800 font-semibold hover:bg-gray-700 whitespace-nowrap">ALL (<span id="cnt-ALL">0</span>)</button>
     <button data-tab="PAPER TRACKER" onclick="filterCards('PAPER TRACKER')" class="tab-btn px-3 py-2 rounded bg-emerald-950 text-emerald-200 border border-emerald-700 font-bold whitespace-nowrap">🧪 PAPER TRACKER (<span id="cnt-PAPER">0</span>)</button>
+    <button data-tab="SPECIAL 10" onclick="filterCards('SPECIAL 10')" class="tab-btn px-3 py-2 rounded bg-amber-950 text-amber-200 border border-amber-600 font-extrabold whitespace-nowrap">🏆 SPECIAL 10 (<span id="cnt-SPECIAL">0</span>)</button>
     <button data-tab="GPT POWER STOCKS" onclick="filterCards('GPT POWER STOCKS')" class="tab-btn px-3 py-2 rounded bg-fuchsia-950 text-fuchsia-200 border border-fuchsia-700 font-bold whitespace-nowrap">🧠 GPT POWER STOCKS (<span id="cnt-GPT">0</span>)</button>
     <button data-tab="BRAHMASTRA" onclick="filterCards('BRAHMASTRA')" class="tab-btn px-3 py-2 rounded bg-sky-950 text-sky-300 border border-sky-700 font-semibold whitespace-nowrap">⚡ BRAHMASTRA (<span id="cnt-BRAHMASTRA">0</span>)</button>
     <button data-tab="BREAKER" onclick="filterCards('BREAKER')" class="tab-btn px-3 py-2 rounded bg-cyan-950 text-cyan-200 border border-cyan-600 font-bold whitespace-nowrap">🧨 BREAKER (<span id="cnt-BREAKER">0</span>)</button>
@@ -66,6 +67,7 @@
   let allSetups = [];
   let allPowerStocks = [];
   let allBreakerStocks = [];
+  let allSpecial10 = [];
   let paperTradeTracker = null;
   let paperTradeCandidates = [];
   let activeTab = 'ALL';
@@ -92,6 +94,7 @@
   function updateTabCounts(cards) {
     document.getElementById('cnt-ALL').innerText = cards.length;
     document.getElementById('cnt-GPT').innerText = allPowerStocks.length;
+    document.getElementById('cnt-SPECIAL').innerText = allSpecial10.length;
     document.getElementById('cnt-BRAHMASTRA').innerText = cards.filter(c => c.tier === 'BRAHMASTRA').length;
     document.getElementById('cnt-BREAKER').innerText = allBreakerStocks.length;
     document.getElementById('cnt-EXPLOSIVE').innerText = cards.filter(c => c.tier === 'EXPLOSIVE').length;
@@ -129,12 +132,17 @@
   function renderActiveView() {
     const desc = document.getElementById('filter-description');
     if (activeTab === 'PAPER TRACKER') {
-      desc.innerText = 'Paper-only test of the top 3 CE and top 2 PE F&O-eligible signals per scan. Tracks underlying stock movement, not option premium P&L.';
+      desc.innerText = 'Paper trading runs from 09:15 to 11:00 IST. No new paper entries at/after 11:00; any still-open trade is closed on the latest completed candle at or before 11:00.';
       renderPaperTracker();
       return;
     }
+    if (activeTab === 'SPECIAL 10') {
+      desc.innerText = 'Top 10 unique stocks consolidated from GPT POWER, BRAHMASTRA and BREAKER. Stocks appearing across more sections are ranked first; GPT POWER and BRAHMASTRA results are included whenever available.';
+      renderSpecial10(allSpecial10);
+      return;
+    }
     if (activeTab === 'BREAKER') {
-      desc.innerText = 'Stocks with 3/4 or 4/4 bullish matrix conditions, plus stocks where the Pine R-Factor Strong BUY or Volume Breakout BUY occurred today. A score alone is a watchlist condition, not an entry signal.';
+      desc.innerText = 'Bidirectional 6-condition matrix: 4/6 = WATCH, 5/6 = qualified setup, 6/6 = full confluence. BUY/SELL labels require a ≥5/6 directional score plus a current breakout/breakdown or a Pine-style signal. Order blocks are a documented heuristic.';
       renderBreakerCards(allBreakerStocks);
       return;
     }
@@ -215,49 +223,93 @@
   function renderBreakerCards(cards) {
     const container = document.getElementById('cards-container');
     if (!cards.length) {
-      container.innerHTML = `<div class="col-span-full py-12 text-center text-gray-500 text-sm border border-gray-800 rounded-lg">No BREAKER candidates in the latest completed-candle scan. This is valid; the scanner will not force a signal.</div>`;
+      container.innerHTML = `<div class="col-span-full py-12 text-center text-gray-500 text-sm border border-gray-800 rounded-lg">No BREAKER candidate met 4/6 on either side and no Pine-style BUY/SELL event was detected.</div>`;
       return;
     }
+    const renderConditions = items => (Array.isArray(items) ? items : []).map(condition => {
+      const ok = Boolean(condition.ok);
+      return `<div class="flex items-center justify-between gap-2 rounded bg-black/25 px-2 py-1.5"><span class="text-gray-300">${escapeHTML(condition.name)}</span><span class="font-bold ${ok ? 'text-emerald-300' : 'text-rose-300'}">${ok ? 'YES ✓' : 'NO ✗'}</span></div>`;
+    }).join('');
     container.innerHTML = cards.map(c => {
-      const scoreColor = Number(c.score) === 4 ? 'bg-emerald-950 text-emerald-300 border-emerald-700' : Number(c.score) === 3 ? 'bg-cyan-950 text-cyan-200 border-cyan-700' : 'bg-gray-800 text-gray-300 border-gray-600';
-      const buyPill = c.hasBuySignal
-        ? '<span class="text-[10px] px-2 py-1 rounded font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-700">BUY SIGNAL SEEN TODAY</span>'
-        : '<span class="text-[10px] px-2 py-1 rounded font-bold bg-amber-950 text-amber-200 border border-amber-700">SCORE WATCH · NO BUY SIGNAL</span>';
-      const sourcePill = c.sourceBarFresh
-        ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">SOURCE BAR FRESH</span>'
-        : '<span class="text-[10px] px-1.5 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">STALE DATA</span>';
+      const bull = Number(c.bullScore || 0);
+      const bear = Number(c.bearScore || 0);
+      const maxScore = Math.max(bull, bear);
+      const bullTone = bull >= 5 ? 'border-emerald-600 bg-emerald-950/50 text-emerald-200' : bull === 4 ? 'border-cyan-700 bg-cyan-950/40 text-cyan-200' : 'border-gray-700 bg-gray-900 text-gray-400';
+      const bearTone = bear >= 5 ? 'border-rose-600 bg-rose-950/50 text-rose-200' : bear === 4 ? 'border-orange-700 bg-orange-950/40 text-orange-200' : 'border-gray-700 bg-gray-900 text-gray-400';
+      const sigClass = c.hasBuySignal ? 'bg-emerald-950 text-emerald-200 border-emerald-700' : c.hasSellSignal ? 'bg-rose-950 text-rose-200 border-rose-700' : 'bg-gray-900 text-gray-300 border-gray-700';
+      const sourcePill = c.sourceBarFresh ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">SOURCE BAR FRESH</span>' : '<span class="text-[10px] px-1.5 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">STALE DATA</span>';
       const tvUrl = `https://in.tradingview.com/chart/?symbol=${encodeURIComponent('NSE:' + c.symbol)}`;
-      const conditions = (Array.isArray(c.conditions) ? c.conditions : []).map(condition => {
-        const okay = Boolean(condition.ok);
-        return `<div class="flex items-center justify-between gap-2 rounded bg-black/25 px-2 py-1.5"><span class="text-gray-300">${escapeHTML(condition.name)}</span><span class="font-bold ${okay ? 'text-emerald-300' : 'text-gray-500'}">${okay ? 'YES ✓' : 'NO ✗'}</span></div>`;
-      }).join('');
-      const signalParts = [];
-      if (c.rFactorBuySignal) signalParts.push(`R-FACTOR STRONG BUY · ${escapeHTML(c.rFactorBuyTime || 'today')}`);
-      if (c.volumeBreakoutBuySignal) signalParts.push(`VOLUME BREAKOUT BUY · ${escapeHTML(c.volumeBreakoutBuyTime || 'today')}`);
-      return `<article class="border ${c.hasBuySignal ? 'border-emerald-700/80 bg-[#0b1917]' : Number(c.score) === 4 ? 'border-cyan-600/80 bg-[#0b1920]' : 'border-gray-800 bg-[#111622]'} rounded-xl p-3.5 shadow-sm flex flex-col gap-3">
+      const signalText = c.hasBuySignal ? 'BUY SIGNAL' : c.hasSellSignal ? 'SELL SIGNAL' : maxScore >= 4 ? 'WATCH SETUP' : 'NO SIGNAL';
+      const sourceSignals = [];
+      if (c.rFactorBuySignal) sourceSignals.push(`R-FACTOR STRONG BUY · ${escapeHTML(c.rFactorBuyTime || 'today')}`);
+      if (c.rFactorSellSignal) sourceSignals.push(`R-FACTOR STRONG SELL · ${escapeHTML(c.rFactorSellTime || 'today')}`);
+      if (c.volumeBreakoutBuySignal) sourceSignals.push(`VOLUME BREAKOUT BUY · ${escapeHTML(c.volumeBreakoutBuyTime || 'today')}`);
+      if (c.volumeBreakoutSellSignal) sourceSignals.push(`VOLUME BREAKDOWN SELL · ${escapeHTML(c.volumeBreakoutSellTime || 'today')}`);
+      const bullConditions = renderConditions(c.bullConditions || c.conditions);
+      const bearConditions = renderConditions(c.bearConditions);
+      return `<article class="border ${c.hasBuySignal ? 'border-emerald-700/80 bg-[#0b1917]' : c.hasSellSignal ? 'border-rose-700/80 bg-[#1a0d12]' : 'border-gray-800 bg-[#111622]'} rounded-xl p-3.5 shadow-sm flex flex-col gap-3">
         <div class="flex items-start justify-between gap-2 flex-wrap">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-[10px] px-2 py-1 rounded font-extrabold ${scoreColor}">${escapeHTML(c.scoreLabel || (c.score + '/4'))}</span>
-            ${buyPill}
-            ${sourcePill}
-            ${c.fnoEligible ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">F&O</span>' : ''}
-          </div>
-          <span class="text-[10px] text-gray-500 font-mono">${escapeHTML(c.sourceBarCloseAt ? new Date(c.sourceBarCloseAt).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'}) + ' IST' : 'time unavailable')}</span>
+          <div class="flex items-center gap-2 flex-wrap"><span class="text-[10px] px-2 py-1 rounded border font-extrabold ${bullTone}">BULL ${bull}/6</span><span class="text-[10px] px-2 py-1 rounded border font-extrabold ${bearTone}">BEAR ${bear}/6</span><span class="text-[10px] px-2 py-1 rounded border font-bold ${sigClass}">${signalText}</span>${c.fnoEligible ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">F&O</span>' : ''}${sourcePill}</div>
+          <span class="text-[10px] text-gray-500">${escapeHTML(c.sourceBarCloseAt || '—')}</span>
         </div>
-        <div class="flex items-end justify-between gap-2">
-          <div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="text-lg font-extrabold text-white hover:text-cyan-300">${escapeHTML(c.symbol)} ↗</a><div class="text-[11px] text-gray-500">BREAKER · Pine conditions mapped to completed 5-minute data</div></div>
-          <div class="text-right"><div class="text-lg font-bold text-white">${price(c.price)}</div><div class="text-xs ${signedClass(c.pctChange)}">${escapeHTML(c.pctChange || '—')}</div></div>
-        </div>
-        <div class="grid grid-cols-2 gap-1.5 text-xs">${conditions}</div>
-        <div class="rounded-lg bg-black/25 border border-gray-800 p-2.5 text-xs space-y-1.5">
-          <div class="flex justify-between gap-2"><span class="text-gray-400">Volume / 20-bar average</span><b class="text-white">${num(c.volumeMultiple,2)}×</b></div>
-          <div class="flex justify-between gap-2"><span class="text-gray-400">Previous-day high</span><b class="text-white">${price(c.pdh)}</b></div>
-          <div class="flex justify-between gap-2"><span class="text-gray-400">Candle range / ATR(14)</span><b class="text-white">${price(c.candleRange)} / ${price(c.atr14)}</b></div>
-        </div>
-        <div class="text-[11px] ${c.hasBuySignal ? 'text-emerald-300' : 'text-amber-200'}">${signalParts.length ? signalParts.join('<br>') : 'No BUY event detected today. A 3/4 or 4/4 score by itself is not a BUY trigger.'}</div>
-        <div class="text-[10px] text-gray-500">${escapeHTML(c.dataWarning || 'Verify live prices and candle close before acting.')} · A historical signal seen today is not a guarantee that entry is still valid.</div>
+        <div class="flex items-end justify-between gap-2"><div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="text-lg font-extrabold text-white hover:text-cyan-300">${escapeHTML(c.symbol)} ↗</a><div class="text-[11px] text-gray-500">BREAKER · 6-condition bullish/bearish matrix</div></div><div class="text-right"><div class="text-lg font-bold text-white">${price(c.price)}</div><div class="text-xs ${signedClass(c.pctChange)}">${escapeHTML(c.pctChange || '—')}</div></div></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3"><div class="rounded-lg border border-emerald-900/70 p-2"><div class="font-bold text-xs text-emerald-300 mb-2">BULLISH RULES · ${bull}/6</div><div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">${bullConditions}</div></div><div class="rounded-lg border border-rose-900/70 p-2"><div class="font-bold text-xs text-rose-300 mb-2">BEARISH RULES · ${bear}/6</div><div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">${bearConditions}</div></div></div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 rounded-lg bg-black/25 border border-gray-800 p-2.5 text-xs"><div><span class="text-gray-500">Volume / MA20</span><div class="font-bold text-white">${num(c.volumeMultiple,2)}×</div></div><div><span class="text-gray-500">PDH / PDL</span><div class="font-bold text-white">${price(c.pdh)} / ${price(c.pdl)}</div></div><div><span class="text-gray-500">VWAP / Day Low</span><div class="font-bold text-white">${price(c.vwap)} / ${price(c.dayLow)}</div></div><div><span class="text-gray-500">Candle range / ATR14</span><div class="font-bold text-white">${price(c.candleRange)} / ${price(c.atr14)}</div></div><div><span class="text-gray-500">Bull OB</span><div class="font-bold text-emerald-300">${Number(c.bullOBCount||0)} UP ${c.bullOBActive?'· ACTIVE':''}</div></div><div><span class="text-gray-500">Bear OB</span><div class="font-bold text-rose-300">${Number(c.bearOBCount||0)} DOWN ${c.bearOBActive?'· ACTIVE':''}</div></div><div><span class="text-gray-500">RF + 15m</span><div class="font-bold ${c.rf15mBullAligned?'text-emerald-300':c.rf15mBearAligned?'text-rose-300':'text-gray-400'}">${c.rf15mBullAligned?'BULL ALIGN':c.rf15mBearAligned?'BEAR ALIGN':'WAIT'}</div></div><div><span class="text-gray-500">Signal rank</span><div class="font-bold text-white">${maxScore===6?'FULL 6/6':maxScore===5?'QUALIFIED 5/6':maxScore===4?'WATCH 4/6':'SIGNAL EVENT'}</div></div></div>
+        <div class="text-[11px] ${c.hasBuySignal ? 'text-emerald-300' : c.hasSellSignal ? 'text-rose-300' : 'text-amber-200'}">${sourceSignals.length ? sourceSignals.join('<br>') : maxScore >= 5 ? 'High confluence; still verify current price, liquidity and candle close before entry.' : '4/6 is a watch setup only; wait for stronger confirmation before considering an entry.'}</div>
+        <div class="text-[10px] text-gray-500">${escapeHTML(c.dataWarning || 'Verify live prices and candle close before acting.')} · OB zones are a heuristic approximation; 15m alignment is calculated from the available completed 5-minute data.</div>
         <div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="inline-block px-3 py-1.5 bg-cyan-950 hover:bg-cyan-900 text-cyan-200 border border-cyan-800 rounded text-xs font-semibold">Open TradingView chart ↗</a></div>
       </article>`;
+    }).join('');
+  }
+
+  function buildSpecial10() {
+    const bySymbol = new Map();
+    function add(symbol, source, obj) {
+      if (!symbol) return;
+      const key = String(symbol).toUpperCase();
+      if (!bySymbol.has(key)) bySymbol.set(key, {symbol:key, sources:[], power:null, brahmastra:null, breaker:null, price:obj.price, pctChange:obj.pctChange});
+      const item = bySymbol.get(key);
+      if (!item.sources.includes(source)) item.sources.push(source);
+      if (source === 'GPT POWER') item.power = obj;
+      if (source === 'BRAHMASTRA') item.brahmastra = obj;
+      if (source === 'BREAKER') item.breaker = obj;
+      if (obj.price !== undefined && obj.price !== null) item.price = obj.price;
+      if (obj.pctChange !== undefined && obj.pctChange !== null) item.pctChange = obj.pctChange;
+    }
+    allPowerStocks.forEach(x => add(x.symbol, 'GPT POWER', x));
+    allSetups.filter(x => x.tier === 'BRAHMASTRA').forEach(x => add(x.symbol, 'BRAHMASTRA', x));
+    allBreakerStocks.forEach(x => add(x.symbol, 'BREAKER', x));
+    const rows = Array.from(bySymbol.values());
+    rows.forEach(x => {
+      x.commonCount = x.sources.length;
+      x.rankScore = (x.commonCount * 1000) + (Number(x.power?.powerScore || 0)) +
+        (Number(x.brahmastra?.numScore || 0) * 10) +
+        (Math.max(Number(x.breaker?.bullScore || 0), Number(x.breaker?.bearScore || 0)) * 15) +
+        ((x.power?.status === 'BREAKOUT CONFIRMED') ? 30 : 0) +
+        ((x.breaker?.hasBuySignal || x.breaker?.hasSellSignal) ? 25 : 0);
+    });
+    rows.sort((a,b) => b.rankScore - a.rankScore || a.symbol.localeCompare(b.symbol));
+    // Make sure the shortlist represents GPT POWER and BRAHMASTRA whenever either has results.
+    const selected = [];
+    const pushUnique = x => { if (x && !selected.some(y => y.symbol === x.symbol) && selected.length < 10) selected.push(x); };
+    pushUnique(rows.find(x => x.power));
+    pushUnique(rows.find(x => x.brahmastra));
+    rows.forEach(pushUnique);
+    return selected.map((x, i) => ({...x, specialRank:i+1}));
+  }
+
+  function renderSpecial10(rows) {
+    const container = document.getElementById('cards-container');
+    if (!rows.length) {
+      container.innerHTML = `<div class="col-span-full py-12 text-center text-gray-500 text-sm border border-gray-800 rounded-lg">SPECIAL 10 will populate when GPT POWER, BRAHMASTRA or BREAKER has qualifying data.</div>`;
+      return;
+    }
+    container.innerHTML = rows.map(x => {
+      const tvUrl = `https://in.tradingview.com/chart/?symbol=${encodeURIComponent('NSE:' + x.symbol)}`;
+      const tags = x.sources.map(s => `<span class="text-[10px] px-2 py-1 rounded border ${s==='GPT POWER'?'bg-fuchsia-950 text-fuchsia-200 border-fuchsia-700':s==='BRAHMASTRA'?'bg-sky-950 text-sky-200 border-sky-700':'bg-cyan-950 text-cyan-200 border-cyan-700'}">${escapeHTML(s)}</span>`).join('');
+      const p = x.power, b = x.brahmastra, br = x.breaker;
+      const signal = br?.hasBuySignal ? 'BREAKER BUY' : br?.hasSellSignal ? 'BREAKER SELL' : p?.status === 'BREAKOUT CONFIRMED' ? 'GPT CONFIRMED' : b ? 'BRAHMASTRA' : 'WATCH';
+      return `<article class="border ${x.commonCount===3?'border-amber-500/80 bg-[#1a170b]':'border-gray-800 bg-[#111622]'} rounded-xl p-3.5 flex flex-col gap-3"><div class="flex items-start justify-between gap-2"><span class="text-[10px] px-2 py-1 rounded bg-amber-950 text-amber-200 border border-amber-700 font-extrabold">🏆 SPECIAL #${x.specialRank}</span><span class="text-[10px] px-2 py-1 rounded bg-gray-900 border border-gray-700 text-gray-300">COMMON ${x.commonCount}/3</span></div><div class="flex items-end justify-between gap-2"><div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="text-xl font-extrabold text-white hover:text-amber-300">${escapeHTML(x.symbol)} ↗</a><div class="text-[10px] text-gray-400 mt-1">${tags}</div></div><div class="text-right"><div class="text-lg font-bold text-white">${price(x.price)}</div><div class="text-xs ${signedClass(x.pctChange)}">${escapeHTML(x.pctChange || '—')}</div></div></div><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">GPT POWER</div><b class="text-fuchsia-200">${p ? `${num(p.powerScore,0)}/100 · ${escapeHTML(p.status || 'Watch')}` : '—'}</b></div><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">BRAHMASTRA</div><b class="text-sky-200">${b ? `${escapeHTML(b.score || b.numScore || 'Active')} · ${escapeHTML(b.type || '')}` : '—'}</b></div><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">BREAKER BULL</div><b class="text-emerald-200">${br ? `${Number(br.bullScore||0)}/6` : '—'}</b></div><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">BREAKER BEAR</div><b class="text-rose-200">${br ? `${Number(br.bearScore||0)}/6` : '—'}</b></div></div><div class="text-[11px] font-bold ${signal.includes('BUY')||signal.includes('CONFIRMED')?'text-emerald-300':signal.includes('SELL')?'text-rose-300':'text-amber-200'}">${escapeHTML(signal)}</div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="inline-block self-start px-3 py-1.5 bg-gray-900 border border-gray-700 hover:border-amber-600 rounded text-xs text-gray-200">Open TradingView ↗</a></article>`;
     }).join('');
   }
 
@@ -362,7 +414,7 @@
     }).join('');
     container.innerHTML = `
       <section class="col-span-full space-y-4">
-        <div class="rounded-lg border border-emerald-900 bg-emerald-950/20 p-3 text-xs text-emerald-100"><b>SIMULATION ONLY.</b> BUY = confirmed bullish breakout; SELL = confirmed bearish breakdown. Prices are underlying stocks, not option premiums. Stop-loss ${num(tracker.stopLossPct ?? 0.5,2)}%; Target 1 ${num(tracker.target1Pct ?? 1,2)}% (1:2 risk/reward); Target 2 ${num(tracker.target2Pct ?? 1.5,2)}% (1:3). A candle touching stop and target is scored stop-loss first. Yahoo data may be delayed.</div>
+        <div class="rounded-lg border border-emerald-900 bg-emerald-950/20 p-3 text-xs text-emerald-100"><b>SIMULATION ONLY.</b> Paper window: 09:15–11:00 IST. New trades stop at 11:00; all remaining open trades are closed using the latest completed candle at or before 11:00. BUY = confirmed bullish breakout; SELL = confirmed bearish breakdown. Prices are underlying stocks, not option premiums. Stop-loss ${num(tracker.stopLossPct ?? 0.5,2)}%; Target 1 ${num(tracker.target1Pct ?? 1,2)}% (1:2 risk/reward); Target 2 ${num(tracker.target2Pct ?? 1.5,2)}% (1:3). A candle touching stop and target is scored stop-loss first. Yahoo data may be delayed.</div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
           ${statCard('SCANS RECORDED', stats.scansRecorded ?? 0)}
           ${statCard('OPEN PAPER TRADES', stats.openTrades ?? openTrades.length, 'text-sky-300')}
@@ -373,9 +425,9 @@
           ${statCard('REALIZED POINTS/SHARE', num(stats.realizedPointsPerShare,2), Number(stats.realizedPointsPerShare||0)>=0?'text-emerald-300':'text-rose-300')}
           ${statCard('OPEN P&L POINTS/SHARE', num(stats.unrealizedPointsPerShare,2), Number(stats.unrealizedPointsPerShare||0)>=0?'text-emerald-300':'text-rose-300')}
         </div>
-        <div><h2 class="font-bold text-sm mb-2">Confirmed paper-test candidates (up to 3 BUY + 2 SELL)</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">${candidateCards || '<div class="text-sm text-gray-500 border border-gray-800 rounded-lg p-4">No fresh confirmed F&O breakout/breakdown candidates in the latest scan.</div>'}</div></div>
+        <div><h2 class="font-bold text-sm mb-2">Confirmed paper-test candidates (entry window 09:15–11:00 IST; up to 3 BUY + 2 SELL)</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">${candidateCards || '<div class="text-sm text-gray-500 border border-gray-800 rounded-lg p-4">No fresh confirmed F&O breakout/breakdown candidates in the 09:15–11:00 IST paper-entry window.</div>'}</div></div>
         <div><h2 class="font-bold text-sm mb-2">Open paper trades (${openTrades.length})</h2><div class="overflow-x-auto border border-gray-800 rounded-lg"><table class="w-full text-xs text-left"><thead class="bg-gray-900 text-gray-400"><tr><th class="p-2">Symbol / Side</th><th class="p-2">Entry</th><th class="p-2">Last</th><th class="p-2">Stop</th><th class="p-2">Target 1</th><th class="p-2">Target 2</th><th class="p-2">T1 status</th><th class="p-2">Open P&amp;L</th></tr></thead><tbody>${tradeRows || '<tr><td colspan="8" class="p-4 text-gray-500">No open paper trades.</td></tr>'}</tbody></table></div></div>
-        <div><h2 class="font-bold text-sm mb-2">Recently closed trades (${closedTrades.length} total)</h2><div class="overflow-x-auto border border-gray-800 rounded-lg"><table class="w-full text-xs text-left"><thead class="bg-gray-900 text-gray-400"><tr><th class="p-2">Symbol / Side</th><th class="p-2">Entry</th><th class="p-2">Exit</th><th class="p-2">Reason</th><th class="p-2">P&amp;L</th><th class="p-2">Exit candle</th></tr></thead><tbody>${closedRows || '<tr><td colspan="6" class="p-4 text-gray-500">No closed trades yet. Wait for later completed candles to hit the stop or Target 2.</td></tr>'}</tbody></table></div></div>
+        <div><h2 class="font-bold text-sm mb-2">Recently closed trades (${closedTrades.length} total)</h2><div class="overflow-x-auto border border-gray-800 rounded-lg"><table class="w-full text-xs text-left"><thead class="bg-gray-900 text-gray-400"><tr><th class="p-2">Symbol / Side</th><th class="p-2">Entry</th><th class="p-2">Exit</th><th class="p-2">Reason</th><th class="p-2">P&amp;L</th><th class="p-2">Exit candle</th></tr></thead><tbody>${closedRows || '<tr><td colspan="6" class="p-4 text-gray-500">No closed trades yet. Trades close at 11:00 IST if neither stop-loss nor Target 2 has closed them earlier.</td></tr>'}</tbody></table></div></div>
         <div><h2 class="font-bold text-sm mb-2">Signal history (latest 20 scans)</h2><div class="overflow-x-auto border border-gray-800 rounded-lg"><table class="w-full text-xs text-left"><thead class="bg-gray-900 text-gray-400"><tr><th class="p-2">Scan time</th><th class="p-2">Selected candidates</th></tr></thead><tbody>${historyRows || '<tr><td colspan="2" class="p-4 text-gray-500">History will appear after the next scanner run.</td></tr>'}</tbody></table></div></div>
         <p class="text-[10px] text-gray-500">P&amp;L is directional points per share on the underlying stock, not rupee profit or actual option returns. Signal disappearing from the latest scan does not close an open trade. Tracker state is persisted in data.json; GitHub Actions must commit the updated data.json after each scan.</p>
       </section>`;
@@ -397,6 +449,7 @@
       allSetups = Array.isArray(data.leaders) ? data.leaders : [];
       allPowerStocks = Array.isArray(data.gptPowerStocks) ? data.gptPowerStocks : [];
       allBreakerStocks = Array.isArray(data.breakerStocks) ? data.breakerStocks : [];
+      allSpecial10 = buildSpecial10();
       paperTradeTracker = data.paperTradeTracker || null;
       paperTradeCandidates = Array.isArray(data.paperTradeCandidates) ? data.paperTradeCandidates : [];
       const paperCount = paperTradeTracker?.stats?.openTrades ?? paperTradeTracker?.openTrades?.length ?? 0;
