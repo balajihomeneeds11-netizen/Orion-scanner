@@ -29,6 +29,82 @@ POWER_MAX_CARDS = 25
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+# Official NSE cash-market holiday dates for 2026. Future years are loaded from
+# NSE's holiday-master endpoint; scheduled runs fail closed if that calendar cannot be verified.
+NSE_CM_HOLIDAYS: dict[int, set[str]] = {
+    2026: {
+        # NSE cash-equity holidays, verified against NSE's 2026 equities calendar.
+        "2026-01-15", "2026-01-26", "2026-03-03", "2026-03-26", "2026-03-31",
+        "2026-04-03", "2026-04-14", "2026-05-01", "2026-05-28", "2026-06-26",
+        "2026-09-14", "2026-10-02", "2026-10-20", "2026-11-10", "2026-11-24",
+        "2026-12-25",
+    }
+}
+
+
+def _fetch_nse_cm_holidays(year: int) -> Optional[set[str]]:
+    """Load NSE's published CM holiday calendar for a year not bundled above."""
+    try:
+        import requests
+        session = requests.Session()
+        session.headers.update({
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36",
+            "Accept": "application/json, text/plain, */*",
+            "Referer": NSE_HOME_URL,
+        })
+        session.get(NSE_HOME_URL, timeout=6)
+        response = session.get(f"{NSE_HOME_URL}/api/holiday-master?type=trading&year={year}", timeout=8)
+        response.raise_for_status()
+        payload = response.json()
+        records = payload.get("CM") if isinstance(payload, dict) else None
+        if not isinstance(records, list) or len(records) < 5:
+            return None
+        dates: set[str] = set()
+        for row in records:
+            if not isinstance(row, dict):
+                continue
+            value = str(row.get("tradingDate", "")).strip()
+            if not value:
+                continue
+            parsed = None
+            for fmt in ("%d-%b-%Y", "%d-%b-%y", "%Y-%m-%d"):
+                try:
+                    parsed = dt.datetime.strptime(value, fmt).date()
+                    break
+                except ValueError:
+                    pass
+            if parsed:
+                dates.add(parsed.isoformat())
+        return dates if len(dates) >= 5 else None
+    except Exception as exc:
+        print(f"NSE holiday calendar unavailable for {year}: {type(exc).__name__}: {exc}")
+        return None
+
+
+def skip_scheduled_run_if_market_closed(now: dt.datetime) -> bool:
+    """Skip automatic GitHub scheduled runs on weekends/verified NSE holidays.
+
+    Manual workflow_dispatch runs are deliberately allowed for troubleshooting.
+    """
+    event_name = os.getenv("GITHUB_EVENT_NAME", "").strip().lower()
+    if event_name != "schedule":
+        return False
+    local_date = now.astimezone(IST).date()
+    if local_date.weekday() >= 5:
+        print(f"SKIP scheduled scan: {local_date.isoformat()} is Saturday/Sunday (NSE market closed).")
+        return True
+    year = local_date.year
+    holidays = NSE_CM_HOLIDAYS.get(year)
+    if holidays is None:
+        holidays = _fetch_nse_cm_holidays(year)
+        if holidays is None:
+            print(f"SKIP scheduled scan: could not verify NSE {year} holiday calendar; failing safe to avoid a holiday run.")
+            return True
+        NSE_CM_HOLIDAYS[year] = holidays
+    if local_date.isoformat() in holidays:
+        print(f"SKIP scheduled scan: {local_date.isoformat()} is listed in NSE's CM trading-holiday calendar.")
+        return True
+    return False
 
 # Existing configured symbol universe for general screener tabs. GPT POWER is separately restricted
 # to the current NSE F&O stock-underlying whitelist loaded below.
@@ -207,23 +283,189 @@ SECTOR_LABEL_ORDER = [
 ]
 
 
-def build_sector_rankings(snapshots: list[dict], gpt_power_stocks: list[dict],
-                          leaders: list[dict], breaker_stocks: list[dict]) -> tuple[list[dict], dict]:
-    """Build screenshot-matched sector rankings from available constituent stock returns.
+# Yahoo Finance index symbols for sectors with a matching published NSE/Nifty index.
+# Yahoo is still the data vendor (not a direct official NSE real-time feed); unsupported
+# symbols fall back to a clearly labelled, same-session constituent proxy.
+SECTOR_INDEX_TICKERS: dict[str, str] = {
+    "PSU BANK": "^CNXPSUBANK",
+    "OIL & GAS": "^CNXOILGAS",
+    "METAL": "^CNXMETAL",
+    "ENERGY": "^CNXENERGY",
+    "BANKNIFTY": "^NSEBANK",
+    "PHARMA": "^CNXPHARMA",
+    "COMMODITIES": "^CNXCMDT",
+    "INFRA": "^CNXINFRA",
+    "AUTO": "^CNXAUTO",
+    "HEALTHCARE": "^CNXHEALTHCARE",
+    "CONSUMPTION": "^CNXCONSUM",
+    "NIFTY": "^NSEI",
+    "MIDCAP": "^CNXMIDCAP",
+    "CONSR DURBL": "^CNXCONSUMER",
+    "REALTY": "^CNXREALTY",
+    "SERVICES": "^CNXSERVICE",
+    "IT": "^CNXIT",
+    "FMCG": "^CNXFMCG",
+    # Prefer the Nifty Financial Services index symbol; unsupported aliases fall back to proxy.
+    "FINNIFTY": "^CNXFINANCE",
+    "CHEMICALS": "^CNXCHEMICALS",
+    "PVT BANK": "^CNXPVTBANK",
+}
 
-    This is a constituent-based proxy, not a claim that an official index quote was retrieved.
-    Existing GPT POWER/BRAHMASTRA/BREAKER selection and scoring are not modified.
+
+def _market_is_open_window(now: dt.datetime) -> bool:
+    local = now.astimezone(IST)
+    return local.weekday() < 5 and dt.time(9, 15) <= local.time().replace(tzinfo=None) <= dt.time(15, 30)
+
+
+def download_sector_index_readings(now: dt.datetime) -> dict[str, dict]:
+    """Fetch best-effort 5-minute index readings from Yahoo Finance.
+
+    These are index-symbol quotes where supported, not a claim of a direct NSE feed.
+    Any unavailable or stale symbol is omitted and the sector builder may use a proxy.
     """
-    by_symbol = {str(row.get("symbol", "")).upper(): row for row in snapshots}
+    ticker_to_labels: dict[str, list[str]] = defaultdict(list)
+    for label, ticker in SECTOR_INDEX_TICKERS.items():
+        ticker_to_labels[ticker].append(label)
+    tickers = list(ticker_to_labels)
+    if not tickers:
+        return {}
+
+    daily_frames: dict[str, pd.DataFrame] = {}
+    intra_frames: dict[str, pd.DataFrame] = {}
+    for start in range(0, len(tickers), BATCH_SIZE):
+        batch_tickers = tickers[start:start + BATCH_SIZE]
+        print(f"Downloading sector index batch {start + 1}-{start + len(batch_tickers)} of {len(tickers)} tickers...")
+        try:
+            daily_batch = yf_download_batch(batch_tickers, "1y", "1d")
+        except Exception as exc:
+            print(f"Sector index daily batch error: {type(exc).__name__}: {exc}")
+            daily_batch = pd.DataFrame()
+        try:
+            intra_batch = yf_download_batch(batch_tickers, "5d", "5m")
+        except Exception as exc:
+            print(f"Sector index intraday batch error: {type(exc).__name__}: {exc}")
+            intra_batch = pd.DataFrame()
+        for ticker in batch_tickers:
+            daily_frames[ticker] = extract_ticker_frame(daily_batch, ticker)
+            intra_frames[ticker] = extract_ticker_frame(intra_batch, ticker)
+
+    readings: dict[str, dict] = {}
+    local_now = now.astimezone(IST)
+    for label, ticker in SECTOR_INDEX_TICKERS.items():
+        daily = clean_ohlcv(daily_frames.get(ticker, pd.DataFrame()))
+        intra = remove_incomplete_5m_bars(clean_ohlcv(intra_frames.get(ticker, pd.DataFrame())), now)
+        if daily.empty or intra.empty:
+            print(f"SECTOR INDEX unavailable: {label} ({ticker}) — no usable Yahoo candles")
+            continue
+        session_date = max(intra.index.date)
+        today = intra.loc[[d == session_date for d in intra.index.date]].copy()
+        if today.empty:
+            continue
+        hist = get_daily_history_before(daily, session_date)
+        if hist.empty:
+            print(f"SECTOR INDEX unavailable: {label} ({ticker}) — no previous daily close")
+            continue
+        prev_close = safe_float(hist["Close"].iloc[-1])
+        close = safe_float(today["Close"].iloc[-1])
+        if prev_close <= 0 or close <= 0:
+            continue
+        bar_start = today.index[-1]
+        if bar_start.tzinfo is None:
+            bar_start = bar_start.tz_localize(IST)
+        else:
+            bar_start = bar_start.tz_convert(IST)
+        bar_close = bar_start + pd.Timedelta(minutes=INTRADAY_INTERVAL_MINUTES)
+        age_minutes = max(0.0, (pd.Timestamp(local_now) - bar_close).total_seconds() / 60.0)
+        fresh = bool(session_date == local_now.date() and age_minutes <= 15.0)
+        # During regular hours, reject stale direct-index readings. Outside that window,
+        # the latest candle can be used as the previous/current session snapshot, with its date shown.
+        if _market_is_open_window(local_now) and not fresh:
+            print(f"SECTOR INDEX stale: {label} ({ticker}) — age {age_minutes:.1f} min")
+            continue
+        readings[label] = {
+            "changePct": float(pct_change(close, prev_close)),
+            "sessionDate": session_date.isoformat(),
+            "asOf": bar_close.isoformat(),
+            "sourceAgeMinutes": round(age_minutes, 1),
+            "sourceBarFresh": fresh,
+            "sourceTicker": ticker,
+            "method": "index_quote",
+            "sourceLabel": "Yahoo Finance index symbol; may be delayed",
+        }
+        print(f"SECTOR INDEX {label}: {readings[label]['changePct']:+.2f}% ({ticker}) as of {bar_close.isoformat()}")
+    return readings
+
+
+def build_sector_rankings(snapshots: list[dict], gpt_power_stocks: list[dict],
+                          leaders: list[dict], breaker_stocks: list[dict],
+                          sector_index_readings: Optional[dict[str, dict]] = None,
+                          target_session: Optional[str] = None,
+                          now: Optional[dt.datetime] = None) -> tuple[list[dict], dict]:
+    """Build sector rankings using matching index quotes where possible.
+
+    Fallback proxies are restricted to the same market session and use unrounded
+    constituent returns. The function is additive: scanner scoring/candidate logic is untouched.
+    """
+    sector_index_readings = sector_index_readings or {}
+    if target_session is None:
+        candidates = [str(row.get("sessionDate")) for row in snapshots if row.get("sessionDate")]
+        target_session = max(candidates) if candidates else None
+    local_now = (now or dt.datetime.now(IST)).astimezone(IST)
+    market_open = _market_is_open_window(local_now)
+
+    session_snapshots = [row for row in snapshots
+                         if target_session and str(row.get("sessionDate", "")) == target_session]
+    # Use a shared recent candle window to avoid mixing yesterday's data with today's prices.
+    timestamps = []
+    for row in session_snapshots:
+        raw_time = row.get("lastSourceBarCloseAt")
+        if not raw_time:
+            continue
+        try:
+            timestamp = pd.Timestamp(raw_time)
+            timestamp = timestamp.tz_localize(IST) if timestamp.tzinfo is None else timestamp.tz_convert(IST)
+            if not market_open or bool(row.get("sourceBarFresh", False)):
+                timestamps.append(timestamp)
+        except Exception:
+            continue
+    reference_time = max(timestamps) if timestamps else None
+    allowed_lag_minutes = 10.0 if market_open else 20.0
+
+    def aligned_for_sector(row: dict) -> bool:
+        if not target_session or str(row.get("sessionDate", "")) != target_session:
+            return False
+        if market_open and not bool(row.get("sourceBarFresh", False)):
+            return False
+        if reference_time is None:
+            return True
+        raw_time = row.get("lastSourceBarCloseAt")
+        if not raw_time:
+            return False
+        try:
+            timestamp = pd.Timestamp(raw_time)
+            timestamp = timestamp.tz_localize(IST) if timestamp.tzinfo is None else timestamp.tz_convert(IST)
+            return abs((reference_time - timestamp).total_seconds()) <= allowed_lag_minutes * 60
+        except Exception:
+            return False
+
+    by_symbol = {str(row.get("symbol", "")).upper(): row for row in session_snapshots if aligned_for_sector(row)}
     eligible: dict[str, dict] = {}
 
     def add_eligible(record: dict, source: str) -> None:
         symbol = str(record.get("symbol", "")).upper().strip()
         if not symbol:
             return
+        snapshot = by_symbol.get(symbol, {})
+        snapshot_atr = safe_float(snapshot.get("atr"), 0.0)
+        snapshot_fuel = snapshot.get("fuelLeftPct")
         item = eligible.setdefault(symbol, {
             "symbol": symbol, "sources": [], "price": record.get("price"),
-            "pctChange": record.get("pctChange"), "sector": by_symbol.get(symbol, {}).get("sector", "General"),
+            "pctChange": record.get("pctChange"), "sector": snapshot.get("sector", "General"),
+            "fuelLeftPct": snapshot_fuel if snapshot_atr > 0 else None,
+            "atrUsedPct": snapshot.get("atrUsedPct"),
+            "fuelLeft": (f"{safe_float(snapshot_fuel):.0f}%" if snapshot_atr > 0 and snapshot_fuel is not None else None),
+            "fuelAsOf": snapshot.get("lastSourceBarCloseAt"),
+            "sourceBarFresh": bool(snapshot.get("sourceBarFresh", False)),
             "fnoEligible": bool(record.get("fnoEligible", False)),
         })
         if source not in item["sources"]:
@@ -255,10 +497,53 @@ def build_sector_rankings(snapshots: list[dict], gpt_power_stocks: list[dict],
     for label in SECTOR_LABEL_ORDER:
         universe = SECTOR_INDEX_MEMBERS[label]
         members = [by_symbol[symbol] for symbol in universe if symbol in by_symbol]
-        valid_changes = [safe_float(row.get("pctChangeNum")) for row in members
-                         if row.get("pctChangeNum") is not None and math.isfinite(safe_float(row.get("pctChangeNum")))]
-        change = round(sum(valid_changes) / len(valid_changes), 2) if valid_changes else None
-        valid_symbols = {str(row.get("symbol", "")).upper() for row in members}
+        valid_changes = []
+        for row in members:
+            raw_change = row.get("pctChangePrecise", row.get("pctChangeNum"))
+            if raw_change is None:
+                continue
+            try:
+                numeric_change = float(raw_change)
+            except (TypeError, ValueError):
+                continue
+            if math.isfinite(numeric_change):
+                valid_changes.append(numeric_change)
+
+        index_quote = sector_index_readings.get(label)
+        use_index = bool(index_quote and target_session and
+                         str(index_quote.get("sessionDate", "")) == target_session)
+        if use_index and market_open:
+            use_index = bool(index_quote.get("sourceBarFresh", False))
+            if reference_time is not None and index_quote.get("asOf"):
+                try:
+                    idx_time = pd.Timestamp(index_quote["asOf"])
+                    idx_time = idx_time.tz_localize(IST) if idx_time.tzinfo is None else idx_time.tz_convert(IST)
+                    use_index = use_index and abs((reference_time - idx_time).total_seconds()) <= allowed_lag_minutes * 60
+                except Exception:
+                    use_index = False
+        elif use_index and reference_time is not None and index_quote.get("asOf"):
+            try:
+                idx_time = pd.Timestamp(index_quote["asOf"])
+                idx_time = idx_time.tz_localize(IST) if idx_time.tzinfo is None else idx_time.tz_convert(IST)
+                use_index = abs((reference_time - idx_time).total_seconds()) <= allowed_lag_minutes * 60
+            except Exception:
+                use_index = False
+
+        if use_index:
+            change = round(float(index_quote["changePct"]), 2)
+            method = "index_quote"
+            source_ticker = index_quote.get("sourceTicker")
+            as_of = index_quote.get("asOf")
+            source_age = index_quote.get("sourceAgeMinutes")
+            source_label = index_quote.get("sourceLabel", "Yahoo Finance index symbol; may be delayed")
+        else:
+            change = round(sum(valid_changes) / len(valid_changes), 2) if valid_changes else None
+            method = "stock_proxy" if valid_changes else "unavailable"
+            source_ticker = None
+            as_of = (max([str(row.get("lastSourceBarCloseAt")) for row in members if row.get("lastSourceBarCloseAt")], default=None))
+            source_age = None
+            source_label = "Average of same-session representative stocks; not an official index quote" if valid_changes else "No aligned data available"
+
         sector_eligible = []
         for symbol in universe:
             item = eligible.get(symbol)
@@ -277,12 +562,16 @@ def build_sector_rankings(snapshots: list[dict], gpt_power_stocks: list[dict],
             "advances": sum(1 for value in valid_changes if value > 0),
             "declines": sum(1 for value in valid_changes if value < 0),
             "eligibleStocks": sector_eligible,
-            "available": bool(valid_changes),
-            "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+            "available": change is not None,
+            "method": method,
+            "sourceTicker": source_ticker,
+            "sourceLabel": source_label,
+            "asOf": as_of,
+            "sourceAgeMinutes": source_age,
+            "sessionDate": target_session,
         })
 
-    # Keep every named sector in the output. Missing-data sectors remain visible but rank after
-    # sectors with readings; they are explicitly labelled unavailable in the UI.
+    # Keep the exact 23 screenshot labels; unavailable readings sort last and are never fabricated.
     rankings.sort(key=lambda row: (row["changePct"] is None,
                                    -(row["changePct"] if row["changePct"] is not None else -999.0),
                                    SECTOR_LABEL_ORDER.index(row["name"])))
@@ -299,6 +588,8 @@ def build_sector_rankings(snapshots: list[dict], gpt_power_stocks: list[dict],
     negative = sum(1 for row in available if row["changePct"] < 0)
     unchanged = sum(1 for row in available if row["changePct"] == 0)
     directional = positive + negative
+    methods = {method: sum(1 for row in available if row["method"] == method)
+               for method in ("index_quote", "stock_proxy")}
     sentiment = {
         "positiveCount": positive,
         "negativeCount": negative,
@@ -307,7 +598,11 @@ def build_sector_rankings(snapshots: list[dict], gpt_power_stocks: list[dict],
         "totalSectors": len(SECTOR_LABEL_ORDER),
         "positivePct": round(positive / directional * 100, 1) if directional else 0,
         "negativePct": round(negative / directional * 100, 1) if directional else 0,
-        "basis": "Sector constituent-proxy breadth; excludes sectors with no available constituent data",
+        "indexQuoteSectors": methods["index_quote"],
+        "proxySectors": methods["stock_proxy"],
+        "sessionDate": target_session,
+        "referenceAsOf": reference_time.isoformat() if reference_time is not None else None,
+        "basis": "Index quote from Yahoo Finance where available; otherwise a same-session average of representative constituents. Yahoo data may be delayed.",
     }
     return rankings, sentiment
 
@@ -657,9 +952,16 @@ def calculate_snapshot(symbol: str, daily_raw: pd.DataFrame, intra_raw: pd.DataF
     session_return_pct = pct_change(close, open_day)
     gap_pct = pct_change(open_day, prev_close)
     today_range = max(0.0, high_day - low_day)
+    # Keep the scanner's legacy fuel value unchanged for its existing heuristic/ranking logic.
     atr = context["atr"] or max(today_range, close * 0.01)
     atr_used_pct = (today_range / atr * 100.0) if atr > 0 else 0.0
     fuel_left_pct = max(0.0, 100.0 - atr_used_pct)
+    # A separate, more complete DISPLAY metric includes overnight gaps, matching the
+    # market's daily true-range/ATR concept. It is used only for the added UI meter.
+    today_true_range = max(0.0, max(high_day, prev_close) - min(low_day, prev_close))
+    daily_atr_baseline = safe_float(context.get("atr"), 0.0)
+    fuel_display_used_pct = (today_true_range / daily_atr_baseline * 100.0) if daily_atr_baseline > 0 else None
+    fuel_display_left_pct = max(0.0, 100.0 - fuel_display_used_pct) if fuel_display_used_pct is not None else None
 
     # Conventional price-volume VWAP uses the typical price (H+L+C)/3.
     typical = (today["High"] + today["Low"] + today["Close"]) / 3.0
@@ -768,7 +1070,8 @@ def calculate_snapshot(symbol: str, daily_raw: pd.DataFrame, intra_raw: pd.DataF
         "today": today, "allIntraday": all_intraday, "context": context,
         "price": round(close, 2), "openDay": round(open_day, 2),
         "highDay": round(high_day, 2), "lowDay": round(low_day, 2),
-        "pctChangeNum": round(change_pct, 2), "sessionReturnPct": round(session_return_pct, 2),
+        "pctChangeNum": round(change_pct, 2), "pctChangePrecise": float(change_pct),
+        "sessionReturnPct": round(session_return_pct, 2),
         "gapPct": round(gap_pct, 2), "niftyPct": round(nifty_move_pct, 2),
         "alphaNum": round(alpha, 2), "vwap": round(vwap, 2),
         "orbHigh15": round(orb_high_15, 2), "orbLow15": round(orb_low_15, 2),
@@ -779,7 +1082,11 @@ def calculate_snapshot(symbol: str, daily_raw: pd.DataFrame, intra_raw: pd.DataF
         "rvol": round(rvol, 2), "rvolAvailable": rvol_available,
         "expansionRatio": round(expansion_ratio, 2),
         "atr": round(atr, 2), "atrUsedPct": round(atr_used_pct, 1),
-        "fuelLeftPct": round(fuel_left_pct, 1), "avgTurnoverCr": round(context["avgTurnoverCr"], 2),
+        "fuelLeftPct": round(fuel_left_pct, 1), "fuelDailyAtr14": round(daily_atr_baseline, 4) if daily_atr_baseline > 0 else None,
+        "fuelTrueRange": round(today_true_range, 4),
+        "fuelDisplayUsedPct": round(fuel_display_used_pct, 1) if fuel_display_used_pct is not None else None,
+        "fuelDisplayLeftPct": round(fuel_display_left_pct, 1) if fuel_display_left_pct is not None else None,
+        "avgTurnoverCr": round(context["avgTurnoverCr"], 2),
         "isNarrowCPR": bool(context["isNarrowCPR"]), "isNR7": bool(context["isNR7"]),
         "is52W": bool(is_52w), "bbWidth": round(bb_width, 4), "bbSqueeze": bool(bb_squeeze),
         "closeLocation": round(day_close_location, 3), "nearDayHigh": near_day_high,
@@ -988,6 +1295,11 @@ def identify_power_setup(m: dict, bull_score: int, bear_score: int) -> Optional[
         "status": status, "riskFlag": risk_flag,
         "detectTime": "PENDING" if not confirmed else "",  # filled with first confirmed time below
         "price": m["price"], "pctChange": f"{m['pctChangeNum']:+.2f}%",
+        "sector": m.get("sector", "General"),
+        "fuelLeftPct": m.get("fuelLeftPct"), "numFuel": m.get("fuelLeftPct"),
+        "fuelLeft": (f"{safe_float(m.get('fuelLeftPct')):.0f}%" if m.get("fuelLeftPct") is not None else None),
+        "displayFuelLeftPct": m.get("fuelDisplayLeftPct"), "displayAtrUsedPct": m.get("fuelDisplayUsedPct"),
+        "fuelAsOf": m.get("lastSourceBarCloseAt"), "sourceBarFresh": bool(m.get("sourceBarFresh", False)),
         "sessionReturn": f"{m['sessionReturnPct']:+.2f}%", "gapPct": f"{m['gapPct']:+.2f}%",
         "alpha": f"{m['alphaNum']:+.2f}%", "rvol": round(m["rvol"], 2),
         "rvolAvailable": bool(m["rvolAvailable"]), "rsi": m["rsi"], "adx": m["adx"],
@@ -1147,6 +1459,7 @@ def classify_legacy_tier(m: dict, sector_strong: bool = False) -> Optional[dict]
     strike_label = f"{rounded_strike} {side} (approx)"
     return {
         "symbol": m["symbol"], "type": side, "tier": tier, "optionTag": "⚡ OPTION",
+        "sector": m.get("sector", "General"),
         "score": f"{score}/7", "numScore": int(score), "prob": f"{heuristic}% heuristic",
         "probScore": int(heuristic), "detectTime": "", "price": m["price"],
         "pctChange": f"{pct:+.2f}%", "absChange": abs(pct),
@@ -1159,6 +1472,8 @@ def classify_legacy_tier(m: dict, sector_strong: bool = False) -> Optional[dict]
         "fadeRisk": bool(fade_risk), "openedAtLow": bool(opened_low),
         "isNarrowCPR": bool(p["isNarrowCPR"]), "isNR7": bool(p["isNR7"]),
         "fuelLeft": f"{m['fuelLeftPct']:.0f}%", "numFuel": m["fuelLeftPct"],
+        "fuelLeftPct": m.get("fuelLeftPct"), "atrUsedPct": m.get("atrUsedPct"),
+        "fuelAsOf": m.get("lastSourceBarCloseAt"), "sourceBarFresh": bool(m.get("sourceBarFresh", False)),
         "alpha": f"{m['alphaNum']:+.2f}%", "pillars": pillars, "sl": round(risk_sl, 2),
         "t1": round(t1, 2), "rsi": m["legacyRsi"],
     }
@@ -1622,7 +1937,12 @@ def calculate_breaker_setup(m: dict) -> Optional[dict]:
             score_label = f"{strongest}/6"
             return {
                 "symbol": str(m.get("symbol", "")), "tier": "BREAKER", "type": signal_type,
+                "sector": m.get("sector", "General"),
                 "price": round(latest_close, 2), "pctChange": f"{pct_change_num:+.2f}%",
+                "fuelLeftPct": m.get("fuelLeftPct"), "numFuel": m.get("fuelLeftPct"),
+                "fuelLeft": (f"{safe_float(m.get('fuelLeftPct')):.0f}%" if m.get("fuelLeftPct") is not None else None),
+                "atrUsedPct": m.get("atrUsedPct"), "fuelAsOf": m.get("lastSourceBarCloseAt"),
+                "sourceBarFresh": bool(m.get("sourceBarFresh", False)),
                 "score": strongest, "scoreLabel": score_label,
                 "bullScore": bull_score, "bullScoreLabel": f"{bull_score}/6",
                 "bearScore": bear_score, "bearScoreLabel": f"{bear_score}/6",
@@ -1864,6 +2184,8 @@ def make_paper_tracker(
 
 def main() -> None:
     now = dt.datetime.now(IST)
+    if skip_scheduled_run_if_market_closed(now):
+        return
     current_ist_time = now.strftime("%I:%M %p")
     global FNO_SYMBOLS, FNO_UNIVERSE_SOURCE, FNO_SYMBOL_SET, SYMBOLS, YF_SYMBOLS
     FNO_SYMBOLS, FNO_UNIVERSE_SOURCE = load_fno_symbols()
@@ -1989,12 +2311,21 @@ def main() -> None:
         breaker_stocks.extend(remaining_bulls[:10 - len(breaker_stocks)])
     breaker_stocks = breaker_stocks[:10]
 
-    # Additive sector dashboard output: uses the already-computed lists and does not alter them.
-    sector_rankings, sector_sentiment = build_sector_rankings(
-        snapshots, gpt_power_stocks, leaders, breaker_stocks
-    )
-
+    # Additive sector dashboard output: prefer matching index-symbol data; if unavailable,
+    # use same-session constituent proxies. This does not alter the existing signal lists.
     scan_session = max(session_dates) if session_dates else None
+    sector_index_readings = download_sector_index_readings(now)
+    sector_rankings, sector_sentiment = build_sector_rankings(
+        snapshots, gpt_power_stocks, leaders, breaker_stocks,
+        sector_index_readings=sector_index_readings,
+        target_session=scan_session,
+        now=now,
+    )
+    print("Sector data source counts: " + ", ".join(
+        f"{method}={sum(1 for item in sector_rankings if item.get('method') == method)}"
+        for method in ("index_quote", "stock_proxy", "unavailable")
+    ))
+
     status = "SESSION DATA AVAILABLE" if scan_session == now.date().isoformat() else "LAST AVAILABLE SESSION DATA"
     source_bar_times = [m["lastSourceBarCloseAt"] for m in snapshots if m.get("lastSourceBarCloseAt")]
     latest_source_bar = max(source_bar_times) if source_bar_times else None
@@ -2047,6 +2378,30 @@ def main() -> None:
         fresh_session=fresh_session,
     )
 
+    # Canonical per-stock ATR-room metrics let every frontend tab use the same value.
+    # Fuel is a remaining-range proxy, not a forecast or probability of reaching a target.
+    stock_fuel_metrics = {}
+    for m in snapshots:
+        symbol = str(m.get("symbol", "")).upper().strip()
+        if not symbol:
+            continue
+        daily_atr = safe_float(m.get("context", {}).get("atr"), 0.0)
+        range_used_pct = m.get("fuelDisplayUsedPct")
+        fuel_value = m.get("fuelDisplayLeftPct") if daily_atr > 0 else None
+        stock_fuel_metrics[symbol] = {
+            "fuelLeftPct": round(safe_float(fuel_value), 1) if fuel_value is not None else None,
+            "atrUsedPct": round(safe_float(range_used_pct), 1) if daily_atr > 0 and range_used_pct is not None else None,
+            "dailyATR14": round(safe_float(m.get("fuelDailyAtr14")), 4) if safe_float(m.get("fuelDailyAtr14")) > 0 else None,
+            "sessionRange": round(max(0.0, safe_float(m.get("highDay")) - safe_float(m.get("lowDay"))), 4),
+            "trueRangeIncludingGap": round(safe_float(m.get("fuelTrueRange")), 4),
+            "sector": m.get("sector", "General"),
+            "asOf": m.get("lastSourceBarCloseAt"),
+            "sourceBarFresh": bool(m.get("sourceBarFresh", False)),
+            "sessionDate": m.get("sessionDate"),
+            "available": bool(daily_atr > 0 and fuel_value is not None),
+            "method": "100 - min(100, session true range including previous-close gap / prior 14-session daily ATR x 100)"
+        }
+
     output = {
         "lastUpdated": current_ist_time,
         "scanGeneratedAt": now.isoformat(),
@@ -2059,6 +2414,8 @@ def main() -> None:
         "breadth": {"advances": int(advances), "declines": int(declines), "sentiment": sentiment},
         "sectorRankings": sector_rankings,
         "sectorSentiment": sector_sentiment,
+        "stockFuelMetrics": stock_fuel_metrics,
+        "fuelMetricNote": "Displayed fuel is an estimated remaining daily ATR-range allowance, calculated as 100 minus today's true range (including the previous-close gap) relative to the prior 14-session daily ATR; it is not a probability or directional forecast. Legacy internal fuel used by existing signal heuristic/ranking logic is preserved. Marked stale when source candles are stale.",
         "leaders": leaders,
         "gptPowerStocks": gpt_power_stocks,
         "breakerStocks": breaker_stocks,
