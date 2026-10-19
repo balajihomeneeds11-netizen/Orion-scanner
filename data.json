@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "02:07 PM",
-  "scanGeneratedAt": "2026-10-18T14:07:57.442369+05:30",
+  "lastUpdated": "09:17 AM",
+  "scanGeneratedAt": "2026-10-19T09:17:31.250425+05:30",
   "sessionDate": "2026-10-16",
   "marketDataStatus": "LAST AVAILABLE SESSION DATA",
   "dataSource": "Yahoo Finance via yfinance (no API key); NSE public F&O underlying list with public GitHub snapshot fallback",
@@ -989,71 +989,6 @@
       "rsi": 56.7
     },
     {
-      "symbol": "BATAINDIA",
-      "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "⚡ OPTION",
-      "score": "7/7",
-      "numScore": 7,
-      "prob": "88% heuristic",
-      "probScore": 88,
-      "detectTime": "09:35",
-      "price": 638.65,
-      "pctChange": "+3.67%",
-      "absChange": 3.67,
-      "volumeX": "2.07x",
-      "numVol": 2.07,
-      "strike": "650 CE (approx)",
-      "lotSize": null,
-      "sectorStatus": "General • WATCH",
-      "watchBadge": "★★★ STRONG BUY WATCH",
-      "candleInfo": "body 0.37% • low ▲3.73% • high ▼0.50%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "isNarrowCPR": false,
-      "isNR7": true,
-      "fuelLeft": "0%",
-      "numFuel": 0.0,
-      "alpha": "+3.02%",
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": true
-        }
-      ],
-      "sl": 615.7,
-      "t1": 673.07,
-      "rsi": 69.7
-    },
-    {
       "symbol": "POONAWALLA",
       "type": "CE",
       "tier": "EXPLOSIVE",
@@ -1184,6 +1119,136 @@
       "rsi": 62.1
     },
     {
+      "symbol": "BATAINDIA",
+      "type": "CE",
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "84% heuristic",
+      "probScore": 84,
+      "detectTime": "09:35",
+      "price": 638.65,
+      "pctChange": "+3.67%",
+      "absChange": 3.67,
+      "volumeX": "1.35x",
+      "numVol": 1.35,
+      "strike": "650 CE (approx)",
+      "lotSize": null,
+      "sectorStatus": "General • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.37% • low ▲3.73% • high ▼0.50%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": true,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": true,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "+3.02%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": true
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": false
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 615.7,
+      "t1": 673.07,
+      "rsi": 69.7
+    },
+    {
+      "symbol": "METROPOLIS",
+      "type": "CE",
+      "tier": "EXPLOSIVE",
+      "optionTag": "⚡ OPTION",
+      "score": "5/7",
+      "numScore": 5,
+      "prob": "72% heuristic",
+      "probScore": 72,
+      "detectTime": "15:25",
+      "price": 530.35,
+      "pctChange": "+1.41%",
+      "absChange": 1.41,
+      "volumeX": "3.07x",
+      "numVol": 3.07,
+      "strike": "550 CE (approx)",
+      "lotSize": null,
+      "sectorStatus": "General • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.58% • low ▲2.37% • high ▼3.56%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": true,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "0%",
+      "numFuel": 0.0,
+      "alpha": "+0.76%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": false
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 518.05,
+      "t1": 548.8,
+      "rsi": 59.9
+    },
+    {
       "symbol": "IRFC",
       "type": "CE",
       "tier": "EXPLOSIVE",
@@ -1247,71 +1312,6 @@
       "sl": 77.33,
       "t1": 84.63,
       "rsi": 37.0
-    },
-    {
-      "symbol": "ACC",
-      "type": "CE",
-      "tier": "EXPLOSIVE",
-      "optionTag": "⚡ OPTION",
-      "score": "5/7",
-      "numScore": 5,
-      "prob": "75% heuristic",
-      "probScore": 75,
-      "detectTime": "10:45",
-      "price": 1187.2,
-      "pctChange": "+4.38%",
-      "absChange": 4.38,
-      "volumeX": "1.81x",
-      "numVol": 1.81,
-      "strike": "1200 CE (approx)",
-      "lotSize": null,
-      "sectorStatus": "General • WATCH",
-      "watchBadge": "★★★ STRONG BUY WATCH",
-      "candleInfo": "body 0.39% • low ▲4.71% • high ▼0.65%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": false,
-      "isNarrowCPR": false,
-      "isNR7": false,
-      "fuelLeft": "0%",
-      "numFuel": 0.0,
-      "alpha": "+3.73%",
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": true
-        },
-        {
-          "name": "Follow",
-          "ok": false
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": false
-        }
-      ],
-      "sl": 1134.1,
-      "t1": 1266.85,
-      "rsi": 52.5
     },
     {
       "symbol": "EICHERMOT",
@@ -1911,8 +1911,8 @@
       "price": 850.15,
       "pctChange": "+1.35%",
       "absChange": 1.35,
-      "volumeX": "4.31x",
-      "numVol": 4.31,
+      "volumeX": "4.43x",
+      "numVol": 4.43,
       "strike": "850 CE (approx)",
       "lotSize": null,
       "sectorStatus": "Durables • WATCH",
@@ -3279,7 +3279,7 @@
       "sessionReturn": "-1.46%",
       "gapPct": "-0.28%",
       "alpha": "-2.38%",
-      "rvol": 5.52,
+      "rvol": 6.12,
       "rvolAvailable": true,
       "rsi": 13.4,
       "adx": 41.1,
@@ -3324,7 +3324,7 @@
       "relativeStrength": -2.38,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3342,7 +3342,7 @@
       "sessionReturn": "-1.32%",
       "gapPct": "+0.36%",
       "alpha": "-1.62%",
-      "rvol": 4.74,
+      "rvol": 2.99,
       "rvolAvailable": true,
       "rsi": 24.2,
       "adx": 21.1,
@@ -3388,7 +3388,7 @@
       "relativeStrength": -1.62,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3406,7 +3406,7 @@
       "sessionReturn": "-0.74%",
       "gapPct": "-2.70%",
       "alpha": "-4.07%",
-      "rvol": 5.35,
+      "rvol": 4.26,
       "rvolAvailable": true,
       "rsi": 22.9,
       "adx": 44.9,
@@ -3451,7 +3451,7 @@
       "relativeStrength": -4.07,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3469,7 +3469,7 @@
       "sessionReturn": "+4.80%",
       "gapPct": "+3.52%",
       "alpha": "+7.84%",
-      "rvol": 5.33,
+      "rvol": 5.92,
       "rvolAvailable": true,
       "rsi": 68.4,
       "adx": 45.1,
@@ -3514,7 +3514,7 @@
       "relativeStrength": 7.84,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3532,7 +3532,7 @@
       "sessionReturn": "+2.18%",
       "gapPct": "+0.56%",
       "alpha": "+2.10%",
-      "rvol": 5.23,
+      "rvol": 5.21,
       "rvolAvailable": true,
       "rsi": 63.5,
       "adx": 45.9,
@@ -3577,7 +3577,70 @@
       "relativeStrength": 2.1,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
+    },
+    {
+      "symbol": "ENRIN",
+      "type": "PE",
+      "sector": "General",
+      "powerScore": 73,
+      "grade": "A",
+      "status": "BREAKOUT CONFIRMED",
+      "riskFlag": "NORMAL",
+      "detectTime": "09:35",
+      "price": 2889.0,
+      "pctChange": "-2.30%",
+      "sessionReturn": "-3.14%",
+      "gapPct": "+0.87%",
+      "alpha": "-2.95%",
+      "rvol": 2.22,
+      "rvolAvailable": true,
+      "rsi": 22.9,
+      "adx": 47.2,
+      "vwap": 2915.34,
+      "ema9": 2898.71,
+      "ema20": 2908.03,
+      "orbHigh": 2982.8,
+      "orbLow": 2901.0,
+      "previousDayHigh": 3121.39990234375,
+      "previousDayLow": 2946.0,
+      "atr": 128.68,
+      "atrUsedPct": 76.8,
+      "fuelLeft": "23%",
+      "avgTurnoverCr": 143.05,
+      "lotSize": null,
+      "triggerLevel": 2946.0,
+      "invalidationLevel": 2982.8,
+      "reasons": [
+        "15m ORB / previous-day level break",
+        "VWAP aligned",
+        "Relative volume elevated",
+        "Recent momentum aligned",
+        "Relative strength vs Nifty"
+      ],
+      "scoreBreakdown": {
+        "relativeVolume": 10.7,
+        "structure": 17.0,
+        "momentum": 9.3,
+        "trend": 15.0,
+        "relativeStrength": 10,
+        "volatility": 3.5,
+        "coil": 0,
+        "candle": 2.5,
+        "liquidity": 5
+      },
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "bbSqueeze": false,
+      "breakoutConfirmed": true,
+      "fnoEligible": true,
+      "sectorStatus": "General • WATCH",
+      "relativeStrength": -2.95,
+      "marketSessionDate": "2026-10-16",
+      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3595,7 +3658,7 @@
       "sessionReturn": "+8.34%",
       "gapPct": "-2.21%",
       "alpha": "+5.30%",
-      "rvol": 5.96,
+      "rvol": 4.58,
       "rvolAvailable": true,
       "rsi": 52.6,
       "adx": 25.4,
@@ -3640,7 +3703,7 @@
       "relativeStrength": 5.3,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3658,7 +3721,7 @@
       "sessionReturn": "-1.54%",
       "gapPct": "+0.49%",
       "alpha": "-1.70%",
-      "rvol": 2.78,
+      "rvol": 2.79,
       "rvolAvailable": true,
       "rsi": 36.2,
       "adx": 60.6,
@@ -3683,7 +3746,7 @@
         "Relative strength vs Nifty"
       ],
       "scoreBreakdown": {
-        "relativeVolume": 14.8,
+        "relativeVolume": 14.9,
         "structure": 17.0,
         "momentum": 4.0,
         "trend": 15.0,
@@ -3702,7 +3765,7 @@
       "relativeStrength": -1.7,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3720,7 +3783,7 @@
       "sessionReturn": "+3.51%",
       "gapPct": "+0.61%",
       "alpha": "+3.49%",
-      "rvol": 5.37,
+      "rvol": 5.47,
       "rvolAvailable": true,
       "rsi": 43.1,
       "adx": 22.7,
@@ -3766,7 +3829,70 @@
       "relativeStrength": 3.49,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
+    },
+    {
+      "symbol": "SUZLON",
+      "type": "CE",
+      "sector": "General",
+      "powerScore": 71,
+      "grade": "A",
+      "status": "EARLY WATCH",
+      "riskFlag": "EXTENDED VS ATR",
+      "detectTime": "Not confirmed",
+      "price": 42.0,
+      "pctChange": "+2.56%",
+      "sessionReturn": "+2.56%",
+      "gapPct": "+0.00%",
+      "alpha": "+1.92%",
+      "rvol": 1.0,
+      "rvolAvailable": false,
+      "rsi": 70.9,
+      "adx": 32.5,
+      "vwap": 41.28,
+      "ema9": 41.15,
+      "ema20": 41.11,
+      "orbHigh": 41.04,
+      "orbLow": 40.65,
+      "previousDayHigh": 41.380001068115234,
+      "previousDayLow": 40.41999816894531,
+      "atr": 1.2,
+      "atrUsedPct": 116.0,
+      "fuelLeft": "0%",
+      "avgTurnoverCr": 255.68,
+      "lotSize": null,
+      "triggerLevel": 41.38,
+      "invalidationLevel": 40.65,
+      "reasons": [
+        "15m ORB / previous-day level break",
+        "VWAP aligned",
+        "Recent momentum aligned",
+        "Compression context",
+        "Relative strength vs Nifty"
+      ],
+      "scoreBreakdown": {
+        "relativeVolume": 1.5,
+        "structure": 17.0,
+        "momentum": 15,
+        "trend": 15.0,
+        "relativeStrength": 10,
+        "volatility": 0.0,
+        "coil": 5.0,
+        "candle": 2.5,
+        "liquidity": 5
+      },
+      "isNarrowCPR": true,
+      "isNR7": true,
+      "bbSqueeze": false,
+      "breakoutConfirmed": false,
+      "fnoEligible": true,
+      "sectorStatus": "General • WATCH",
+      "relativeStrength": 1.92,
+      "marketSessionDate": "2026-10-16",
+      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3784,7 +3910,7 @@
       "sessionReturn": "-2.99%",
       "gapPct": "+1.09%",
       "alpha": "-2.59%",
-      "rvol": 3.32,
+      "rvol": 3.85,
       "rvolAvailable": true,
       "rsi": 39.0,
       "adx": 65.9,
@@ -3829,134 +3955,7 @@
       "relativeStrength": -2.59,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
-      "sourceBarFresh": false,
-      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
-    },
-    {
-      "symbol": "MANKIND",
-      "type": "PE",
-      "sector": "General",
-      "powerScore": 70,
-      "grade": "A",
-      "status": "BREAKOUT CONFIRMED",
-      "riskFlag": "EXTENDED VS ATR",
-      "detectTime": "09:40",
-      "price": 2275.5,
-      "pctChange": "-3.07%",
-      "sessionReturn": "-3.11%",
-      "gapPct": "+0.04%",
-      "alpha": "-3.72%",
-      "rvol": 2.68,
-      "rvolAvailable": true,
-      "rsi": 48.5,
-      "adx": 59.7,
-      "vwap": 2288.28,
-      "ema9": 2276.69,
-      "ema20": 2276.71,
-      "orbHigh": 2352.5,
-      "orbLow": 2324.2,
-      "previousDayHigh": 2365.0,
-      "previousDayLow": 2321.10009765625,
-      "atr": 69.22,
-      "atrUsedPct": 121.1,
-      "fuelLeft": "0%",
-      "avgTurnoverCr": 111.65,
-      "lotSize": null,
-      "triggerLevel": 2321.1,
-      "invalidationLevel": 2352.5,
-      "reasons": [
-        "15m ORB / previous-day level break",
-        "VWAP aligned",
-        "Relative volume elevated",
-        "Recent momentum aligned",
-        "Compression context",
-        "Relative strength vs Nifty"
-      ],
-      "scoreBreakdown": {
-        "relativeVolume": 14.1,
-        "structure": 17.0,
-        "momentum": 5.5,
-        "trend": 10.0,
-        "relativeStrength": 10,
-        "volatility": 1.4,
-        "coil": 5.0,
-        "candle": 2.5,
-        "liquidity": 5
-      },
-      "isNarrowCPR": true,
-      "isNR7": true,
-      "bbSqueeze": true,
-      "breakoutConfirmed": true,
-      "fnoEligible": true,
-      "sectorStatus": "General • WATCH",
-      "relativeStrength": -3.72,
-      "marketSessionDate": "2026-10-16",
-      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
-      "sourceBarFresh": false,
-      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
-    },
-    {
-      "symbol": "ENRIN",
-      "type": "PE",
-      "sector": "General",
-      "powerScore": 70,
-      "grade": "A",
-      "status": "BREAKOUT CONFIRMED",
-      "riskFlag": "NORMAL",
-      "detectTime": "09:35",
-      "price": 2889.0,
-      "pctChange": "-2.30%",
-      "sessionReturn": "-3.14%",
-      "gapPct": "+0.87%",
-      "alpha": "-2.95%",
-      "rvol": 1.82,
-      "rvolAvailable": true,
-      "rsi": 22.9,
-      "adx": 47.2,
-      "vwap": 2915.34,
-      "ema9": 2898.71,
-      "ema20": 2908.03,
-      "orbHigh": 2982.8,
-      "orbLow": 2901.0,
-      "previousDayHigh": 3121.39990234375,
-      "previousDayLow": 2946.0,
-      "atr": 128.68,
-      "atrUsedPct": 76.8,
-      "fuelLeft": "23%",
-      "avgTurnoverCr": 143.05,
-      "lotSize": null,
-      "triggerLevel": 2946.0,
-      "invalidationLevel": 2982.8,
-      "reasons": [
-        "15m ORB / previous-day level break",
-        "VWAP aligned",
-        "Relative volume elevated",
-        "Recent momentum aligned",
-        "Relative strength vs Nifty"
-      ],
-      "scoreBreakdown": {
-        "relativeVolume": 7.7,
-        "structure": 17.0,
-        "momentum": 9.3,
-        "trend": 15.0,
-        "relativeStrength": 10,
-        "volatility": 3.5,
-        "coil": 0,
-        "candle": 2.5,
-        "liquidity": 5
-      },
-      "isNarrowCPR": false,
-      "isNR7": false,
-      "bbSqueeze": false,
-      "breakoutConfirmed": true,
-      "fnoEligible": true,
-      "sectorStatus": "General • WATCH",
-      "relativeStrength": -2.95,
-      "marketSessionDate": "2026-10-16",
-      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3974,7 +3973,7 @@
       "sessionReturn": "+1.40%",
       "gapPct": "+0.20%",
       "alpha": "+0.96%",
-      "rvol": 1.6,
+      "rvol": 1.54,
       "rvolAvailable": true,
       "rsi": 63.7,
       "adx": 43.6,
@@ -4001,7 +4000,7 @@
         "Relative strength vs Nifty"
       ],
       "scoreBreakdown": {
-        "relativeVolume": 6.0,
+        "relativeVolume": 5.5,
         "structure": 17.0,
         "momentum": 8.4,
         "trend": 15.0,
@@ -4020,7 +4019,7 @@
       "relativeStrength": 0.96,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4038,7 +4037,7 @@
       "sessionReturn": "-1.20%",
       "gapPct": "-0.33%",
       "alpha": "-2.17%",
-      "rvol": 1.05,
+      "rvol": 1.04,
       "rvolAvailable": true,
       "rsi": 40.0,
       "adx": 18.8,
@@ -4063,7 +4062,7 @@
         "Relative strength vs Nifty"
       ],
       "scoreBreakdown": {
-        "relativeVolume": 1.9,
+        "relativeVolume": 1.8,
         "structure": 17.0,
         "momentum": 11.0,
         "trend": 15.0,
@@ -4082,132 +4081,7 @@
       "relativeStrength": -2.17,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
-      "sourceBarFresh": false,
-      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
-    },
-    {
-      "symbol": "SUZLON",
-      "type": "CE",
-      "sector": "General",
-      "powerScore": 70,
-      "grade": "A",
-      "status": "EARLY WATCH",
-      "riskFlag": "EXTENDED VS ATR",
-      "detectTime": "Not confirmed",
-      "price": 42.0,
-      "pctChange": "+2.56%",
-      "sessionReturn": "+2.56%",
-      "gapPct": "+0.00%",
-      "alpha": "+1.92%",
-      "rvol": 0.44,
-      "rvolAvailable": true,
-      "rsi": 70.9,
-      "adx": 32.5,
-      "vwap": 41.28,
-      "ema9": 41.15,
-      "ema20": 41.11,
-      "orbHigh": 41.04,
-      "orbLow": 40.65,
-      "previousDayHigh": 41.380001068115234,
-      "previousDayLow": 40.41999816894531,
-      "atr": 1.2,
-      "atrUsedPct": 116.0,
-      "fuelLeft": "0%",
-      "avgTurnoverCr": 255.68,
-      "lotSize": null,
-      "triggerLevel": 41.38,
-      "invalidationLevel": 40.65,
-      "reasons": [
-        "15m ORB / previous-day level break",
-        "VWAP aligned",
-        "Recent momentum aligned",
-        "Compression context",
-        "Relative strength vs Nifty"
-      ],
-      "scoreBreakdown": {
-        "relativeVolume": 0.0,
-        "structure": 17.0,
-        "momentum": 15,
-        "trend": 15.0,
-        "relativeStrength": 10,
-        "volatility": 0.0,
-        "coil": 5.0,
-        "candle": 2.5,
-        "liquidity": 5
-      },
-      "isNarrowCPR": true,
-      "isNR7": true,
-      "bbSqueeze": false,
-      "breakoutConfirmed": false,
-      "fnoEligible": true,
-      "sectorStatus": "General • WATCH",
-      "relativeStrength": 1.92,
-      "marketSessionDate": "2026-10-16",
-      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
-      "sourceBarFresh": false,
-      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
-    },
-    {
-      "symbol": "LTM",
-      "type": "CE",
-      "sector": "General",
-      "powerScore": 69,
-      "grade": "B",
-      "status": "MOMENTUM WATCH",
-      "riskFlag": "EXTENDED VS ATR",
-      "detectTime": "Not confirmed",
-      "price": 4390.0,
-      "pctChange": "+3.66%",
-      "sessionReturn": "+3.08%",
-      "gapPct": "+0.56%",
-      "alpha": "+3.01%",
-      "rvol": 2.7,
-      "rvolAvailable": true,
-      "rsi": 62.1,
-      "adx": 54.2,
-      "vwap": 4339.49,
-      "ema9": 4395.82,
-      "ema20": 4379.16,
-      "orbHigh": 4279.9,
-      "orbLow": 4213.0,
-      "previousDayHigh": 4358.0,
-      "previousDayLow": 4235.0,
-      "atr": 136.85,
-      "atrUsedPct": 150.5,
-      "fuelLeft": "0%",
-      "avgTurnoverCr": 153.06,
-      "lotSize": null,
-      "triggerLevel": 4358.0,
-      "invalidationLevel": 4213.0,
-      "reasons": [
-        "15m ORB / previous-day level break",
-        "VWAP aligned",
-        "Relative volume elevated",
-        "Relative strength vs Nifty"
-      ],
-      "scoreBreakdown": {
-        "relativeVolume": 14.3,
-        "structure": 17.0,
-        "momentum": 5.0,
-        "trend": 15.0,
-        "relativeStrength": 10,
-        "volatility": 0.0,
-        "coil": 0,
-        "candle": 2.5,
-        "liquidity": 5
-      },
-      "isNarrowCPR": false,
-      "isNR7": false,
-      "bbSqueeze": false,
-      "breakoutConfirmed": false,
-      "fnoEligible": true,
-      "sectorStatus": "General • WATCH",
-      "relativeStrength": 3.01,
-      "marketSessionDate": "2026-10-16",
-      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4269,7 +4143,7 @@
       "relativeStrength": 2.22,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4287,7 +4161,7 @@
       "sessionReturn": "-3.52%",
       "gapPct": "+0.98%",
       "alpha": "-3.22%",
-      "rvol": 3.34,
+      "rvol": 3.51,
       "rvolAvailable": true,
       "rsi": 48.4,
       "adx": 28.8,
@@ -4331,42 +4205,106 @@
       "relativeStrength": -3.22,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
     {
-      "symbol": "SBICARD",
+      "symbol": "MANKIND",
       "type": "PE",
-      "sector": "Finance",
+      "sector": "General",
       "powerScore": 67,
       "grade": "B",
       "status": "BREAKOUT CONFIRMED",
       "riskFlag": "EXTENDED VS ATR",
-      "detectTime": "09:55",
-      "price": 564.2,
-      "pctChange": "-1.57%",
-      "sessionReturn": "-1.57%",
-      "gapPct": "+0.00%",
-      "alpha": "-2.22%",
-      "rvol": 1.5,
+      "detectTime": "09:40",
+      "price": 2275.5,
+      "pctChange": "-3.07%",
+      "sessionReturn": "-3.11%",
+      "gapPct": "+0.04%",
+      "alpha": "-3.72%",
+      "rvol": 2.2,
       "rvolAvailable": true,
-      "rsi": 20.0,
-      "adx": 45.5,
-      "vwap": 567.75,
-      "ema9": 566.15,
-      "ema20": 567.81,
-      "orbHigh": 575.7,
-      "orbLow": 568.25,
-      "previousDayHigh": 578.75,
-      "previousDayLow": 564.25,
-      "atr": 14.5,
-      "atrUsedPct": 97.2,
-      "fuelLeft": "3%",
-      "avgTurnoverCr": 52.46,
+      "rsi": 48.5,
+      "adx": 59.7,
+      "vwap": 2288.28,
+      "ema9": 2276.69,
+      "ema20": 2276.71,
+      "orbHigh": 2352.5,
+      "orbLow": 2324.2,
+      "previousDayHigh": 2365.0,
+      "previousDayLow": 2321.10009765625,
+      "atr": 69.22,
+      "atrUsedPct": 121.1,
+      "fuelLeft": "0%",
+      "avgTurnoverCr": 111.65,
       "lotSize": null,
-      "triggerLevel": 564.25,
-      "invalidationLevel": 575.7,
+      "triggerLevel": 2321.1,
+      "invalidationLevel": 2352.5,
+      "reasons": [
+        "15m ORB / previous-day level break",
+        "VWAP aligned",
+        "Relative volume elevated",
+        "Recent momentum aligned",
+        "Compression context",
+        "Relative strength vs Nifty"
+      ],
+      "scoreBreakdown": {
+        "relativeVolume": 10.5,
+        "structure": 17.0,
+        "momentum": 5.5,
+        "trend": 10.0,
+        "relativeStrength": 10,
+        "volatility": 1.4,
+        "coil": 5.0,
+        "candle": 2.5,
+        "liquidity": 5
+      },
+      "isNarrowCPR": true,
+      "isNR7": true,
+      "bbSqueeze": true,
+      "breakoutConfirmed": true,
+      "fnoEligible": true,
+      "sectorStatus": "General • WATCH",
+      "relativeStrength": -3.72,
+      "marketSessionDate": "2026-10-16",
+      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
+      "sourceBarAgeMinutes": 3947.5,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
+    },
+    {
+      "symbol": "ALKEM",
+      "type": "PE",
+      "sector": "Pharma",
+      "powerScore": 67,
+      "grade": "B",
+      "status": "BREAKOUT CONFIRMED",
+      "riskFlag": "NORMAL",
+      "detectTime": "09:35",
+      "price": 5050.0,
+      "pctChange": "-1.38%",
+      "sessionReturn": "-1.81%",
+      "gapPct": "+0.44%",
+      "alpha": "-2.02%",
+      "rvol": 2.03,
+      "rvolAvailable": true,
+      "rsi": 42.5,
+      "adx": 41.4,
+      "vwap": 5063.86,
+      "ema9": 5058.98,
+      "ema20": 5061.75,
+      "orbHigh": 5143.0,
+      "orbLow": 5081.0,
+      "previousDayHigh": 5249.0,
+      "previousDayLow": 5120.5,
+      "atr": 118.86,
+      "atrUsedPct": 84.1,
+      "fuelLeft": "16%",
+      "avgTurnoverCr": 64.9,
+      "lotSize": null,
+      "triggerLevel": 5120.5,
+      "invalidationLevel": 5143.0,
       "reasons": [
         "15m ORB / previous-day level break",
         "VWAP aligned",
@@ -4375,12 +4313,12 @@
         "Relative strength vs Nifty"
       ],
       "scoreBreakdown": {
-        "relativeVolume": 5.2,
+        "relativeVolume": 9.2,
         "structure": 17.0,
-        "momentum": 8.2,
+        "momentum": 5.4,
         "trend": 15.0,
         "relativeStrength": 10,
-        "volatility": 4.0,
+        "volatility": 2.5,
         "coil": 0,
         "candle": 2.5,
         "liquidity": 5
@@ -4390,11 +4328,11 @@
       "bbSqueeze": false,
       "breakoutConfirmed": true,
       "fnoEligible": true,
-      "sectorStatus": "Finance 🔥 STRONG",
-      "relativeStrength": -2.22,
+      "sectorStatus": "Pharma 🔥 STRONG",
+      "relativeStrength": -2.02,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4457,7 +4395,7 @@
       "relativeStrength": -1.59,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4465,7 +4403,7 @@
       "symbol": "INOXWIND",
       "type": "PE",
       "sector": "General",
-      "powerScore": 65,
+      "powerScore": 66,
       "grade": "B",
       "status": "EARLY WATCH",
       "riskFlag": "NORMAL",
@@ -4475,7 +4413,7 @@
       "sessionReturn": "-1.50%",
       "gapPct": "+0.12%",
       "alpha": "-2.03%",
-      "rvol": 0.82,
+      "rvol": 1.02,
       "rvolAvailable": true,
       "rsi": 12.3,
       "adx": 65.2,
@@ -4500,7 +4438,7 @@
         "Relative strength vs Nifty"
       ],
       "scoreBreakdown": {
-        "relativeVolume": 0.1,
+        "relativeVolume": 1.6,
         "structure": 17.0,
         "momentum": 11.4,
         "trend": 15.0,
@@ -4519,196 +4457,7 @@
       "relativeStrength": -2.03,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
-      "sourceBarFresh": false,
-      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
-    },
-    {
-      "symbol": "TCS",
-      "type": "CE",
-      "sector": "IT",
-      "powerScore": 64,
-      "grade": "B",
-      "status": "MOMENTUM WATCH",
-      "riskFlag": "EXTENDED VS ATR",
-      "detectTime": "Not confirmed",
-      "price": 2465.0,
-      "pctChange": "+4.89%",
-      "sessionReturn": "+3.61%",
-      "gapPct": "+1.23%",
-      "alpha": "+4.25%",
-      "rvol": 1.66,
-      "rvolAvailable": true,
-      "rsi": 70.6,
-      "adx": 39.7,
-      "vwap": 2443.21,
-      "ema9": 2464.04,
-      "ema20": 2458.79,
-      "orbHigh": 2424.9,
-      "orbLow": 2378.8,
-      "previousDayHigh": 2386.699951171875,
-      "previousDayLow": 2335.0,
-      "atr": 70.7,
-      "atrUsedPct": 147.2,
-      "fuelLeft": "0%",
-      "avgTurnoverCr": 751.07,
-      "lotSize": 175,
-      "triggerLevel": 2386.7,
-      "invalidationLevel": 2378.8,
-      "reasons": [
-        "15m ORB / previous-day level break",
-        "VWAP aligned",
-        "Relative volume elevated",
-        "Relative strength vs Nifty"
-      ],
-      "scoreBreakdown": {
-        "relativeVolume": 6.4,
-        "structure": 17.0,
-        "momentum": 5.4,
-        "trend": 15.0,
-        "relativeStrength": 10,
-        "volatility": 3.2,
-        "coil": 0,
-        "candle": 2.5,
-        "liquidity": 5
-      },
-      "isNarrowCPR": false,
-      "isNR7": false,
-      "bbSqueeze": false,
-      "breakoutConfirmed": false,
-      "fnoEligible": true,
-      "sectorStatus": "IT 🔥 STRONG",
-      "relativeStrength": 4.25,
-      "marketSessionDate": "2026-10-16",
-      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
-      "sourceBarFresh": false,
-      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
-    },
-    {
-      "symbol": "PFC",
-      "type": "PE",
-      "sector": "Finance",
-      "powerScore": 64,
-      "grade": "B",
-      "status": "BREAKOUT CONFIRMED",
-      "riskFlag": "EXTENDED VS ATR",
-      "detectTime": "10:15",
-      "price": 333.25,
-      "pctChange": "-2.64%",
-      "sessionReturn": "-3.52%",
-      "gapPct": "+0.91%",
-      "alpha": "-3.29%",
-      "rvol": 1.3,
-      "rvolAvailable": true,
-      "rsi": 27.1,
-      "adx": 42.2,
-      "vwap": 339.74,
-      "ema9": 334.61,
-      "ema20": 335.17,
-      "orbHigh": 345.55,
-      "orbLow": 342.3,
-      "previousDayHigh": 348.0,
-      "previousDayLow": 341.6499938964844,
-      "atr": 8.36,
-      "atrUsedPct": 147.1,
-      "fuelLeft": "0%",
-      "avgTurnoverCr": 313.6,
-      "lotSize": null,
-      "triggerLevel": 341.65,
-      "invalidationLevel": 345.55,
-      "reasons": [
-        "15m ORB / previous-day level break",
-        "VWAP aligned",
-        "Relative volume elevated",
-        "Recent momentum aligned",
-        "Compression context",
-        "Relative strength vs Nifty"
-      ],
-      "scoreBreakdown": {
-        "relativeVolume": 3.8,
-        "structure": 17.0,
-        "momentum": 8.6,
-        "trend": 15.0,
-        "relativeStrength": 10,
-        "volatility": 0.0,
-        "coil": 2.5,
-        "candle": 2.5,
-        "liquidity": 5
-      },
-      "isNarrowCPR": false,
-      "isNR7": true,
-      "bbSqueeze": false,
-      "breakoutConfirmed": true,
-      "fnoEligible": true,
-      "sectorStatus": "Finance 🔥 STRONG",
-      "relativeStrength": -3.29,
-      "marketSessionDate": "2026-10-16",
-      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
-      "sourceBarFresh": false,
-      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
-    },
-    {
-      "symbol": "BEL",
-      "type": "PE",
-      "sector": "Defense",
-      "powerScore": 64,
-      "grade": "B",
-      "status": "EARLY WATCH",
-      "riskFlag": "NORMAL",
-      "detectTime": "Not confirmed",
-      "price": 376.85,
-      "pctChange": "-0.93%",
-      "sessionReturn": "-1.04%",
-      "gapPct": "+0.11%",
-      "alpha": "-1.58%",
-      "rvol": 1.14,
-      "rvolAvailable": true,
-      "rsi": 31.1,
-      "adx": 31.7,
-      "vwap": 378.73,
-      "ema9": 377.95,
-      "ema20": 378.37,
-      "orbHigh": 381.15,
-      "orbLow": 378.65,
-      "previousDayHigh": 382.5,
-      "previousDayLow": 377.29998779296875,
-      "atr": 7.85,
-      "atrUsedPct": 56.1,
-      "fuelLeft": "44%",
-      "avgTurnoverCr": 382.13,
-      "lotSize": 2850,
-      "triggerLevel": 377.3,
-      "invalidationLevel": 381.15,
-      "reasons": [
-        "15m ORB / previous-day level break",
-        "VWAP aligned",
-        "Recent momentum aligned",
-        "Compression context",
-        "Relative strength vs Nifty"
-      ],
-      "scoreBreakdown": {
-        "relativeVolume": 2.5,
-        "structure": 17.0,
-        "momentum": 5.0,
-        "trend": 15.0,
-        "relativeStrength": 10,
-        "volatility": 4.0,
-        "coil": 2.5,
-        "candle": 2.5,
-        "liquidity": 5
-      },
-      "isNarrowCPR": true,
-      "isNR7": false,
-      "bbSqueeze": false,
-      "breakoutConfirmed": false,
-      "fnoEligible": true,
-      "sectorStatus": "Defense 🔥 STRONG",
-      "relativeStrength": -1.58,
-      "marketSessionDate": "2026-10-16",
-      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4716,7 +4465,7 @@
       "symbol": "ONGC",
       "type": "PE",
       "sector": "Energy",
-      "powerScore": 63,
+      "powerScore": 65,
       "grade": "B",
       "status": "BREAKOUT CONFIRMED",
       "riskFlag": "NORMAL",
@@ -4726,7 +4475,7 @@
       "sessionReturn": "-1.03%",
       "gapPct": "-0.15%",
       "alpha": "-1.82%",
-      "rvol": 1.22,
+      "rvol": 1.41,
       "rvolAvailable": true,
       "rsi": 14.1,
       "adx": 75.2,
@@ -4753,7 +4502,7 @@
         "Relative strength vs Nifty"
       ],
       "scoreBreakdown": {
-        "relativeVolume": 3.1,
+        "relativeVolume": 4.6,
         "structure": 17.0,
         "momentum": 4.6,
         "trend": 15.0,
@@ -4772,7 +4521,258 @@
       "relativeStrength": -1.82,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
+    },
+    {
+      "symbol": "BEL",
+      "type": "PE",
+      "sector": "Defense",
+      "powerScore": 64,
+      "grade": "B",
+      "status": "BREAKOUT CONFIRMED",
+      "riskFlag": "NORMAL",
+      "detectTime": "12:25",
+      "price": 376.85,
+      "pctChange": "-0.93%",
+      "sessionReturn": "-1.04%",
+      "gapPct": "+0.11%",
+      "alpha": "-1.58%",
+      "rvol": 1.17,
+      "rvolAvailable": true,
+      "rsi": 31.1,
+      "adx": 31.7,
+      "vwap": 378.73,
+      "ema9": 377.95,
+      "ema20": 378.37,
+      "orbHigh": 381.15,
+      "orbLow": 378.65,
+      "previousDayHigh": 382.5,
+      "previousDayLow": 377.29998779296875,
+      "atr": 7.85,
+      "atrUsedPct": 56.1,
+      "fuelLeft": "44%",
+      "avgTurnoverCr": 382.13,
+      "lotSize": 2850,
+      "triggerLevel": 377.3,
+      "invalidationLevel": 381.15,
+      "reasons": [
+        "15m ORB / previous-day level break",
+        "VWAP aligned",
+        "Relative volume elevated",
+        "Recent momentum aligned",
+        "Compression context",
+        "Relative strength vs Nifty"
+      ],
+      "scoreBreakdown": {
+        "relativeVolume": 2.8,
+        "structure": 17.0,
+        "momentum": 5.0,
+        "trend": 15.0,
+        "relativeStrength": 10,
+        "volatility": 4.0,
+        "coil": 2.5,
+        "candle": 2.5,
+        "liquidity": 5
+      },
+      "isNarrowCPR": true,
+      "isNR7": false,
+      "bbSqueeze": false,
+      "breakoutConfirmed": true,
+      "fnoEligible": true,
+      "sectorStatus": "Defense 🔥 STRONG",
+      "relativeStrength": -1.58,
+      "marketSessionDate": "2026-10-16",
+      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
+      "sourceBarAgeMinutes": 3947.5,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
+    },
+    {
+      "symbol": "SBICARD",
+      "type": "PE",
+      "sector": "Finance",
+      "powerScore": 64,
+      "grade": "B",
+      "status": "EARLY WATCH",
+      "riskFlag": "EXTENDED VS ATR",
+      "detectTime": "Not confirmed",
+      "price": 564.2,
+      "pctChange": "-1.57%",
+      "sessionReturn": "-1.57%",
+      "gapPct": "+0.00%",
+      "alpha": "-2.22%",
+      "rvol": 1.14,
+      "rvolAvailable": true,
+      "rsi": 20.0,
+      "adx": 45.5,
+      "vwap": 567.75,
+      "ema9": 566.15,
+      "ema20": 567.81,
+      "orbHigh": 575.7,
+      "orbLow": 568.25,
+      "previousDayHigh": 578.75,
+      "previousDayLow": 564.25,
+      "atr": 14.5,
+      "atrUsedPct": 97.2,
+      "fuelLeft": "3%",
+      "avgTurnoverCr": 52.46,
+      "lotSize": null,
+      "triggerLevel": 564.25,
+      "invalidationLevel": 575.7,
+      "reasons": [
+        "15m ORB / previous-day level break",
+        "VWAP aligned",
+        "Recent momentum aligned",
+        "Relative strength vs Nifty"
+      ],
+      "scoreBreakdown": {
+        "relativeVolume": 2.5,
+        "structure": 17.0,
+        "momentum": 8.2,
+        "trend": 15.0,
+        "relativeStrength": 10,
+        "volatility": 4.0,
+        "coil": 0,
+        "candle": 2.5,
+        "liquidity": 5
+      },
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "bbSqueeze": false,
+      "breakoutConfirmed": false,
+      "fnoEligible": true,
+      "sectorStatus": "Finance 🔥 STRONG",
+      "relativeStrength": -2.22,
+      "marketSessionDate": "2026-10-16",
+      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
+      "sourceBarAgeMinutes": 3947.5,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
+    },
+    {
+      "symbol": "ASTRAL",
+      "type": "PE",
+      "sector": "General",
+      "powerScore": 64,
+      "grade": "B",
+      "status": "EARLY WATCH",
+      "riskFlag": "NORMAL",
+      "detectTime": "Not confirmed",
+      "price": 1427.4,
+      "pctChange": "-1.10%",
+      "sessionReturn": "-0.90%",
+      "gapPct": "-0.21%",
+      "alpha": "-1.75%",
+      "rvol": 1.08,
+      "rvolAvailable": true,
+      "rsi": 33.9,
+      "adx": 33.3,
+      "vwap": 1432.08,
+      "ema9": 1434.89,
+      "ema20": 1435.97,
+      "orbHigh": 1444.3,
+      "orbLow": 1429.0,
+      "previousDayHigh": 1469.4000244140625,
+      "previousDayLow": 1438.199951171875,
+      "atr": 35.03,
+      "atrUsedPct": 52.2,
+      "fuelLeft": "48%",
+      "avgTurnoverCr": 50.33,
+      "lotSize": 275,
+      "triggerLevel": 1438.2,
+      "invalidationLevel": 1444.3,
+      "reasons": [
+        "15m ORB / previous-day level break",
+        "VWAP aligned",
+        "Recent momentum aligned",
+        "Relative strength vs Nifty"
+      ],
+      "scoreBreakdown": {
+        "relativeVolume": 2.1,
+        "structure": 17.0,
+        "momentum": 8.5,
+        "trend": 15.0,
+        "relativeStrength": 10,
+        "volatility": 4.2,
+        "coil": 0,
+        "candle": 2.5,
+        "liquidity": 5
+      },
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "bbSqueeze": false,
+      "breakoutConfirmed": false,
+      "fnoEligible": true,
+      "sectorStatus": "General • WATCH",
+      "relativeStrength": -1.75,
+      "marketSessionDate": "2026-10-16",
+      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
+      "sourceBarAgeMinutes": 3947.5,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
+    },
+    {
+      "symbol": "IOC",
+      "type": "CE",
+      "sector": "Energy",
+      "powerScore": 63,
+      "grade": "B",
+      "status": "BREAKOUT CONFIRMED",
+      "riskFlag": "EXTENDED VS ATR",
+      "detectTime": "10:20",
+      "price": 130.38,
+      "pctChange": "+1.20%",
+      "sessionReturn": "+1.70%",
+      "gapPct": "-0.49%",
+      "alpha": "+0.56%",
+      "rvol": 1.82,
+      "rvolAvailable": true,
+      "rsi": 62.6,
+      "adx": 39.8,
+      "vwap": 129.14,
+      "ema9": 129.87,
+      "ema20": 129.77,
+      "orbHigh": 128.2,
+      "orbLow": 127.08,
+      "previousDayHigh": 129.14999389648438,
+      "previousDayLow": 126.51000213623047,
+      "atr": 2.91,
+      "atrUsedPct": 121.5,
+      "fuelLeft": "0%",
+      "avgTurnoverCr": 102.09,
+      "lotSize": null,
+      "triggerLevel": 129.15,
+      "invalidationLevel": 127.08,
+      "reasons": [
+        "15m ORB / previous-day level break",
+        "VWAP aligned",
+        "Relative volume elevated",
+        "Recent momentum aligned",
+        "Relative strength vs Nifty"
+      ],
+      "scoreBreakdown": {
+        "relativeVolume": 7.7,
+        "structure": 17.0,
+        "momentum": 7.5,
+        "trend": 15.0,
+        "relativeStrength": 8,
+        "volatility": 0.0,
+        "coil": 0,
+        "candle": 2.5,
+        "liquidity": 5
+      },
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "bbSqueeze": false,
+      "breakoutConfirmed": true,
+      "fnoEligible": true,
+      "sectorStatus": "Energy • WATCH",
+      "relativeStrength": 0.56,
+      "marketSessionDate": "2026-10-16",
+      "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4790,7 +4790,7 @@
       "sessionReturn": "-2.54%",
       "gapPct": "+0.26%",
       "alpha": "-2.94%",
-      "rvol": 0.62,
+      "rvol": 0.5,
       "rvolAvailable": true,
       "rsi": 45.2,
       "adx": 19.7,
@@ -4834,7 +4834,7 @@
       "relativeStrength": -2.94,
       "marketSessionDate": "2026-10-16",
       "lastSourceBarCloseAt": "2026-10-16T15:30:00+05:30",
-      "sourceBarAgeMinutes": 2798.0,
+      "sourceBarAgeMinutes": 3947.5,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     }
@@ -4850,7 +4850,7 @@
       "low": 494.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -4861,7 +4861,7 @@
       "low": 6801.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -4872,7 +4872,7 @@
       "low": 26170.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -4883,7 +4883,7 @@
       "low": 379.4,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -4894,7 +4894,7 @@
       "low": 44.81,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -4905,7 +4905,7 @@
       "low": 1187.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -4916,7 +4916,7 @@
       "low": 2692.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -4927,7 +4927,7 @@
       "low": 1750.8,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -4938,7 +4938,7 @@
       "low": 5050.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -4949,7 +4949,7 @@
       "low": 360.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -4960,7 +4960,7 @@
       "low": 300.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -4971,7 +4971,7 @@
       "low": 7890.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -4982,7 +4982,7 @@
       "low": 408.45,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -4993,7 +4993,7 @@
       "low": 148.91,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5004,7 +5004,7 @@
       "low": 2331.8999,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5015,7 +5015,7 @@
       "low": 1427.4,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5026,7 +5026,7 @@
       "low": 6170.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5037,7 +5037,7 @@
       "low": 989.4,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5048,7 +5048,7 @@
       "low": 1666.9,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5059,7 +5059,7 @@
       "low": 1290.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5070,7 +5070,7 @@
       "low": 10405.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5081,7 +5081,7 @@
       "low": 1729.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5092,7 +5092,7 @@
       "low": 982.1,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5103,7 +5103,7 @@
       "low": 2050.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5114,7 +5114,7 @@
       "low": 713.45,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5125,7 +5125,7 @@
       "low": 167.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5136,7 +5136,7 @@
       "low": 230.4,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5147,7 +5147,7 @@
       "low": 638.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5158,7 +5158,7 @@
       "low": 376.85,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5169,7 +5169,7 @@
       "low": 470.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5180,7 +5180,7 @@
       "low": 1835.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5191,7 +5191,7 @@
       "low": 434.6,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5202,7 +5202,7 @@
       "low": 293.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5213,7 +5213,7 @@
       "low": 1905.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5224,7 +5224,7 @@
       "low": 349.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5235,7 +5235,7 @@
       "low": 315.1,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5246,7 +5246,7 @@
       "low": 45560.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5257,7 +5257,7 @@
       "low": 4764.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5268,7 +5268,7 @@
       "low": 732.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5279,7 +5279,7 @@
       "low": 118.29,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5290,7 +5290,7 @@
       "low": 388.35,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5301,7 +5301,7 @@
       "low": 1574.4,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5312,7 +5312,7 @@
       "low": 1325.1,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5323,7 +5323,7 @@
       "low": 417.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5334,7 +5334,7 @@
       "low": 1951.9,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5345,7 +5345,7 @@
       "low": 1770.9,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5356,7 +5356,7 @@
       "low": 447.95,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5367,7 +5367,7 @@
       "low": 1750.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5378,7 +5378,7 @@
       "low": 215.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5389,7 +5389,7 @@
       "low": 4608.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5400,7 +5400,7 @@
       "low": 385.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5411,7 +5411,7 @@
       "low": 1667.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5422,7 +5422,7 @@
       "low": 1598.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5433,7 +5433,7 @@
       "low": 80.67,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5444,7 +5444,7 @@
       "low": 9144.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5455,7 +5455,7 @@
       "low": 12340.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5466,7 +5466,7 @@
       "low": 675.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5477,7 +5477,7 @@
       "low": 1233.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5488,7 +5488,7 @@
       "low": 7284.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5499,7 +5499,7 @@
       "low": 2749.7,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5510,7 +5510,7 @@
       "low": 370.7,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5521,7 +5521,7 @@
       "low": 338.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5532,7 +5532,7 @@
       "low": 168.1,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5543,7 +5543,7 @@
       "low": 2226.7,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5554,7 +5554,7 @@
       "low": 562.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5565,7 +5565,7 @@
       "low": 855.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5576,7 +5576,7 @@
       "low": 1603.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5587,7 +5587,7 @@
       "low": 820.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5598,7 +5598,7 @@
       "low": 2920.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5609,7 +5609,7 @@
       "low": 4989.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5620,7 +5620,7 @@
       "low": 1121.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5631,7 +5631,7 @@
       "low": 1380.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5642,7 +5642,7 @@
       "low": 2398.6001,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5653,7 +5653,7 @@
       "low": 728.85,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5664,7 +5664,7 @@
       "low": 553.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5675,7 +5675,7 @@
       "low": 5225.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5686,7 +5686,7 @@
       "low": 908.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5697,7 +5697,7 @@
       "low": 458.05,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5708,7 +5708,7 @@
       "low": 346.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5719,7 +5719,7 @@
       "low": 1893.8,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5730,7 +5730,7 @@
       "low": 1397.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5741,7 +5741,7 @@
       "low": 1680.1,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5752,7 +5752,7 @@
       "low": 445.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5763,7 +5763,7 @@
       "low": 78.08,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5774,7 +5774,7 @@
       "low": 107.55,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5785,7 +5785,7 @@
       "low": 143.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5796,7 +5796,7 @@
       "low": 772.1,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5807,7 +5807,7 @@
       "low": 298.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5818,7 +5818,7 @@
       "low": 1630.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5829,7 +5829,7 @@
       "low": 4686.8999,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5840,7 +5840,7 @@
       "low": 877.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5851,7 +5851,7 @@
       "low": 383.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5862,7 +5862,7 @@
       "low": 1161.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5873,7 +5873,7 @@
       "low": 130.38,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5884,7 +5884,7 @@
       "low": 1845.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5895,7 +5895,7 @@
       "low": 466.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5906,7 +5906,7 @@
       "low": 263.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5917,7 +5917,7 @@
       "low": 1045.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5928,7 +5928,7 @@
       "low": 4914.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5939,7 +5939,7 @@
       "low": 1216.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5950,7 +5950,7 @@
       "low": 417.95,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5961,7 +5961,7 @@
       "low": 447.4,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5972,7 +5972,7 @@
       "low": 1856.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -5983,7 +5983,7 @@
       "low": 2060.1001,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -5994,7 +5994,7 @@
       "low": 521.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6005,7 +6005,7 @@
       "low": 3627.1001,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6016,7 +6016,7 @@
       "low": 253.85,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6027,7 +6027,7 @@
       "low": 1961.6,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6038,7 +6038,7 @@
       "low": 2920.8999,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6049,7 +6049,7 @@
       "low": 311.55,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6060,7 +6060,7 @@
       "low": 323.95,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6071,7 +6071,7 @@
       "low": 785.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6082,7 +6082,7 @@
       "low": 11489.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6093,7 +6093,7 @@
       "low": 3162.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6104,7 +6104,7 @@
       "low": 526.6,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6115,7 +6115,7 @@
       "low": 1294.9,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6126,7 +6126,7 @@
       "low": 1054.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6137,7 +6137,7 @@
       "low": 160.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6148,7 +6148,7 @@
       "low": 2500.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6159,7 +6159,7 @@
       "low": 122770.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6170,7 +6170,7 @@
       "low": 2598.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6181,7 +6181,7 @@
       "low": 324.25,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6192,7 +6192,7 @@
       "low": 1265.1,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6203,7 +6203,7 @@
       "low": 8139.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6214,7 +6214,7 @@
       "low": 1265.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6225,7 +6225,7 @@
       "low": 71.69,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6236,7 +6236,7 @@
       "low": 315.15,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6247,7 +6247,7 @@
       "low": 1703.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6258,7 +6258,7 @@
       "low": 10386.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6269,7 +6269,7 @@
       "low": 222.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6280,7 +6280,7 @@
       "low": 36145.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6291,7 +6291,7 @@
       "low": 5741.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6302,7 +6302,7 @@
       "low": 293.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6313,7 +6313,7 @@
       "low": 333.25,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6324,7 +6324,7 @@
       "low": 1502.8,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6335,7 +6335,7 @@
       "low": 2190.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6346,7 +6346,7 @@
       "low": 116.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6357,7 +6357,7 @@
       "low": 8219.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6368,7 +6368,7 @@
       "low": 447.35,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6379,7 +6379,7 @@
       "low": 250.45,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6390,7 +6390,7 @@
       "low": 1400.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6401,7 +6401,7 @@
       "low": 805.4,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6412,7 +6412,7 @@
       "low": 378.25,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6423,7 +6423,7 @@
       "low": 307.8,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6434,7 +6434,7 @@
       "low": 1211.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6445,7 +6445,7 @@
       "low": 170.95,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6456,7 +6456,7 @@
       "low": 564.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6467,7 +6467,7 @@
       "low": 1656.8,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6478,7 +6478,7 @@
       "low": 962.6,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6489,7 +6489,7 @@
       "low": 22460.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6500,7 +6500,7 @@
       "low": 939.95,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6511,7 +6511,7 @@
       "low": 3624.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6522,7 +6522,7 @@
       "low": 2472.1001,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6533,7 +6533,7 @@
       "low": 1758.8,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6544,7 +6544,7 @@
       "low": 635.15,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6555,7 +6555,7 @@
       "low": 385.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6566,7 +6566,7 @@
       "low": 633.65,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6577,7 +6577,7 @@
       "low": 1741.6,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6588,7 +6588,7 @@
       "low": 978.9,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6599,7 +6599,7 @@
       "low": 353.85,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6610,7 +6610,7 @@
       "low": 175.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6621,7 +6621,7 @@
       "low": 2465.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6632,7 +6632,7 @@
       "low": 1790.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6643,7 +6643,7 @@
       "low": 4444.7998,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6654,7 +6654,7 @@
       "low": 4558.8999,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6665,7 +6665,7 @@
       "low": 2958.7,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6676,7 +6676,7 @@
       "low": 4095.1001,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6687,7 +6687,7 @@
       "low": 1199.4,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6698,7 +6698,7 @@
       "low": 10907.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6709,7 +6709,7 @@
       "low": 171.68,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6720,7 +6720,7 @@
       "low": 534.65,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6731,7 +6731,7 @@
       "low": 246.1,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6742,7 +6742,7 @@
       "low": 1029.1,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6753,7 +6753,7 @@
       "low": 184.4,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6764,7 +6764,7 @@
       "low": 71.83,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6775,7 +6775,7 @@
       "low": 1123.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6786,7 +6786,7 @@
       "low": 1075.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6797,7 +6797,7 @@
       "low": 1365.9,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6808,7 +6808,7 @@
       "low": 1302.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6819,7 +6819,7 @@
       "low": 195.85,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6830,7 +6830,7 @@
       "low": 2152.7,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6841,7 +6841,7 @@
       "low": 6668.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6852,7 +6852,7 @@
       "low": 2159.7,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6863,7 +6863,7 @@
       "low": 226.03,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6874,7 +6874,7 @@
       "low": 646.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6885,7 +6885,7 @@
       "low": 3711.2,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6896,7 +6896,7 @@
       "low": 227.52,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6907,7 +6907,7 @@
       "low": 849.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": false
     },
     {
@@ -6918,7 +6918,7 @@
       "low": 1470.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6929,7 +6929,7 @@
       "low": 3342.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6940,7 +6940,7 @@
       "low": 3363.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6951,7 +6951,7 @@
       "low": 11198.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6962,7 +6962,7 @@
       "low": 132.36,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6973,7 +6973,7 @@
       "low": 79.79,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6984,7 +6984,7 @@
       "low": 1114.7,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -6995,7 +6995,7 @@
       "low": 1567.6,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7006,7 +7006,7 @@
       "low": 846.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7017,7 +7017,7 @@
       "low": 1286.9,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7028,7 +7028,7 @@
       "low": 1248.8,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7039,7 +7039,7 @@
       "low": 700.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7050,7 +7050,7 @@
       "low": 407.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7061,7 +7061,7 @@
       "low": 325.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7072,7 +7072,7 @@
       "low": 17700.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7083,7 +7083,7 @@
       "low": 345.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7094,7 +7094,7 @@
       "low": 736.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7105,7 +7105,7 @@
       "low": 3959.1001,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7116,7 +7116,7 @@
       "low": 89.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7127,7 +7127,7 @@
       "low": 1852.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7138,7 +7138,7 @@
       "low": 540.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7149,7 +7149,7 @@
       "low": 28990.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7160,7 +7160,7 @@
       "low": 1987.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7171,7 +7171,7 @@
       "low": 854.1,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7182,7 +7182,7 @@
       "low": 80.25,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7193,7 +7193,7 @@
       "low": 108.8,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7204,7 +7204,7 @@
       "low": 67.63,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7215,7 +7215,7 @@
       "low": 482.6,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7226,7 +7226,7 @@
       "low": 216.25,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7237,7 +7237,7 @@
       "low": 4482.2998,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7248,7 +7248,7 @@
       "low": 555.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7259,7 +7259,7 @@
       "low": 558.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7270,7 +7270,7 @@
       "low": 3281.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7281,7 +7281,7 @@
       "low": 887.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7292,7 +7292,7 @@
       "low": 4390.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7303,7 +7303,7 @@
       "low": 397.75,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7314,7 +7314,7 @@
       "low": 1058.7,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7325,7 +7325,7 @@
       "low": 2275.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7336,7 +7336,7 @@
       "low": 846.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7347,7 +7347,7 @@
       "low": 2092.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7358,7 +7358,7 @@
       "low": 1057.6,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7369,7 +7369,7 @@
       "low": 75.51,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7380,7 +7380,7 @@
       "low": 71.44,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7391,7 +7391,7 @@
       "low": 1065.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7402,7 +7402,7 @@
       "low": 445.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7413,7 +7413,7 @@
       "low": 1693.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7424,7 +7424,7 @@
       "low": 1070.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7435,7 +7435,7 @@
       "low": 521.05,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7446,7 +7446,7 @@
       "low": 1167.7,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7457,7 +7457,7 @@
       "low": 367.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7468,7 +7468,7 @@
       "low": 901.05,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7479,7 +7479,7 @@
       "low": 1492.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7490,7 +7490,7 @@
       "low": 4473.3999,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7501,7 +7501,7 @@
       "low": 199.45,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7512,7 +7512,7 @@
       "low": 45.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7523,7 +7523,7 @@
       "low": 2889.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7534,7 +7534,7 @@
       "low": 20011.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7545,7 +7545,7 @@
       "low": 800.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7556,7 +7556,7 @@
       "low": 3595.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7567,7 +7567,7 @@
       "low": 42.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7578,7 +7578,7 @@
       "low": 234.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7589,7 +7589,7 @@
       "low": 3850.1001,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7600,7 +7600,7 @@
       "low": 286.85,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7611,7 +7611,7 @@
       "low": 1896.9,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7622,7 +7622,7 @@
       "low": 2197.3,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7633,7 +7633,7 @@
       "low": 1108.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7644,7 +7644,7 @@
       "low": 63.25,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7655,7 +7655,7 @@
       "low": 1380.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7666,7 +7666,7 @@
       "low": 430.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7677,7 +7677,7 @@
       "low": 96.0,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7688,7 +7688,7 @@
       "low": 12.59,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7699,7 +7699,7 @@
       "low": 2565.3999,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     },
     {
@@ -7710,7 +7710,7 @@
       "low": 17.5,
       "candleTime": "2026-10-16T15:30:00+05:30",
       "sourceBarFresh": false,
-      "paperCutoffMark": true,
+      "paperCutoffMark": false,
       "fnoEligible": true
     }
   ],
@@ -10248,6 +10248,16 @@
         "target1Pct": 1.0,
         "target2Pct": 1.5,
         "candidates": []
+      },
+      {
+        "scanId": "2026-10-19T09:17:31.250425+05:30",
+        "scanTime": "2026-10-19T09:17:31.250425+05:30",
+        "sessionDate": "2026-10-16",
+        "freshSession": false,
+        "stopLossPct": 0.5,
+        "target1Pct": 1.0,
+        "target2Pct": 1.5,
+        "candidates": []
       }
     ],
     "processedScanIds": [
@@ -10270,13 +10280,14 @@
       "2026-10-16T19:04:02.296370+05:30",
       "2026-10-17T23:39:44.858832+05:30",
       "2026-10-18T08:06:59.602999+05:30",
-      "2026-10-18T14:07:57.442369+05:30"
+      "2026-10-18T14:07:57.442369+05:30",
+      "2026-10-19T09:17:31.250425+05:30"
     ],
-    "updatedAt": "2026-10-18T14:07:57.442369+05:30",
+    "updatedAt": "2026-10-19T09:17:31.250425+05:30",
     "sessionDate": "2026-10-16",
     "stats": {
       "signalsRecorded": 58,
-      "scansRecorded": 20,
+      "scansRecorded": 21,
       "openTrades": 33,
       "closedTrades": 25,
       "wins": 11,
