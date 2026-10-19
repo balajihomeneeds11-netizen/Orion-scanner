@@ -1,16 +1,973 @@
 {
-  "lastUpdated": "07:41 PM",
-  "scanGeneratedAt": "2026-10-19T19:41:12.780577+05:30",
+  "lastUpdated": "09:40 PM",
+  "scanGeneratedAt": "2026-10-19T21:40:47.940935+05:30",
   "sessionDate": "2026-10-19",
   "marketDataStatus": "SESSION DATA AVAILABLE",
   "dataSource": "Yahoo Finance via yfinance (no API key); NSE public F&O underlying list with public GitHub snapshot fallback",
   "latestCompleted5mBarCloseAt": "2026-10-19T15:30:00+05:30",
-  "staleSourceSymbols": 260,
+  "staleSourceSymbols": 261,
   "marketDataNote": "Free, no-key source configuration. Yahoo Finance may be delayed, incomplete or rate-limited; stale candles are flagged, not treated as live quotes. Verify quotes and order levels before trading.",
   "breadth": {
-    "advances": 49,
+    "advances": 50,
     "declines": 211,
     "sentiment": "BEARISH"
+  },
+  "sectorRankings": [
+    {
+      "name": "PSU BANK",
+      "changePct": 2.86,
+      "coverage": 8,
+      "universeSize": 11,
+      "advances": 8,
+      "declines": 0,
+      "eligibleStocks": [
+        {
+          "symbol": "BANKBARODA",
+          "sources": [
+            "GPT POWER",
+            "BRAHMASTRA"
+          ],
+          "price": 238.2,
+          "pctChange": "+3.39%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": "7/7",
+          "signal": "CE"
+        },
+        {
+          "symbol": "BANKINDIA",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 136.78,
+          "pctChange": "+3.34%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": 70,
+          "signal": "BREAKOUT CONFIRMED"
+        },
+        {
+          "symbol": "UNIONBANK",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 180.7,
+          "pctChange": "+5.25%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": 66,
+          "signal": "MOMENTUM WATCH"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 1,
+      "strength": "STRONG",
+      "eligibleCount": 3
+    },
+    {
+      "name": "BANKNIFTY",
+      "changePct": 0.5,
+      "coverage": 18,
+      "universeSize": 18,
+      "advances": 9,
+      "declines": 9,
+      "eligibleStocks": [
+        {
+          "symbol": "BANKBARODA",
+          "sources": [
+            "GPT POWER",
+            "BRAHMASTRA"
+          ],
+          "price": 238.2,
+          "pctChange": "+3.39%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": "7/7",
+          "signal": "CE"
+        },
+        {
+          "symbol": "BANKINDIA",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 136.78,
+          "pctChange": "+3.34%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": 70,
+          "signal": "BREAKOUT CONFIRMED"
+        },
+        {
+          "symbol": "UNIONBANK",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 180.7,
+          "pctChange": "+5.25%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": 66,
+          "signal": "MOMENTUM WATCH"
+        },
+        {
+          "symbol": "FEDERALBNK",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 348.85,
+          "pctChange": "+3.21%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": 63,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "BANDHANBNK",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 163.8,
+          "pctChange": "-2.21%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": 61,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "CUB",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 230.95,
+          "pctChange": "+1.57%",
+          "sector": "Banking",
+          "fnoEligible": false,
+          "score": "6/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 2,
+      "strength": "STRONG",
+      "eligibleCount": 6
+    },
+    {
+      "name": "OIL & GAS",
+      "changePct": 0.04,
+      "coverage": 10,
+      "universeSize": 13,
+      "advances": 5,
+      "declines": 5,
+      "eligibleStocks": [
+        {
+          "symbol": "HINDPETRO",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 348.5,
+          "pctChange": "+0.72%",
+          "sector": "Energy",
+          "fnoEligible": true,
+          "score": 69,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "ONGC",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 225.0,
+          "pctChange": "+1.35%",
+          "sector": "Energy",
+          "fnoEligible": false,
+          "score": "6/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 3,
+      "strength": "STRONG",
+      "eligibleCount": 2
+    },
+    {
+      "name": "AUTO",
+      "changePct": -0.76,
+      "coverage": 18,
+      "universeSize": 19,
+      "advances": 4,
+      "declines": 14,
+      "eligibleStocks": [
+        {
+          "symbol": "APOLLOTYRE",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 416.75,
+          "pctChange": "+1.93%",
+          "sector": "Auto",
+          "fnoEligible": false,
+          "score": "7/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 4,
+      "strength": "STRONG",
+      "eligibleCount": 1
+    },
+    {
+      "name": "HEALTHCARE",
+      "changePct": -0.77,
+      "coverage": 18,
+      "universeSize": 18,
+      "advances": 4,
+      "declines": 13,
+      "eligibleStocks": [
+        {
+          "symbol": "BIOCON",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 340.0,
+          "pctChange": "-2.63%",
+          "sector": "Pharma",
+          "fnoEligible": true,
+          "score": 65,
+          "signal": "BREAKOUT CONFIRMED"
+        },
+        {
+          "symbol": "APOLLOHOSP",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 7700.0,
+          "pctChange": "-2.41%",
+          "sector": "General",
+          "fnoEligible": true,
+          "score": 64,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "AUROPHARMA",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 1621.4,
+          "pctChange": "-2.73%",
+          "sector": "Pharma",
+          "fnoEligible": true,
+          "score": 60,
+          "signal": "MOMENTUM WATCH"
+        },
+        {
+          "symbol": "SYNGENE",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 399.0,
+          "pctChange": "+3.34%",
+          "sector": "General",
+          "fnoEligible": false,
+          "score": "7/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 5,
+      "strength": "STRONG",
+      "eligibleCount": 4
+    },
+    {
+      "name": "NIFTY",
+      "changePct": -0.85,
+      "coverage": 51,
+      "universeSize": 51,
+      "advances": 10,
+      "declines": 41,
+      "eligibleStocks": [
+        {
+          "symbol": "ULTRACEMCO",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 10650.0,
+          "pctChange": "-2.36%",
+          "sector": "General",
+          "fnoEligible": true,
+          "score": 70,
+          "signal": "MOMENTUM WATCH"
+        },
+        {
+          "symbol": "APOLLOHOSP",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 7700.0,
+          "pctChange": "-2.41%",
+          "sector": "General",
+          "fnoEligible": true,
+          "score": 64,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "JSWSTEEL",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 1241.3,
+          "pctChange": "+2.06%",
+          "sector": "Metals",
+          "fnoEligible": true,
+          "score": 61,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "ONGC",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 225.0,
+          "pctChange": "+1.35%",
+          "sector": "Energy",
+          "fnoEligible": false,
+          "score": "6/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 6,
+      "strength": "MIDDLE",
+      "eligibleCount": 4
+    },
+    {
+      "name": "PHARMA",
+      "changePct": -0.91,
+      "coverage": 15,
+      "universeSize": 16,
+      "advances": 2,
+      "declines": 12,
+      "eligibleStocks": [
+        {
+          "symbol": "BIOCON",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 340.0,
+          "pctChange": "-2.63%",
+          "sector": "Pharma",
+          "fnoEligible": true,
+          "score": 65,
+          "signal": "BREAKOUT CONFIRMED"
+        },
+        {
+          "symbol": "MANKIND",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 2253.2,
+          "pctChange": "-0.98%",
+          "sector": "General",
+          "fnoEligible": true,
+          "score": 61,
+          "signal": "MOMENTUM WATCH"
+        },
+        {
+          "symbol": "AUROPHARMA",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 1621.4,
+          "pctChange": "-2.73%",
+          "sector": "Pharma",
+          "fnoEligible": true,
+          "score": 60,
+          "signal": "MOMENTUM WATCH"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 7,
+      "strength": "MIDDLE",
+      "eligibleCount": 3
+    },
+    {
+      "name": "INFRA",
+      "changePct": -0.91,
+      "coverage": 10,
+      "universeSize": 16,
+      "advances": 2,
+      "declines": 8,
+      "eligibleStocks": [
+        {
+          "symbol": "NBCC",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 73.7,
+          "pctChange": "-2.40%",
+          "sector": "Infra",
+          "fnoEligible": true,
+          "score": 60,
+          "signal": "EARLY WATCH"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 8,
+      "strength": "MIDDLE",
+      "eligibleCount": 1
+    },
+    {
+      "name": "REALTY",
+      "changePct": -0.92,
+      "coverage": 5,
+      "universeSize": 10,
+      "advances": 0,
+      "declines": 5,
+      "eligibleStocks": [],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 9,
+      "strength": "MIDDLE",
+      "eligibleCount": 0
+    },
+    {
+      "name": "MIDCAP",
+      "changePct": -0.94,
+      "coverage": 28,
+      "universeSize": 29,
+      "advances": 7,
+      "declines": 20,
+      "eligibleStocks": [
+        {
+          "symbol": "HINDPETRO",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 348.5,
+          "pctChange": "+0.72%",
+          "sector": "Energy",
+          "fnoEligible": true,
+          "score": 69,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "DIXON",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 12100.0,
+          "pctChange": "-1.94%",
+          "sector": "Durables",
+          "fnoEligible": true,
+          "score": 66,
+          "signal": "MOMENTUM WATCH"
+        },
+        {
+          "symbol": "FEDERALBNK",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 348.85,
+          "pctChange": "+3.21%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": 63,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "AUROPHARMA",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 1621.4,
+          "pctChange": "-2.73%",
+          "sector": "Pharma",
+          "fnoEligible": true,
+          "score": 60,
+          "signal": "MOMENTUM WATCH"
+        },
+        {
+          "symbol": "ZEEL",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 73.11,
+          "pctChange": "+1.75%",
+          "sector": "General",
+          "fnoEligible": false,
+          "score": "6/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 10,
+      "strength": "MIDDLE",
+      "eligibleCount": 5
+    },
+    {
+      "name": "ENERGY",
+      "changePct": -0.96,
+      "coverage": 9,
+      "universeSize": 12,
+      "advances": 0,
+      "declines": 9,
+      "eligibleStocks": [],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 11,
+      "strength": "MIDDLE",
+      "eligibleCount": 0
+    },
+    {
+      "name": "FINNIFTY",
+      "changePct": -0.99,
+      "coverage": 25,
+      "universeSize": 25,
+      "advances": 4,
+      "declines": 21,
+      "eligibleStocks": [
+        {
+          "symbol": "BANKBARODA",
+          "sources": [
+            "GPT POWER",
+            "BRAHMASTRA"
+          ],
+          "price": 238.2,
+          "pctChange": "+3.39%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": "7/7",
+          "signal": "CE"
+        },
+        {
+          "symbol": "FEDERALBNK",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 348.85,
+          "pctChange": "+3.21%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": 63,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "ANGELONE",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 302.9,
+          "pctChange": "+0.97%",
+          "sector": "Finance",
+          "fnoEligible": false,
+          "score": "6/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 12,
+      "strength": "MIDDLE",
+      "eligibleCount": 3
+    },
+    {
+      "name": "COMMODITIES",
+      "changePct": -1.09,
+      "coverage": 25,
+      "universeSize": 25,
+      "advances": 5,
+      "declines": 20,
+      "eligibleStocks": [
+        {
+          "symbol": "HINDPETRO",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 348.5,
+          "pctChange": "+0.72%",
+          "sector": "Energy",
+          "fnoEligible": true,
+          "score": 69,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "JSWSTEEL",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 1241.3,
+          "pctChange": "+2.06%",
+          "sector": "Metals",
+          "fnoEligible": true,
+          "score": 61,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "COROMANDEL",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 1771.1,
+          "pctChange": "+0.71%",
+          "sector": "Chemicals",
+          "fnoEligible": false,
+          "score": "5/7",
+          "signal": "CE"
+        },
+        {
+          "symbol": "ONGC",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 225.0,
+          "pctChange": "+1.35%",
+          "sector": "Energy",
+          "fnoEligible": false,
+          "score": "6/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 13,
+      "strength": "MIDDLE",
+      "eligibleCount": 4
+    },
+    {
+      "name": "METAL",
+      "changePct": -1.11,
+      "coverage": 10,
+      "universeSize": 12,
+      "advances": 1,
+      "declines": 9,
+      "eligibleStocks": [
+        {
+          "symbol": "JSWSTEEL",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 1241.3,
+          "pctChange": "+2.06%",
+          "sector": "Metals",
+          "fnoEligible": true,
+          "score": 61,
+          "signal": "EARLY WATCH"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 14,
+      "strength": "MIDDLE",
+      "eligibleCount": 1
+    },
+    {
+      "name": "CONSUMPTION",
+      "changePct": -1.24,
+      "coverage": 19,
+      "universeSize": 23,
+      "advances": 2,
+      "declines": 17,
+      "eligibleStocks": [
+        {
+          "symbol": "VBL",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 420.55,
+          "pctChange": "-2.31%",
+          "sector": "FMCG",
+          "fnoEligible": true,
+          "score": 60,
+          "signal": "MOMENTUM WATCH"
+        },
+        {
+          "symbol": "UBL",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 1205.0,
+          "pctChange": "+0.28%",
+          "sector": "FMCG",
+          "fnoEligible": false,
+          "score": "6/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 15,
+      "strength": "MIDDLE",
+      "eligibleCount": 2
+    },
+    {
+      "name": "CAPITAL MRKT",
+      "changePct": -1.25,
+      "coverage": 9,
+      "universeSize": 11,
+      "advances": 2,
+      "declines": 7,
+      "eligibleStocks": [
+        {
+          "symbol": "ANGELONE",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 302.9,
+          "pctChange": "+0.97%",
+          "sector": "Finance",
+          "fnoEligible": false,
+          "score": "6/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 16,
+      "strength": "MIDDLE",
+      "eligibleCount": 1
+    },
+    {
+      "name": "SERVICES",
+      "changePct": -1.26,
+      "coverage": 18,
+      "universeSize": 19,
+      "advances": 3,
+      "declines": 15,
+      "eligibleStocks": [
+        {
+          "symbol": "IDEA",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 12.28,
+          "pctChange": "-2.46%",
+          "sector": "Telecom",
+          "fnoEligible": true,
+          "score": 62,
+          "signal": "MOMENTUM WATCH"
+        },
+        {
+          "symbol": "ANGELONE",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 302.9,
+          "pctChange": "+0.97%",
+          "sector": "Finance",
+          "fnoEligible": false,
+          "score": "6/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 17,
+      "strength": "MIDDLE",
+      "eligibleCount": 2
+    },
+    {
+      "name": "FMCG",
+      "changePct": -1.34,
+      "coverage": 11,
+      "universeSize": 14,
+      "advances": 1,
+      "declines": 10,
+      "eligibleStocks": [
+        {
+          "symbol": "VBL",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 420.55,
+          "pctChange": "-2.31%",
+          "sector": "FMCG",
+          "fnoEligible": true,
+          "score": 60,
+          "signal": "MOMENTUM WATCH"
+        },
+        {
+          "symbol": "UBL",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 1205.0,
+          "pctChange": "+0.28%",
+          "sector": "FMCG",
+          "fnoEligible": false,
+          "score": "6/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 18,
+      "strength": "MIDDLE",
+      "eligibleCount": 2
+    },
+    {
+      "name": "DEFENCE",
+      "changePct": -1.51,
+      "coverage": 6,
+      "universeSize": 9,
+      "advances": 1,
+      "declines": 5,
+      "eligibleStocks": [
+        {
+          "symbol": "IDEA",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 12.28,
+          "pctChange": "-2.46%",
+          "sector": "Telecom",
+          "fnoEligible": true,
+          "score": 62,
+          "signal": "MOMENTUM WATCH"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 19,
+      "strength": "WEAK",
+      "eligibleCount": 1
+    },
+    {
+      "name": "CHEMICALS",
+      "changePct": -1.52,
+      "coverage": 12,
+      "universeSize": 19,
+      "advances": 2,
+      "declines": 10,
+      "eligibleStocks": [
+        {
+          "symbol": "COROMANDEL",
+          "sources": [
+            "BRAHMASTRA"
+          ],
+          "price": 1771.1,
+          "pctChange": "+0.71%",
+          "sector": "Chemicals",
+          "fnoEligible": false,
+          "score": "5/7",
+          "signal": "CE"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 20,
+      "strength": "WEAK",
+      "eligibleCount": 1
+    },
+    {
+      "name": "IT",
+      "changePct": -1.53,
+      "coverage": 15,
+      "universeSize": 18,
+      "advances": 0,
+      "declines": 14,
+      "eligibleStocks": [],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 21,
+      "strength": "WEAK",
+      "eligibleCount": 0
+    },
+    {
+      "name": "PVT BANK",
+      "changePct": -1.6,
+      "coverage": 11,
+      "universeSize": 11,
+      "advances": 1,
+      "declines": 10,
+      "eligibleStocks": [
+        {
+          "symbol": "YESBANK",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 16.88,
+          "pctChange": "-3.54%",
+          "sector": "General",
+          "fnoEligible": true,
+          "score": 65,
+          "signal": "MOMENTUM WATCH"
+        },
+        {
+          "symbol": "FEDERALBNK",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 348.85,
+          "pctChange": "+3.21%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": 63,
+          "signal": "EARLY WATCH"
+        },
+        {
+          "symbol": "BANDHANBNK",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 163.8,
+          "pctChange": "-2.21%",
+          "sector": "Banking",
+          "fnoEligible": true,
+          "score": 61,
+          "signal": "EARLY WATCH"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 22,
+      "strength": "WEAK",
+      "eligibleCount": 3
+    },
+    {
+      "name": "CONSR DURBL",
+      "changePct": -1.74,
+      "coverage": 9,
+      "universeSize": 13,
+      "advances": 0,
+      "declines": 9,
+      "eligibleStocks": [
+        {
+          "symbol": "DIXON",
+          "sources": [
+            "GPT POWER"
+          ],
+          "price": 12100.0,
+          "pctChange": "-1.94%",
+          "sector": "Durables",
+          "fnoEligible": true,
+          "score": 66,
+          "signal": "MOMENTUM WATCH"
+        }
+      ],
+      "available": true,
+      "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+      "rank": 23,
+      "strength": "WEAK",
+      "eligibleCount": 1
+    }
+  ],
+  "sectorSentiment": {
+    "positiveCount": 3,
+    "negativeCount": 20,
+    "unchangedCount": 0,
+    "availableSectors": 23,
+    "totalSectors": 23,
+    "positivePct": 13.0,
+    "negativePct": 87.0,
+    "basis": "Sector constituent-proxy breadth; excludes sectors with no available constituent data"
   },
   "leaders": [
     {
@@ -272,6 +1229,71 @@
       "sl": 223.19,
       "t1": 227.72,
       "rsi": 68.2
+    },
+    {
+      "symbol": "ANGELONE",
+      "type": "CE",
+      "tier": "BRAHMASTRA",
+      "optionTag": "⚡ OPTION",
+      "score": "6/7",
+      "numScore": 6,
+      "prob": "76% heuristic",
+      "probScore": 76,
+      "detectTime": "14:40",
+      "price": 302.9,
+      "pctChange": "+0.97%",
+      "absChange": 0.97,
+      "volumeX": "5.61x",
+      "numVol": 5.61,
+      "strike": "300 CE (approx)",
+      "lotSize": 250,
+      "sectorStatus": "Finance • WATCH",
+      "watchBadge": "★★★ STRONG BUY WATCH",
+      "candleInfo": "body 0.00% • low ▲1.56% • high ▼0.43%",
+      "is52W": false,
+      "isIdeal": false,
+      "isRally": false,
+      "isDrop": false,
+      "fadeRisk": false,
+      "openedAtLow": false,
+      "isNarrowCPR": false,
+      "isNR7": false,
+      "fuelLeft": "47%",
+      "numFuel": 47.0,
+      "alpha": "+2.08%",
+      "pillars": [
+        {
+          "name": "Trend",
+          "ok": true
+        },
+        {
+          "name": "VWAP",
+          "ok": true
+        },
+        {
+          "name": "PDH",
+          "ok": false
+        },
+        {
+          "name": "ORB",
+          "ok": true
+        },
+        {
+          "name": "Follow",
+          "ok": true
+        },
+        {
+          "name": "Vol",
+          "ok": true
+        },
+        {
+          "name": "RSI",
+          "ok": true
+        }
+      ],
+      "sl": 299.7,
+      "t1": 307.7,
+      "rsi": 60.2
     },
     {
       "symbol": "ZEEL",
@@ -597,71 +1619,6 @@
       "sl": 1751.1,
       "t1": 1801.1,
       "rsi": 47.4
-    },
-    {
-      "symbol": "CANBK",
-      "type": "CE",
-      "tier": "BRAHMASTRA",
-      "optionTag": "⚡ OPTION",
-      "score": "5/7",
-      "numScore": 5,
-      "prob": "84% heuristic",
-      "probScore": 84,
-      "detectTime": "09:20",
-      "price": 122.0,
-      "pctChange": "+3.14%",
-      "absChange": 3.14,
-      "volumeX": "4.28x",
-      "numVol": 4.28,
-      "strike": "120 CE (approx)",
-      "lotSize": null,
-      "sectorStatus": "Banking 🔥 STRONG",
-      "watchBadge": "★★★ STRONG BUY WATCH",
-      "candleInfo": "body 0.00% • low ▲1.96% • high ▼0.59%",
-      "is52W": false,
-      "isIdeal": false,
-      "isRally": true,
-      "isDrop": false,
-      "fadeRisk": false,
-      "openedAtLow": true,
-      "isNarrowCPR": true,
-      "isNR7": false,
-      "fuelLeft": "13%",
-      "numFuel": 12.8,
-      "alpha": "+4.25%",
-      "pillars": [
-        {
-          "name": "Trend",
-          "ok": true
-        },
-        {
-          "name": "VWAP",
-          "ok": true
-        },
-        {
-          "name": "PDH",
-          "ok": true
-        },
-        {
-          "name": "ORB",
-          "ok": false
-        },
-        {
-          "name": "Follow",
-          "ok": true
-        },
-        {
-          "name": "Vol",
-          "ok": true
-        },
-        {
-          "name": "RSI",
-          "ok": false
-        }
-      ],
-      "sl": 119.66,
-      "t1": 125.51,
-      "rsi": 52.6
     },
     {
       "symbol": "ABB",
@@ -3000,7 +3957,7 @@
       "relativeStrength": 4.5,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3064,7 +4021,7 @@
       "relativeStrength": 3.65,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3127,7 +4084,7 @@
       "relativeStrength": -1.25,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3191,7 +4148,7 @@
       "relativeStrength": 4.45,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3254,71 +4211,7 @@
       "relativeStrength": 1.83,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
-      "sourceBarFresh": false,
-      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
-    },
-    {
-      "symbol": "PGEL",
-      "type": "PE",
-      "sector": "General",
-      "powerScore": 67,
-      "grade": "B",
-      "status": "BREAKOUT CONFIRMED",
-      "riskFlag": "EXTENDED VS ATR",
-      "detectTime": "10:00",
-      "price": 508.0,
-      "pctChange": "-2.50%",
-      "sessionReturn": "-2.78%",
-      "gapPct": "+0.29%",
-      "alpha": "-1.39%",
-      "rvol": 1.54,
-      "rvolAvailable": true,
-      "rsi": 45.5,
-      "adx": 25.6,
-      "vwap": 510.7,
-      "ema9": 509.9,
-      "ema20": 509.93,
-      "orbHigh": 522.55,
-      "orbLow": 513.0,
-      "previousDayHigh": 525.7999877929688,
-      "previousDayLow": 519.0,
-      "atr": 17.09,
-      "atrUsedPct": 99.8,
-      "fuelLeft": "0%",
-      "avgTurnoverCr": 42.62,
-      "lotSize": null,
-      "triggerLevel": 519.0,
-      "invalidationLevel": 522.55,
-      "reasons": [
-        "15m ORB / previous-day level break",
-        "VWAP aligned",
-        "Relative volume elevated",
-        "Recent momentum aligned",
-        "Compression context",
-        "Relative strength vs Nifty"
-      ],
-      "scoreBreakdown": {
-        "relativeVolume": 5.5,
-        "structure": 17.0,
-        "momentum": 9.8,
-        "trend": 13.0,
-        "relativeStrength": 10,
-        "volatility": 0.2,
-        "coil": 5.0,
-        "candle": 2.5,
-        "liquidity": 4
-      },
-      "isNarrowCPR": true,
-      "isNR7": true,
-      "bbSqueeze": false,
-      "breakoutConfirmed": true,
-      "fnoEligible": true,
-      "sectorStatus": "General 🔥 STRONG",
-      "relativeStrength": -1.39,
-      "marketSessionDate": "2026-10-19",
-      "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3381,7 +4274,7 @@
       "relativeStrength": -0.5,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3444,7 +4337,7 @@
       "relativeStrength": 6.37,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3506,7 +4399,71 @@
       "relativeStrength": -0.83,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
+      "sourceBarFresh": false,
+      "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
+    },
+    {
+      "symbol": "PGEL",
+      "type": "PE",
+      "sector": "General",
+      "powerScore": 66,
+      "grade": "B",
+      "status": "BREAKOUT CONFIRMED",
+      "riskFlag": "EXTENDED VS ATR",
+      "detectTime": "10:00",
+      "price": 508.0,
+      "pctChange": "-2.50%",
+      "sessionReturn": "-2.78%",
+      "gapPct": "+0.29%",
+      "alpha": "-1.39%",
+      "rvol": 1.43,
+      "rvolAvailable": true,
+      "rsi": 45.5,
+      "adx": 25.6,
+      "vwap": 510.7,
+      "ema9": 509.9,
+      "ema20": 509.93,
+      "orbHigh": 522.55,
+      "orbLow": 513.0,
+      "previousDayHigh": 525.7999877929688,
+      "previousDayLow": 519.0,
+      "atr": 17.09,
+      "atrUsedPct": 99.8,
+      "fuelLeft": "0%",
+      "avgTurnoverCr": 42.62,
+      "lotSize": null,
+      "triggerLevel": 519.0,
+      "invalidationLevel": 522.55,
+      "reasons": [
+        "15m ORB / previous-day level break",
+        "VWAP aligned",
+        "Relative volume elevated",
+        "Recent momentum aligned",
+        "Compression context",
+        "Relative strength vs Nifty"
+      ],
+      "scoreBreakdown": {
+        "relativeVolume": 4.7,
+        "structure": 17.0,
+        "momentum": 9.8,
+        "trend": 13.0,
+        "relativeStrength": 10,
+        "volatility": 0.2,
+        "coil": 5.0,
+        "candle": 2.5,
+        "liquidity": 4
+      },
+      "isNarrowCPR": true,
+      "isNR7": true,
+      "bbSqueeze": false,
+      "breakoutConfirmed": true,
+      "fnoEligible": true,
+      "sectorStatus": "General 🔥 STRONG",
+      "relativeStrength": -1.39,
+      "marketSessionDate": "2026-10-19",
+      "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3568,7 +4525,7 @@
       "relativeStrength": -2.43,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3632,7 +4589,7 @@
       "relativeStrength": -1.52,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3695,7 +4652,7 @@
       "relativeStrength": -1.3,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3758,7 +4715,7 @@
       "relativeStrength": 4.32,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3821,7 +4778,7 @@
       "relativeStrength": -2.16,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3884,7 +4841,7 @@
       "relativeStrength": -1.35,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -3947,7 +4904,7 @@
       "relativeStrength": -0.56,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4009,7 +4966,7 @@
       "relativeStrength": -0.86,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4070,7 +5027,7 @@
       "relativeStrength": 0.13,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4134,7 +5091,7 @@
       "relativeStrength": 3.17,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4197,7 +5154,7 @@
       "relativeStrength": -2.94,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4259,7 +5216,7 @@
       "relativeStrength": -1.1,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4322,7 +5279,7 @@
       "relativeStrength": -1.2,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4385,7 +5342,7 @@
       "relativeStrength": -1.29,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4447,7 +5404,7 @@
       "relativeStrength": -1.62,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     },
@@ -4509,7 +5466,7 @@
       "relativeStrength": -1.29,
       "marketSessionDate": "2026-10-19",
       "lastSourceBarCloseAt": "2026-10-19T15:30:00+05:30",
-      "sourceBarAgeMinutes": 251.2,
+      "sourceBarAgeMinutes": 370.8,
       "sourceBarFresh": false,
       "dataWarning": "SOURCE CANDLE STALE — verify price before acting"
     }
@@ -4622,6 +5579,17 @@
       "open": 364.5,
       "high": 364.5,
       "low": 363.55,
+      "candleTime": "2026-10-19T11:00:00+05:30",
+      "sourceBarFresh": false,
+      "paperCutoffMark": true,
+      "fnoEligible": true
+    },
+    {
+      "symbol": "ANGELONE",
+      "price": 299.4,
+      "open": 299.55,
+      "high": 299.7,
+      "low": 299.1,
       "candleTime": "2026-10-19T11:00:00+05:30",
       "sourceBarFresh": false,
       "paperCutoffMark": true,
@@ -10826,6 +11794,16 @@
         "target1Pct": 1.0,
         "target2Pct": 1.5,
         "candidates": []
+      },
+      {
+        "scanId": "2026-10-19T21:40:47.940935+05:30",
+        "scanTime": "2026-10-19T21:40:47.940935+05:30",
+        "sessionDate": "2026-10-19",
+        "freshSession": true,
+        "stopLossPct": 0.5,
+        "target1Pct": 1.0,
+        "target2Pct": 1.5,
+        "candidates": []
       }
     ],
     "processedScanIds": [
@@ -10857,13 +11835,14 @@
       "2026-10-19T11:01:33.476971+05:30",
       "2026-10-19T14:48:05.352047+05:30",
       "2026-10-19T15:10:50.196000+05:30",
-      "2026-10-19T19:41:12.780577+05:30"
+      "2026-10-19T19:41:12.780577+05:30",
+      "2026-10-19T21:40:47.940935+05:30"
     ],
-    "updatedAt": "2026-10-19T19:41:12.780577+05:30",
+    "updatedAt": "2026-10-19T21:40:47.940935+05:30",
     "sessionDate": "2026-10-19",
     "stats": {
       "signalsRecorded": 81,
-      "scansRecorded": 29,
+      "scansRecorded": 30,
       "openTrades": 0,
       "closedTrades": 68,
       "wins": 32,
@@ -10880,12 +11859,12 @@
   },
   "scanSummary": {
     "configuredSymbols": 268,
-    "symbolsWithData": 260,
-    "staleSourceSymbols": 260,
+    "symbolsWithData": 261,
+    "staleSourceSymbols": 261,
     "universeSource": "existing symbol universe + current F&O underlyings",
     "fnoUniverseSource": "official NSE underlying-information API",
     "fnoEligibleSymbols": 213,
-    "fnoEligibleScanned": 212,
+    "fnoEligibleScanned": 213,
     "gptPowerFnoOnly": true,
     "legacySignals": 45,
     "gptPowerCandidates": 25,
