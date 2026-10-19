@@ -14,6 +14,10 @@
     .score-track { height:5px; border-radius:999px; background:#273244; overflow:hidden; }
     .score-fill { height:100%; background:#38bdf8; border-radius:999px; }
     .power-card { background:linear-gradient(145deg,#121b2b 0%,#10151f 100%); }
+    .sector-stock-badge svg { display:block; }
+    .fuel-meter { min-width:135px; }
+    @media (max-width:420px) { .fuel-meter { min-width:125px; } }
+
     a { -webkit-tap-highlight-color:transparent; }
   </style>
 </head>
@@ -71,6 +75,7 @@
   let allSpecial10 = [];
   let allSectorRankings = [];
   let sectorSentiment = null;
+  let stockFuelMetrics = {};
   let paperTradeTracker = null;
   let paperTradeCandidates = [];
   let activeTab = 'ALL';
@@ -113,6 +118,128 @@
     'HEALTHCARE','DEFENCE','CAPITAL MRKT','CONSUMPTION','NIFTY','MIDCAP','CONSR DURBL','REALTY',
     'SERVICES','IT','FMCG','FINNIFTY','CHEMICALS','PVT BANK'
   ];
+  function sectorRankByName(name) {
+    const key = String(name || '').trim().toUpperCase();
+    return allSectorRankings.find(row => String(row.name || '').trim().toUpperCase() === key) || null;
+  }
+  function stockSectorText(stock) {
+    const nested = stock?.power?.sector || stock?.brahmastra?.sector || stock?.breaker?.sector || '';
+    const symbol = String(stock?.symbol || '').trim().toUpperCase();
+    const metricSector = stockFuelMetrics && typeof stockFuelMetrics === 'object' ? stockFuelMetrics[symbol]?.sector : '';
+    const raw = String(stock?.sector || nested || stock?.sectorStatus || metricSector || '').trim();
+    return raw.replace(/\s+(?:🔥\s*STRONG|•\s*WATCH|•\s*STRONG|STRONG|WATCH).*$/i, '').trim();
+  }
+  function resolveStockSector(stock, forcedLabel = '') {
+    if (forcedLabel) return sectorRankByName(forcedLabel);
+    const symbol = String(stock?.symbol || '').trim().toUpperCase();
+    const raw = stockSectorText(stock).toUpperCase();
+    const eligibleRows = allSectorRankings.filter(row =>
+      Array.isArray(row.eligibleStocks) && row.eligibleStocks.some(item => String(item.symbol || '').toUpperCase() === symbol)
+    );
+    const availableRows = allSectorRankings.filter(row => row.available && Number.isFinite(Number(row.changePct)));
+    const pickNamed = names => {
+      for (const name of names) {
+        const row = sectorRankByName(name);
+        if (row && row.available && Number.isFinite(Number(row.changePct))) return row;
+      }
+      return null;
+    };
+    const pickMember = names => {
+      for (const name of names) {
+        const row = eligibleRows.find(item => String(item.name || '').toUpperCase() === name);
+        if (row && row.available && Number.isFinite(Number(row.changePct))) return row;
+      }
+      return null;
+    };
+    const aliases = {
+      'IT': ['IT'], 'AUTO': ['AUTO'], 'AUTOMOTIVE': ['AUTO'],
+      'ENERGY': ['OIL & GAS', 'ENERGY'], 'OIL & GAS': ['OIL & GAS'],
+      'METALS': ['METAL'], 'METAL': ['METAL'],
+      'PHARMA': ['PHARMA'], 'HEALTHCARE': ['HEALTHCARE', 'PHARMA'],
+      'FMCG': ['FMCG', 'CONSUMPTION'], 'CONSUMPTION': ['CONSUMPTION', 'FMCG'],
+      'FINANCE': ['CAPITAL MRKT', 'FINNIFTY'], 'CAPITAL MRKT': ['CAPITAL MRKT'],
+      'INFRA': ['INFRA'], 'DEFENSE': ['DEFENCE'], 'DEFENCE': ['DEFENCE'],
+      'DURABLES': ['CONSR DURBL'], 'CONSR DURBL': ['CONSR DURBL'],
+      'CHEMICALS': ['CHEMICALS'], 'TELECOM': ['SERVICES'], 'HOTELS': ['SERVICES'],
+      'REALTY': ['REALTY'], 'SERVICES': ['SERVICES'], 'PSU BANK': ['PSU BANK'],
+      'PVT BANK': ['PVT BANK'], 'BANKNIFTY': ['BANKNIFTY'], 'FINNIFTY': ['FINNIFTY'],
+      'NIFTY': ['NIFTY'], 'MIDCAP': ['MIDCAP'], 'COMMODITIES': ['COMMODITIES']
+    };
+    if (raw === 'BANKING' || raw === 'BANK') {
+      return pickMember(['PSU BANK', 'PVT BANK', 'BANKNIFTY', 'FINNIFTY']) || pickNamed(['BANKNIFTY', 'PVT BANK', 'PSU BANK', 'FINNIFTY']);
+    }
+    const candidates = aliases[raw] || [];
+    return pickMember(candidates) || pickNamed(candidates) ||
+      eligibleRows.find(row => !['NIFTY','BANKNIFTY','FINNIFTY','COMMODITIES','SERVICES','CONSUMPTION','MIDCAP'].includes(String(row.name || '').toUpperCase()) && row.available) ||
+      eligibleRows.find(row => row.available) || null;
+  }
+  function renderStockSectorBadge(stock, forcedLabel = '') {
+    const row = resolveStockSector(stock, forcedLabel);
+    if (!row || !row.available || !Number.isFinite(Number(row.changePct))) {
+      const label = forcedLabel || stockSectorText(stock) || 'SECTOR';
+      return `<span class="inline-flex items-center gap-1.5 rounded-md border border-gray-700 bg-gray-900/80 px-2 py-1 text-[10px] text-gray-400" title="No valid sector reading available for ${escapeHTML(label)}">📊 ${escapeHTML(label)} · N/A</span>`;
+    }
+    const change = Number(row.changePct);
+    const positive = change >= 0;
+    const rank = Number(row.rank || 0);
+    const total = allSectorRankings.length || 23;
+    const computedStrength = row.strength || (rank > 0 && rank <= 5 ? 'STRONG' : rank > total - 5 ? 'WEAK' : 'MIDDLE');
+    const strong = computedStrength === 'STRONG';
+    const weak = computedStrength === 'WEAK';
+    const tone = positive ? 'text-emerald-300 border-emerald-800 bg-emerald-950/50' : 'text-rose-300 border-rose-800 bg-rose-950/50';
+    const value = `${change > 0 ? '+' : ''}${change.toFixed(2)}%`;
+    const mark = strong ? `🔥 STRONG #${rank}` : weak ? `📥 WEAK #${rank}` : `#${rank} RANK`;
+    const trendPath = positive ? 'M3 17 L8 12 L12 14 L20 5 M14 5 H20 V11' : 'M3 7 L8 12 L12 10 L20 19 M14 19 H20 V13';
+    const stamp = row.asOf ? new Date(row.asOf).toLocaleString('en-IN', {hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short',timeZone:'Asia/Kolkata'}) + ' IST' : 'timestamp unavailable';
+    const source = row.sourceLabel || (row.method === 'index_quote' ? `Index ${row.sourceTicker || ''}` : row.method === 'stock_proxy' ? 'Representative-stock proxy, not official index' : 'Source unavailable');
+    return `<span class="inline-flex flex-wrap items-center gap-1.5 rounded-md border ${tone} px-2 py-1 text-[10px] font-semibold" title="${escapeHTML(row.name)} ${value}; rank ${rank}/${total}; ${escapeHTML(source)}; as of ${escapeHTML(stamp)}"><span class="text-gray-200">${escapeHTML(row.name)}</span><span class="inline-flex w-5 h-5 items-center justify-center rounded border ${tone}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="${trendPath}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b class="${positive ? 'text-emerald-300' : 'text-rose-300'}">${value}</b><span>${mark}</span></span>`;
+  }
+  function getStockFuel(stock) {
+    const symbol = String(stock?.symbol || '').trim().toUpperCase();
+    const canonical = stockFuelMetrics && typeof stockFuelMetrics === 'object' ? stockFuelMetrics[symbol] : null;
+    const fromRecord = stock?.fuelLeftPct ?? stock?.numFuel ?? null;
+    const used = stock?.atrUsedPct;
+    let value = canonical?.fuelLeftPct ?? fromRecord;
+    let derived = false;
+    if ((value === null || value === undefined || value === '') && used !== null && used !== undefined && Number.isFinite(Number(used))) {
+      value = Math.max(0, Math.min(100, 100 - Number(used)));
+      derived = true;
+    }
+    if ((value === null || value === undefined || value === '') && stock?.fuelLeft) {
+      const parsed = Number(String(stock.fuelLeft).replace('%',''));
+      if (Number.isFinite(parsed)) value = parsed;
+    }
+    const numeric = value === null || value === undefined || value === '' ? NaN : Number(value);
+    return {
+      value: Number.isFinite(numeric) ? Math.max(0, Math.min(100, numeric)) : null,
+      available: canonical ? Boolean(canonical.available !== false && Number.isFinite(numeric)) : Number.isFinite(numeric),
+      fresh: canonical ? Boolean(canonical.sourceBarFresh) : (stock?.sourceBarFresh === true ? true : stock?.sourceBarFresh === false ? false : null),
+      atrUsedPct: canonical?.atrUsedPct ?? used ?? null,
+      asOf: canonical?.asOf || stock?.fuelAsOf || null,
+      formula: canonical?.method || 'Estimated remaining range using 14-day ATR including the previous-close gap',
+      dailyATR14: canonical?.dailyATR14 ?? null,
+      trueRangeIncludingGap: canonical?.trueRangeIncludingGap ?? null,
+      derived
+    };
+  }
+  function renderFuelBadge(stock) {
+    const metric = getStockFuel(stock);
+    if (!metric.available || metric.value === null) {
+      return `<div class="inline-flex min-w-[135px] flex-col gap-1 rounded-md border border-gray-700 bg-gray-900/80 px-2 py-1" title="Fuel unavailable because a valid ATR baseline is missing"><div class="flex items-center justify-between gap-2 text-[10px]"><span class="font-bold text-gray-300">⛽ FUEL</span><b class="text-gray-500">N/A</b></div><div class="h-1.5 rounded-full bg-gray-800"></div><div class="text-[9px] text-gray-500">ATR baseline unavailable</div></div>`;
+    }
+    const n = metric.value;
+    const color = n >= 65 ? 'emerald' : n >= 35 ? 'amber' : 'rose';
+    const textClass = n >= 65 ? 'text-emerald-300' : n >= 35 ? 'text-amber-300' : 'text-rose-300';
+    const barClass = n >= 65 ? 'bg-emerald-500' : n >= 35 ? 'bg-amber-500' : 'bg-rose-500';
+    const freshness = metric.fresh === true ? 'FRESH' : metric.fresh === false ? 'STALE' : 'FRESHNESS N/A';
+    const freshnessClass = metric.fresh === true ? 'text-emerald-300' : metric.fresh === false ? 'text-rose-300' : 'text-gray-500';
+    const usedText = metric.atrUsedPct !== null && metric.atrUsedPct !== undefined && Number.isFinite(Number(metric.atrUsedPct)) ? `${num(metric.atrUsedPct,1)}% ATR used` : 'ATR used n/a';
+    const atrTitle = metric.dailyATR14 !== null && metric.dailyATR14 !== undefined && Number.isFinite(Number(metric.dailyATR14)) ? ` Prior 14-session daily ATR: ${price(metric.dailyATR14)}.` : '';
+    const trueRangeTitle = metric.trueRangeIncludingGap !== null && metric.trueRangeIncludingGap !== undefined && Number.isFinite(Number(metric.trueRangeIncludingGap)) ? ` Today's true range including gap: ${price(metric.trueRangeIncludingGap)}.` : '';
+    const title = `${metric.formula}.${atrTitle}${trueRangeTitle} This is range capacity remaining, not a prediction of direction or target achievement. ${metric.asOf ? 'Source candle: ' + metric.asOf : ''}`;
+    return `<div class="inline-flex min-w-[135px] flex-col gap-1 rounded-md border border-gray-700 bg-gray-900/80 px-2 py-1" title="${escapeHTML(title)}"><div class="flex items-center justify-between gap-3 text-[10px]"><span class="font-bold text-gray-300">⛽ FUEL</span><b class="${textClass}">${n.toFixed(0)}%</b></div><div class="h-1.5 rounded-full bg-gray-800 overflow-hidden"><div class="h-full ${barClass}" style="width:${n}%"></div></div><div class="flex items-center justify-between gap-2 text-[9px]"><span class="text-gray-500">${usedText}</span><span class="${freshnessClass}">${freshness}</span></div></div>`;
+  }
+
   function renderSectorView(sectors, sentiment) {
     const container = document.getElementById('cards-container');
     const rows = Array.isArray(sectors) && sectors.length ? sectors.slice().sort((a,b) => Number(a.rank)-Number(b.rank)) : SECTOR_REFERENCE_ORDER.map((name, index) => ({rank:index+1, name, changePct:null, coverage:0, universeSize:0, advances:0, declines:0, eligibleStocks:[], eligibleCount:0, available:false}));
@@ -151,28 +278,29 @@
         const tv = `https://in.tradingview.com/chart/?symbol=${encodeURIComponent('NSE:' + stock.symbol)}`;
         const sources = (Array.isArray(stock.sources) ? stock.sources : []).map(source => `<span class="text-[9px] px-1.5 py-0.5 rounded border ${source==='GPT POWER'?'bg-fuchsia-950 text-fuchsia-200 border-fuchsia-800':source==='BRAHMASTRA'?'bg-sky-950 text-sky-200 border-sky-800':'bg-cyan-950 text-cyan-200 border-cyan-800'}">${escapeHTML(source)}</span>`).join(' ');
         const ch = stock.pctChange || '—';
-        return `<div class="flex items-center justify-between gap-2 border-t border-gray-800 py-2"><div class="min-w-0"><a class="font-bold text-sm hover:text-sky-300" target="_blank" rel="noopener noreferrer" href="${tv}">${escapeHTML(stock.symbol)} ↗</a><div class="flex flex-wrap gap-1 mt-1">${sources}</div></div><div class="text-right shrink-0"><div class="text-xs text-gray-200">${price(stock.price)}</div><div class="text-[11px] ${signedClass(ch)}">${escapeHTML(ch)}</div></div></div>`;
+        return `<div class="flex flex-col gap-1.5 border-t border-gray-800 py-2"><div class="flex items-center justify-between gap-2"><div class="min-w-0"><a class="font-bold text-sm hover:text-sky-300" target="_blank" rel="noopener noreferrer" href="${tv}">${escapeHTML(stock.symbol)} ↗</a><div class="flex flex-wrap gap-1 mt-1">${sources}</div></div><div class="text-right shrink-0"><div class="text-xs text-gray-200">${price(stock.price)}</div><div class="text-[11px] ${signedClass(ch)}">${escapeHTML(ch)}</div></div></div><div class="flex flex-wrap items-center gap-1.5">${renderStockSectorBadge(stock, sector.name)}${renderFuelBadge(stock)}</div></div>`;
       }).join('') : `<div class="text-xs text-gray-500 py-3 border-t border-gray-800">No current eligible GPT POWER / BRAHMASTRA / BREAKER stock in this sector.</div>`;
-      const rankBadge = sector.rank === 1 ? '💥 STRONG SECTOR #1' : sector.rank <= 5 ? `🔥 STRONG SECTOR #${sector.rank}` : `🔻 WEAK SECTOR #${sector.rank}`;
-      return `<article class="border border-gray-800 rounded-xl p-3 bg-[#101722] flex flex-col gap-2"><div class="flex items-start justify-between gap-2"><div><div class="text-xs font-extrabold ${tone==='strong'?'text-emerald-300':'text-rose-300'}">${rankBadge}</div><h3 class="font-bold mt-1">${escapeHTML(sector.name)}</h3></div><div class="text-right"><div class="font-bold ${changeClass}">${sector.changePct === null || sector.changePct === undefined ? 'N/A' : `${Number(sector.changePct)>0?'+':''}${num(sector.changePct,2)}%`}</div><div class="text-[10px] text-gray-500">${sector.coverage || 0} constituents</div></div></div><div class="score-track"><div class="score-fill" style="width:${sector.available ? Math.max(4, Math.abs(Number(sector.changePct))/scaleMax*100) : 0}%;background:${tone==='strong'?'#00b981':'#ff626d'}"></div></div><div class="text-[10px] text-gray-400">Eligible stocks: ${list.length} ${sector.available ? '' : '• return unavailable'}</div>${stocks}</article>`;
+      const rankBadge = tone === 'strong' ? (sector.rank === 1 ? '💥 STRONG SECTOR #1' : `🔥 STRONG SECTOR #${sector.rank}`) : `🔻 WEAK SECTOR #${sector.rank}`;
+      return `<article class="border border-gray-800 rounded-xl p-3 bg-[#101722] flex flex-col gap-2"><div class="flex items-start justify-between gap-2"><div><div class="text-xs font-extrabold ${tone==='strong'?'text-emerald-300':'text-rose-300'}">${rankBadge}</div><h3 class="font-bold mt-1">${escapeHTML(sector.name)}</h3></div><div class="text-right"><div class="font-bold ${changeClass}">${sector.changePct === null || sector.changePct === undefined ? 'N/A' : `${Number(sector.changePct)>0?'+':''}${num(sector.changePct,2)}%`}</div><div class="text-[10px] text-gray-500">${sector.method==='index_quote' ? `Index ${escapeHTML(sector.sourceTicker || '')}` : `${sector.coverage || 0}/${sector.universeSize || 0} proxy stocks`}</div><div class="text-[10px] text-gray-500">${sector.asOf ? escapeHTML(new Date(sector.asOf).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'}))+' IST' : 'time n/a'}</div></div></div><div class="score-track"><div class="score-fill" style="width:${sector.available ? Math.max(4, Math.abs(Number(sector.changePct))/scaleMax*100) : 0}%;background:${tone==='strong'?'#00b981':'#ff626d'}"></div></div><div class="text-[10px] text-gray-400">Eligible stocks: ${list.length} ${sector.available ? '' : '• return unavailable'}</div>${stocks}</article>`;
     };
     const fullTable = rows.map(sector => {
       const v = sector.changePct === null || sector.changePct === undefined ? null : Number(sector.changePct);
       const value = v === null || !Number.isFinite(v) ? 'N/A' : `${v>0?'+':''}${v.toFixed(2)}%`;
       const valueClass = v === null ? 'text-gray-500' : v >= 0 ? 'text-emerald-300' : 'text-rose-300';
       const rankStyle = Number(sector.rank) <= 5 ? 'bg-emerald-950 text-emerald-200' : Number(sector.rank) > rows.length-5 ? 'bg-rose-950 text-rose-200' : 'bg-gray-800 text-gray-200';
-      return `<tr class="border-t border-gray-800"><td class="p-2"><span class="inline-flex w-8 h-7 items-center justify-center rounded ${rankStyle} font-bold">${sector.rank}</span></td><td class="p-2 font-semibold">${Number(sector.rank)===1?'💥 ':''}${escapeHTML(sector.name)}</td><td class="p-2 text-right font-bold ${valueClass}">${value}</td><td class="p-2 text-right text-gray-400">${sector.coverage || 0}/${sector.universeSize || 0}</td><td class="p-2 text-right text-gray-300">${sector.eligibleCount || 0}</td><td class="p-2 text-right text-gray-500">${sector.available ? 'Available' : 'No data'}</td></tr>`;
+      const asOf = sector.asOf ? new Date(sector.asOf).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'}) : '—';
+      return `<tr class="border-t border-gray-800"><td class="p-2"><span class="inline-flex w-8 h-7 items-center justify-center rounded ${rankStyle} font-bold">${sector.rank}</span></td><td class="p-2 font-semibold">${Number(sector.rank)===1?'💥 ':''}${escapeHTML(sector.name)}</td><td class="p-2 text-right font-bold ${valueClass}">${value}</td><td class="p-2 text-right text-gray-400">${sector.method==='index_quote' ? 'Index' : sector.method==='stock_proxy' ? `${sector.coverage || 0}/${sector.universeSize || 0}` : '—'}</td><td class="p-2 text-right text-gray-300">${sector.eligibleCount || 0}</td><td class="p-2 text-right text-gray-500">${sector.method==='index_quote' ? escapeHTML(sector.sourceTicker || 'Index') : sector.method==='stock_proxy' ? 'Stock proxy' : 'No data'}</td><td class="p-2 text-right text-gray-500">${escapeHTML(asOf)}${sector.asOf ? ' IST' : ''}</td></tr>`;
     }).join('');
     container.innerHTML = `
       <section class="col-span-full space-y-4">
         <div class="rounded-lg border border-gray-800 bg-[#101722] p-3 md:p-4">
           <div class="flex items-center justify-between gap-2 mb-2"><h2 class="font-bold text-sm">Market Sentiment</h2><div class="text-xs font-mono"><span class="text-emerald-300">${positivePct.toFixed(0)}%</span><span class="text-gray-400 mx-2">vs</span><span class="text-rose-300">${negativePct.toFixed(0)}%</span></div></div>
           <div class="h-2 rounded-full overflow-hidden flex bg-gray-800"><div class="h-full bg-emerald-500" style="width:${positivePct}%"></div><div class="h-full bg-rose-500" style="width:${negativePct}%"></div></div>
-          <div class="flex flex-wrap justify-between gap-2 text-[10px] text-gray-500 mt-2"><span>Positive sectors: ${positiveCount}</span><span>Negative sectors: ${negativeCount}</span><span>Unchanged: ${neutralCount}</span><span>Readings: ${available}/23</span></div>
+          <div class="flex flex-wrap justify-between gap-2 text-[10px] text-gray-500 mt-2"><span>Positive sectors: ${positiveCount}</span><span>Negative sectors: ${negativeCount}</span><span>Unchanged: ${neutralCount}</span><span>Readings: ${available}/23</span><span>Index quotes: ${Number(sentiment?.indexQuoteSectors || 0)}</span><span>Stock proxies: ${Number(sentiment?.proxySectors || 0)}</span></div>
         </div>
-        <div class="border border-gray-800 bg-[#101722] rounded-lg p-3"><div class="flex flex-wrap items-center justify-between gap-2 mb-3"><h2 class="font-bold text-sm">SECTOR • all 23 ranked</h2><span class="text-[10px] text-gray-500">Green = positive • Red = negative • Gray = unavailable</span></div><div class="overflow-x-auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${chartWidth} 370" width="${chartWidth}" height="370" role="img" aria-label="All 23 sectors ranked by representative constituent percentage change"><line x1="20" y1="${baseline}" x2="${chartWidth-16}" y2="${baseline}" stroke="#64748b" stroke-width="1"/>${chartItems}</svg></div><p class="text-[10px] text-gray-500 mt-1">Proxy calculation: average daily percentage change of available representative constituent stocks. These values are not official sector-index quotes; missing data is marked N/A.${noSectorReadings ? ' No sector readings have been generated yet; temporary ranks follow the screenshot label order until the next successful scan.' : ''}</p></div>
+        <div class="border border-gray-800 bg-[#101722] rounded-lg p-3"><div class="flex flex-wrap items-center justify-between gap-2 mb-3"><h2 class="font-bold text-sm">SECTOR • all 23 ranked</h2><span class="text-[10px] text-gray-500">Green = positive • Red = negative • Gray = unavailable • Index quotes preferred</span></div><div class="overflow-x-auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${chartWidth} 370" width="${chartWidth}" height="370" role="img" aria-label="All 23 sectors ranked using index quotes where available and same-session constituent proxies otherwise"><line x1="20" y1="${baseline}" x2="${chartWidth-16}" y2="${baseline}" stroke="#64748b" stroke-width="1"/>${chartItems}</svg></div><p class="text-[10px] text-gray-500 mt-1">Source: Yahoo Finance index-symbol quote where available; otherwise a same-session average of representative stocks (proxy). The feed may be delayed. Index/proxy source and timestamp are shown per sector; missing or stale in-session data is marked N/A.${noSectorReadings ? ' No sector readings have been generated yet; temporary ranks follow the screenshot label order until the next successful scan.' : ''}</p></div>
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-3"><div class="space-y-2"><h2 class="font-bold text-sm text-emerald-300">🔥 5 STRONGEST SECTORS</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${strong.length ? strong.map(s=>renderEligible(s,'strong')).join('') : '<div class="md:col-span-2 rounded-lg border border-gray-800 p-3 text-xs text-gray-500">Waiting for a successful scanner run to calculate the five strongest sectors.</div>'}</div></div><div class="space-y-2"><h2 class="font-bold text-sm text-rose-300">🔻 5 WEAKEST SECTORS</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${weak.length ? weak.map(s=>renderEligible(s,'weak')).join('') : '<div class="md:col-span-2 rounded-lg border border-gray-800 p-3 text-xs text-gray-500">Waiting for a successful scanner run to calculate the five weakest sectors.</div>'}</div></div></div>
-        <div class="border border-gray-800 rounded-lg overflow-hidden"><div class="bg-gray-900 px-3 py-2 flex items-center justify-between gap-2"><h2 class="font-bold text-sm">ALL 23 SECTORS • RANK 1–23</h2><span class="text-[10px] text-gray-500">Strongest to weakest</span></div><div class="overflow-x-auto"><table class="w-full min-w-[650px] text-xs text-left"><thead class="bg-gray-900/70 text-gray-400"><tr><th class="p-2">Rank</th><th class="p-2">Sector</th><th class="p-2 text-right">Change</th><th class="p-2 text-right">Coverage</th><th class="p-2 text-right">Eligible</th><th class="p-2 text-right">Data</th></tr></thead><tbody>${fullTable}</tbody></table></div></div>
+        <div class="border border-gray-800 rounded-lg overflow-hidden"><div class="bg-gray-900 px-3 py-2 flex items-center justify-between gap-2"><h2 class="font-bold text-sm">ALL 23 SECTORS • RANK 1–23</h2><span class="text-[10px] text-gray-500">Strongest to weakest</span></div><div class="overflow-x-auto"><table class="w-full min-w-[650px] text-xs text-left"><thead class="bg-gray-900/70 text-gray-400"><tr><th class="p-2">Rank</th><th class="p-2">Sector</th><th class="p-2 text-right">Change</th><th class="p-2 text-right">Index / Proxy Coverage</th><th class="p-2 text-right">Eligible</th><th class="p-2 text-right">Source</th><th class="p-2 text-right">As of (IST)</th></tr></thead><tbody>${fullTable}</tbody></table></div></div>
       </section>`;
   }
 
@@ -280,8 +408,9 @@
             <span class="font-semibold ${secColor}">${escapeHTML(c.sectorStatus || 'General')}</span>
             <div class="flex items-center gap-1 flex-wrap justify-end"><span class="text-[10px] text-gray-400">CONV:</span><span>${renderConvictionBar(c.numScore,7)}</span><span class="text-[11px] font-mono font-bold text-white">${escapeHTML(c.score || '')}</span>${c.prob ? `<span title="Heuristic score, not calibrated probability" class="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-sky-300 font-mono ml-1">${escapeHTML(c.prob)}</span>`:''}</div>
           </div>
+          <div class="flex flex-wrap items-center gap-1.5 mt-2">${renderStockSectorBadge(c)}</div>
           ${renderPillarChips(c.pillars)}
-          <div class="flex justify-between items-center text-[11px] px-2 py-1 bg-black/40 rounded mb-2 font-mono gap-2"><span class="text-gray-400">${escapeHTML(c.candleInfo || '')}</span><span class="text-emerald-300 font-bold whitespace-nowrap">⛽ FUEL: ${escapeHTML(c.fuelLeft || '—')}</span></div>
+          <div class="flex flex-wrap justify-between items-center text-[11px] px-2 py-1 bg-black/40 rounded mb-2 font-mono gap-2"><span class="text-gray-400">${escapeHTML(c.candleInfo || '')}</span>${renderFuelBadge(c)}</div>
           <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-gray-400 bg-black/30 p-2 rounded mb-3 font-mono">
             <div>Vol Surge: <b class="text-white">${escapeHTML(c.volumeX || '—')}</b></div>
             <div>Intraday Alpha: <b class="${signedClass(c.alpha)}">${escapeHTML(c.alpha || '—')}</b></div>
@@ -330,6 +459,7 @@
           <span class="text-[10px] text-gray-500">${escapeHTML(c.sourceBarCloseAt || '—')}</span>
         </div>
         <div class="flex items-end justify-between gap-2"><div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="text-lg font-extrabold text-white hover:text-cyan-300">${escapeHTML(c.symbol)} ↗</a><div class="text-[11px] text-gray-500">BREAKER · 6-condition bullish/bearish matrix</div></div><div class="text-right"><div class="text-lg font-bold text-white">${price(c.price)}</div><div class="text-xs ${signedClass(c.pctChange)}">${escapeHTML(c.pctChange || '—')}</div></div></div>
+        <div class="flex flex-wrap items-center gap-1.5">${renderStockSectorBadge(c)}${renderFuelBadge(c)}</div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3"><div class="rounded-lg border border-emerald-900/70 p-2"><div class="font-bold text-xs text-emerald-300 mb-2">BULLISH RULES · ${bull}/6</div><div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">${bullConditions}</div></div><div class="rounded-lg border border-rose-900/70 p-2"><div class="font-bold text-xs text-rose-300 mb-2">BEARISH RULES · ${bear}/6</div><div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">${bearConditions}</div></div></div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 rounded-lg bg-black/25 border border-gray-800 p-2.5 text-xs"><div><span class="text-gray-500">Volume / MA20</span><div class="font-bold text-white">${num(c.volumeMultiple,2)}×</div></div><div><span class="text-gray-500">PDH / PDL</span><div class="font-bold text-white">${price(c.pdh)} / ${price(c.pdl)}</div></div><div><span class="text-gray-500">VWAP / Day Low</span><div class="font-bold text-white">${price(c.vwap)} / ${price(c.dayLow)}</div></div><div><span class="text-gray-500">Candle range / ATR14</span><div class="font-bold text-white">${price(c.candleRange)} / ${price(c.atr14)}</div></div><div><span class="text-gray-500">Bull OB</span><div class="font-bold text-emerald-300">${Number(c.bullOBCount||0)} UP ${c.bullOBActive?'· ACTIVE':''}</div></div><div><span class="text-gray-500">Bear OB</span><div class="font-bold text-rose-300">${Number(c.bearOBCount||0)} DOWN ${c.bearOBActive?'· ACTIVE':''}</div></div><div><span class="text-gray-500">RF + 15m</span><div class="font-bold ${c.rf15mBullAligned?'text-emerald-300':c.rf15mBearAligned?'text-rose-300':'text-gray-400'}">${c.rf15mBullAligned?'BULL ALIGN':c.rf15mBearAligned?'BEAR ALIGN':'WAIT'}</div></div><div><span class="text-gray-500">Signal rank</span><div class="font-bold text-white">${maxScore===6?'FULL 6/6':maxScore===5?'QUALIFIED 5/6':maxScore===4?'WATCH 4/6':'SIGNAL EVENT'}</div></div></div>
         <div class="text-[11px] ${c.hasBuySignal ? 'text-emerald-300' : c.hasSellSignal ? 'text-rose-300' : 'text-amber-200'}">${sourceSignals.length ? sourceSignals.join('<br>') : maxScore >= 5 ? 'High confluence; still verify current price, liquidity and candle close before entry.' : '4/6 is a watch setup only; wait for stronger confirmation before considering an entry.'}</div>
@@ -344,7 +474,7 @@
     function add(symbol, source, obj) {
       if (!symbol) return;
       const key = String(symbol).toUpperCase();
-      if (!bySymbol.has(key)) bySymbol.set(key, {symbol:key, sources:[], power:null, brahmastra:null, breaker:null, price:obj.price, pctChange:obj.pctChange});
+      if (!bySymbol.has(key)) bySymbol.set(key, {symbol:key, sources:[], power:null, brahmastra:null, breaker:null, price:obj.price, pctChange:obj.pctChange, sector:obj.sector || stockSectorText(obj)});
       const item = bySymbol.get(key);
       if (!item.sources.includes(source)) item.sources.push(source);
       if (source === 'GPT POWER') item.power = obj;
@@ -352,6 +482,7 @@
       if (source === 'BREAKER') item.breaker = obj;
       if (obj.price !== undefined && obj.price !== null) item.price = obj.price;
       if (obj.pctChange !== undefined && obj.pctChange !== null) item.pctChange = obj.pctChange;
+      if (obj.sector || obj.sectorStatus) item.sector = obj.sector || stockSectorText(obj);
     }
     allPowerStocks.forEach(x => add(x.symbol, 'GPT POWER', x));
     allSetups.filter(x => x.tier === 'BRAHMASTRA').forEach(x => add(x.symbol, 'BRAHMASTRA', x));
@@ -386,7 +517,7 @@
       const tags = x.sources.map(s => `<span class="text-[10px] px-2 py-1 rounded border ${s==='GPT POWER'?'bg-fuchsia-950 text-fuchsia-200 border-fuchsia-700':s==='BRAHMASTRA'?'bg-sky-950 text-sky-200 border-sky-700':'bg-cyan-950 text-cyan-200 border-cyan-700'}">${escapeHTML(s)}</span>`).join('');
       const p = x.power, b = x.brahmastra, br = x.breaker;
       const signal = br?.hasBuySignal ? 'BREAKER BUY' : br?.hasSellSignal ? 'BREAKER SELL' : p?.status === 'BREAKOUT CONFIRMED' ? 'GPT CONFIRMED' : b ? 'BRAHMASTRA' : 'WATCH';
-      return `<article class="border ${x.commonCount===3?'border-amber-500/80 bg-[#1a170b]':'border-gray-800 bg-[#111622]'} rounded-xl p-3.5 flex flex-col gap-3"><div class="flex items-start justify-between gap-2"><span class="text-[10px] px-2 py-1 rounded bg-amber-950 text-amber-200 border border-amber-700 font-extrabold">🏆 SPECIAL #${x.specialRank}</span><span class="text-[10px] px-2 py-1 rounded bg-gray-900 border border-gray-700 text-gray-300">COMMON ${x.commonCount}/3</span></div><div class="flex items-end justify-between gap-2"><div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="text-xl font-extrabold text-white hover:text-amber-300">${escapeHTML(x.symbol)} ↗</a><div class="text-[10px] text-gray-400 mt-1">${tags}</div></div><div class="text-right"><div class="text-lg font-bold text-white">${price(x.price)}</div><div class="text-xs ${signedClass(x.pctChange)}">${escapeHTML(x.pctChange || '—')}</div></div></div><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">GPT POWER</div><b class="text-fuchsia-200">${p ? `${num(p.powerScore,0)}/100 · ${escapeHTML(p.status || 'Watch')}` : '—'}</b></div><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">BRAHMASTRA</div><b class="text-sky-200">${b ? `${escapeHTML(b.score || b.numScore || 'Active')} · ${escapeHTML(b.type || '')}` : '—'}</b></div><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">BREAKER BULL</div><b class="text-emerald-200">${br ? `${Number(br.bullScore||0)}/6` : '—'}</b></div><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">BREAKER BEAR</div><b class="text-rose-200">${br ? `${Number(br.bearScore||0)}/6` : '—'}</b></div></div><div class="text-[11px] font-bold ${signal.includes('BUY')||signal.includes('CONFIRMED')?'text-emerald-300':signal.includes('SELL')?'text-rose-300':'text-amber-200'}">${escapeHTML(signal)}</div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="inline-block self-start px-3 py-1.5 bg-gray-900 border border-gray-700 hover:border-amber-600 rounded text-xs text-gray-200">Open TradingView ↗</a></article>`;
+      return `<article class="border ${x.commonCount===3?'border-amber-500/80 bg-[#1a170b]':'border-gray-800 bg-[#111622]'} rounded-xl p-3.5 flex flex-col gap-3"><div class="flex items-start justify-between gap-2"><span class="text-[10px] px-2 py-1 rounded bg-amber-950 text-amber-200 border border-amber-700 font-extrabold">🏆 SPECIAL #${x.specialRank}</span><span class="text-[10px] px-2 py-1 rounded bg-gray-900 border border-gray-700 text-gray-300">COMMON ${x.commonCount}/3</span></div><div class="flex items-end justify-between gap-2"><div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="text-xl font-extrabold text-white hover:text-amber-300">${escapeHTML(x.symbol)} ↗</a><div class="text-[10px] text-gray-400 mt-1">${tags}</div></div><div class="text-right"><div class="text-lg font-bold text-white">${price(x.price)}</div><div class="text-xs ${signedClass(x.pctChange)}">${escapeHTML(x.pctChange || '—')}</div></div></div><div class="flex flex-wrap items-center gap-1.5">${renderStockSectorBadge(x)}${renderFuelBadge(x)}</div><div class="grid grid-cols-2 gap-2 text-xs"><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">GPT POWER</div><b class="text-fuchsia-200">${p ? `${num(p.powerScore,0)}/100 · ${escapeHTML(p.status || 'Watch')}` : '—'}</b></div><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">BRAHMASTRA</div><b class="text-sky-200">${b ? `${escapeHTML(b.score || b.numScore || 'Active')} · ${escapeHTML(b.type || '')}` : '—'}</b></div><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">BREAKER BULL</div><b class="text-emerald-200">${br ? `${Number(br.bullScore||0)}/6` : '—'}</b></div><div class="bg-black/30 p-2 rounded"><div class="text-gray-500 text-[10px]">BREAKER BEAR</div><b class="text-rose-200">${br ? `${Number(br.bearScore||0)}/6` : '—'}</b></div></div><div class="text-[11px] font-bold ${signal.includes('BUY')||signal.includes('CONFIRMED')?'text-emerald-300':signal.includes('SELL')?'text-rose-300':'text-amber-200'}">${escapeHTML(signal)}</div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="inline-block self-start px-3 py-1.5 bg-gray-900 border border-gray-700 hover:border-amber-600 rounded text-xs text-gray-200">Open TradingView ↗</a></article>`;
     }).join('');
   }
 
@@ -423,6 +554,7 @@
             <div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="text-xl font-bold text-white hover:text-sky-300">${escapeHTML(c.symbol)} ↗</a><div class="text-xs ${accent} font-semibold mt-0.5">${escapeHTML(c.sectorStatus || c.sector || 'General')}</div></div>
             <div class="text-right"><div class="text-lg font-bold text-white">${price(c.price)}</div><div class="text-xs ${signedClass(c.pctChange)}">${escapeHTML(c.pctChange || '—')}</div></div>
           </div>
+          <div class="flex flex-wrap items-center gap-1.5 mt-2">${renderStockSectorBadge(c)}${renderFuelBadge(c)}</div>
           <div class="flex flex-wrap items-center gap-2 mt-3">
             <span class="text-[10px] px-2 py-1 rounded border font-bold ${badge}">${escapeHTML(c.status)}</span>
             <span class="text-[10px] px-2 py-1 rounded border border-gray-700 bg-gray-900 text-gray-300">Risk: ${escapeHTML(c.riskFlag || '—')}</span>
@@ -432,7 +564,7 @@
             <div class="bg-black/30 rounded p-2"><div class="text-gray-500 text-[10px]">Move since open</div><b class="${signedClass(c.sessionReturn)}">${escapeHTML(c.sessionReturn || '—')}</b></div>
             <div class="bg-black/30 rounded p-2"><div class="text-gray-500 text-[10px]">Gap vs prior close</div><b class="${signedClass(c.gapPct)}">${escapeHTML(c.gapPct || '—')}</b></div>
             <div class="bg-black/30 rounded p-2"><div class="text-gray-500 text-[10px]">Relative strength vs Nifty</div><b class="${signedClass(c.alpha)}">${escapeHTML(c.alpha || '—')}</b></div>
-            <div class="bg-black/30 rounded p-2"><div class="text-gray-500 text-[10px]">ATR range used</div><b class="text-gray-100">${num(c.atrUsedPct,1)}%</b></div>
+            <div class="bg-black/30 rounded p-2"><div class="text-gray-500 text-[10px]">True-range ATR used</div><b class="text-gray-100">${num(c.displayAtrUsedPct ?? c.atrUsedPct,1)}%</b></div>
             <div class="bg-black/30 rounded p-2"><div class="text-gray-500 text-[10px]">RSI / ADX</div><b class="text-gray-100">${num(c.rsi,1)} / ${num(c.adx,1)}</b></div>
             <div class="bg-black/30 rounded p-2"><div class="text-gray-500 text-[10px]">Avg daily turnover</div><b class="text-gray-100">₹${num(c.avgTurnoverCr,1)} Cr</b></div>
           </div>
@@ -473,16 +605,16 @@
     const statCard = (label, value, cls='text-white') => `<div class="bg-gray-900 border border-gray-800 rounded-lg p-3"><div class="text-[10px] text-gray-500">${label}</div><div class="text-lg font-bold ${cls}">${value}</div></div>`;
     const tradeRows = openTrades.slice().reverse().slice(0,50).map(t => {
       const cls = Number(t.unrealizedPoints || 0) >= 0 ? 'text-emerald-300' : 'text-rose-300';
-      return `<tr class="border-t border-gray-800"><td class="p-2 font-semibold">${escapeHTML(t.symbol)} <span class="${sideClass(t)}">${sideLabel(t)}</span></td><td class="p-2">${price(t.entryPrice)}</td><td class="p-2">${price(t.lastPrice)}</td><td class="p-2 text-rose-300">${price(t.stopLoss)}</td><td class="p-2 text-amber-300">${price(t.target1 ?? t.target)}</td><td class="p-2 text-emerald-300">${price(t.target2 ?? t.target)}</td><td class="p-2">${t.target1Hit ? '<span class="text-emerald-300">T1 HIT</span>' : '—'}</td><td class="p-2 ${cls}">${num(t.unrealizedPoints,2)} pts</td></tr>`;
+      return `<tr class="border-t border-gray-800"><td class="p-2 font-semibold">${escapeHTML(t.symbol)} <span class="${sideClass(t)}">${sideLabel(t)}</span></td><td class="p-2"><div class="flex flex-col items-start gap-1">${renderStockSectorBadge({symbol:t.symbol})}${renderFuelBadge({symbol:t.symbol})}</div></td><td class="p-2">${price(t.entryPrice)}</td><td class="p-2">${price(t.lastPrice)}</td><td class="p-2 text-rose-300">${price(t.stopLoss)}</td><td class="p-2 text-amber-300">${price(t.target1 ?? t.target)}</td><td class="p-2 text-emerald-300">${price(t.target2 ?? t.target)}</td><td class="p-2">${t.target1Hit ? '<span class="text-emerald-300">T1 HIT</span>' : '—'}</td><td class="p-2 ${cls}">${num(t.unrealizedPoints,2)} pts</td></tr>`;
     }).join('');
     const closedRows = closedTrades.slice().reverse().slice(0,30).map(t => {
       const positive = Number(t.pnlPoints || 0) > 0;
-      return `<tr class="border-t border-gray-800"><td class="p-2 font-semibold">${escapeHTML(t.symbol)} <span class="${sideClass(t)}">${sideLabel(t)}</span></td><td class="p-2">${price(t.entryPrice)}</td><td class="p-2">${price(t.exitPrice)}</td><td class="p-2">${escapeHTML(t.exitReason || '—')}</td><td class="p-2 ${positive?'text-emerald-300':'text-rose-300'}">${num(t.pnlPoints,2)} pts (${num(t.pnlPct,2)}%)</td><td class="p-2 text-gray-400">${escapeHTML(t.exitCandleTime || '—')}</td></tr>`;
+      return `<tr class="border-t border-gray-800"><td class="p-2 font-semibold">${escapeHTML(t.symbol)} <span class="${sideClass(t)}">${sideLabel(t)}</span></td><td class="p-2"><div class="flex flex-col items-start gap-1">${renderStockSectorBadge({symbol:t.symbol})}${renderFuelBadge({symbol:t.symbol})}</div></td><td class="p-2">${price(t.entryPrice)}</td><td class="p-2">${price(t.exitPrice)}</td><td class="p-2">${escapeHTML(t.exitReason || '—')}</td><td class="p-2 ${positive?'text-emerald-300':'text-rose-300'}">${num(t.pnlPoints,2)} pts (${num(t.pnlPct,2)}%)</td><td class="p-2 text-gray-400">${escapeHTML(t.exitCandleTime || '—')}</td></tr>`;
     }).join('');
     const candidateCards = candidates.map(c => {
       const side = c.type === 'CE' ? 'BUY' : 'SELL';
       const cls = side === 'BUY' ? 'text-emerald-300' : 'text-rose-300';
-      return `<div class="bg-gray-900 border border-gray-800 rounded-lg p-3"><div class="flex justify-between gap-2"><b>${escapeHTML(c.symbol)}</b><span class="${cls} font-bold">${side}</span></div><div class="text-xs text-gray-400 mt-1">Score ${escapeHTML(c.powerScore)} / 100 • ${escapeHTML(c.status || 'Watch')}</div><div class="text-lg font-semibold mt-2">${price(c.price)}</div><div class="text-[10px] text-gray-500 mt-1">Candle: ${escapeHTML(c.lastSourceBarCloseAt || 'unknown')}</div></div>`;
+      return `<div class="bg-gray-900 border border-gray-800 rounded-lg p-3"><div class="flex justify-between gap-2"><b>${escapeHTML(c.symbol)}</b><span class="${cls} font-bold">${side}</span></div><div class="text-xs text-gray-400 mt-1">Score ${escapeHTML(c.powerScore)} / 100 • ${escapeHTML(c.status || 'Watch')}</div><div class="text-lg font-semibold mt-2">${price(c.price)}</div><div class="flex flex-wrap gap-1.5 mt-2">${renderStockSectorBadge(c)}${renderFuelBadge(c)}</div><div class="text-[10px] text-gray-500 mt-1">Candle: ${escapeHTML(c.lastSourceBarCloseAt || 'unknown')}</div></div>`;
     }).join('');
     const historyRows = history.slice(0,20).map(scan => {
       const cs = Array.isArray(scan.candidates) ? scan.candidates : [];
@@ -503,8 +635,8 @@
           ${statCard('OPEN P&L POINTS/SHARE', num(stats.unrealizedPointsPerShare,2), Number(stats.unrealizedPointsPerShare||0)>=0?'text-emerald-300':'text-rose-300')}
         </div>
         <div><h2 class="font-bold text-sm mb-2">Confirmed paper-test candidates (entry window 09:15–11:00 IST; up to 3 BUY + 2 SELL)</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">${candidateCards || '<div class="text-sm text-gray-500 border border-gray-800 rounded-lg p-4">No fresh confirmed F&O breakout/breakdown candidates in the 09:15–11:00 IST paper-entry window.</div>'}</div></div>
-        <div><h2 class="font-bold text-sm mb-2">Open paper trades (${openTrades.length})</h2><div class="overflow-x-auto border border-gray-800 rounded-lg"><table class="w-full text-xs text-left"><thead class="bg-gray-900 text-gray-400"><tr><th class="p-2">Symbol / Side</th><th class="p-2">Entry</th><th class="p-2">Last</th><th class="p-2">Stop</th><th class="p-2">Target 1</th><th class="p-2">Target 2</th><th class="p-2">T1 status</th><th class="p-2">Open P&amp;L</th></tr></thead><tbody>${tradeRows || '<tr><td colspan="8" class="p-4 text-gray-500">No open paper trades.</td></tr>'}</tbody></table></div></div>
-        <div><h2 class="font-bold text-sm mb-2">Recently closed trades (${closedTrades.length} total)</h2><div class="overflow-x-auto border border-gray-800 rounded-lg"><table class="w-full text-xs text-left"><thead class="bg-gray-900 text-gray-400"><tr><th class="p-2">Symbol / Side</th><th class="p-2">Entry</th><th class="p-2">Exit</th><th class="p-2">Reason</th><th class="p-2">P&amp;L</th><th class="p-2">Exit candle</th></tr></thead><tbody>${closedRows || '<tr><td colspan="6" class="p-4 text-gray-500">No closed trades yet. Trades close at 11:00 IST if neither stop-loss nor Target 2 has closed them earlier.</td></tr>'}</tbody></table></div></div>
+        <div><h2 class="font-bold text-sm mb-2">Open paper trades (${openTrades.length})</h2><div class="overflow-x-auto border border-gray-800 rounded-lg"><table class="w-full text-xs text-left"><thead class="bg-gray-900 text-gray-400"><tr><th class="p-2">Symbol / Side</th><th class="p-2">Sector / Fuel</th><th class="p-2">Entry</th><th class="p-2">Last</th><th class="p-2">Stop</th><th class="p-2">Target 1</th><th class="p-2">Target 2</th><th class="p-2">T1 status</th><th class="p-2">Open P&amp;L</th></tr></thead><tbody>${tradeRows || '<tr><td colspan="9" class="p-4 text-gray-500">No open paper trades.</td></tr>'}</tbody></table></div></div>
+        <div><h2 class="font-bold text-sm mb-2">Recently closed trades (${closedTrades.length} total)</h2><div class="overflow-x-auto border border-gray-800 rounded-lg"><table class="w-full text-xs text-left"><thead class="bg-gray-900 text-gray-400"><tr><th class="p-2">Symbol / Side</th><th class="p-2">Sector / Fuel</th><th class="p-2">Entry</th><th class="p-2">Exit</th><th class="p-2">Reason</th><th class="p-2">P&amp;L</th><th class="p-2">Exit candle</th></tr></thead><tbody>${closedRows || '<tr><td colspan="7" class="p-4 text-gray-500">No closed trades yet. Trades close at 11:00 IST if neither stop-loss nor Target 2 has closed them earlier.</td></tr>'}</tbody></table></div></div>
         <div><h2 class="font-bold text-sm mb-2">Signal history (latest 20 scans)</h2><div class="overflow-x-auto border border-gray-800 rounded-lg"><table class="w-full text-xs text-left"><thead class="bg-gray-900 text-gray-400"><tr><th class="p-2">Scan time</th><th class="p-2">Selected candidates</th></tr></thead><tbody>${historyRows || '<tr><td colspan="2" class="p-4 text-gray-500">History will appear after the next scanner run.</td></tr>'}</tbody></table></div></div>
         <p class="text-[10px] text-gray-500">P&amp;L is directional points per share on the underlying stock, not rupee profit or actual option returns. Signal disappearing from the latest scan does not close an open trade. Tracker state is persisted in data.json; GitHub Actions must commit the updated data.json after each scan.</p>
       </section>`;
@@ -528,6 +660,7 @@
       allBreakerStocks = Array.isArray(data.breakerStocks) ? data.breakerStocks : [];
       allSectorRankings = Array.isArray(data.sectorRankings) ? data.sectorRankings : [];
       sectorSentiment = data.sectorSentiment || null;
+      stockFuelMetrics = data.stockFuelMetrics && typeof data.stockFuelMetrics === 'object' ? data.stockFuelMetrics : {};
       allSpecial10 = buildSpecial10();
       paperTradeTracker = data.paperTradeTracker || null;
       paperTradeCandidates = Array.isArray(data.paperTradeCandidates) ? data.paperTradeCandidates : [];
