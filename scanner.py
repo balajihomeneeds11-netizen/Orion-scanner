@@ -168,6 +168,150 @@ SECTOR_MAP = {
     **{s: "Hotels" for s in "INDHOTEL".split()},
 }
 
+# Sector dashboard universe. Labels intentionally match the supplied reference screenshots.
+# Returns are representative averages of available constituent stocks (pct change vs prior close),
+# not official sector-index quotes. A sector with no usable constituents is shown as unavailable.
+def _sector_members(symbols: str) -> set[str]:
+    return set(symbols.split())
+
+SECTOR_INDEX_MEMBERS: dict[str, set[str]] = {
+    "PSU BANK": _sector_members("SBIN BANKBARODA CANBK PNB UNIONBANK BANKINDIA INDIANB MAHABANK CENTRALBK UCOBANK INDIANB INDBANK"),
+    "OIL & GAS": _sector_members("RELIANCE ONGC BPCL IOC HINDPETRO GAIL IGL MGL PETRONET AEGISLOG OIL GUJGASLTD GSPL"),
+    "METAL": _sector_members("TATASTEEL JSWSTEEL JINDALSTEL SAIL HINDALCO VEDL NATIONALUM HINDCOPPER NMDC COALINDIA MOIL RATNAMANI"),
+    "ENERGY": _sector_members("NTPC POWERGRID TATAPOWER TORNTPOWER ADANIGREEN JSWENERGY NHPC SJVN CESC IEX PFC RECLTD"),
+    "BANKNIFTY": _sector_members("HDFCBANK ICICIBANK SBIN AXISBANK KOTAKBANK INDUSINDBK FEDERALBNK BANDHANBNK IDFCFIRSTB RBLBANK AUBANK BANKBARODA CANBK PNB UNIONBANK BANKINDIA CUB INDIANB"),
+    "PHARMA": _sector_members("SUNPHARMA DRREDDY CIPLA DIVISLAB LUPIN AUROPHARMA ALKEM TORNTPHARM GLENMARK ZYDUSLIFE BIOCON LAURUSLABS GRANULES IPCALAB NATCOPHARM MANKIND"),
+    "COMMODITIES": _sector_members("TATASTEEL JSWSTEEL JINDALSTEL SAIL HINDALCO VEDL NATIONALUM HINDCOPPER NMDC COALINDIA ONGC BPCL IOC HINDPETRO RELIANCE AARTIIND ATUL DEEPAKNTR CHAMBLFERT COROMANDEL GNFC NAVINFLUOR SRF UPL PIIND"),
+    "INFRA": _sector_members("LT ADANIPORTS CONCOR DLF GODREJPROP OBEROIRLTY PHOENIXLTD PRESTIGE NBCC RVNL HUDCO IRB KNRCON PNCINFRA KEC HGINFRA"),
+    "AUTO": _sector_members("TATAMOTORS TMPV MARUTI M&M BAJAJ-AUTO HEROMOTOCO EICHERMOT TVSMOTOR ASHOKLEY BHARATFORG BALKRISIND APOLLOTYRE MRF MOTHERSON BOSCHLTD EXIDEIND SONACOMS UNOMINDA TIINDIA"),
+    "HEALTHCARE": _sector_members("SUNPHARMA DRREDDY CIPLA DIVISLAB LUPIN AUROPHARMA ALKEM TORNTPHARM GLENMARK ZYDUSLIFE BIOCON LAURUSLABS APOLLOHOSP MAXHEALTH FORTIS LALPATHLAB METROPOLIS SYNGENE"),
+    "DEFENCE": _sector_members("BEL HAL BDL GRSE MAZDOCK COCHINSHIP DATAPATTNS PARAS IDEA"),
+    "CAPITAL MRKT": _sector_members("BSE MCX CDSL KFINTECH CAMS ANGELONE 360ONE IIFL MOTILALOFS HDFCAMC NUVAMA"),
+    "CONSUMPTION": _sector_members("ITC HINDUNILVR NESTLEIND BRITANNIA TATACONSUM DABUR MARICO GODREJCP COLPAL UBL MCDOWELL-N VBL TRENT DMART NYKAA ZOMATO ETERNAL JUBLFOOD DEVYANI WESTLIFE PVRINOX TITAN ASIANPAINT"),
+    "NIFTY": _sector_members("ADANIENT ADANIPORTS APOLLOHOSP ASIANPAINT AXISBANK BAJAJ-AUTO BAJFINANCE BAJAJFINSV BEL BHARTIARTL BPCL BRITANNIA CIPLA COALINDIA DIVISLAB DRREDDY EICHERMOT GRASIM HCLTECH HDFCBANK HDFCLIFE HEROMOTOCO HINDALCO HINDUNILVR ICICIBANK INDUSINDBK INFY ITC JIOFIN JSWSTEEL KOTAKBANK LT M&M MARUTI NESTLEIND NTPC ONGC POWERGRID RELIANCE SBILIFE SBIN SHRIRAMFIN SUNPHARMA TATACONSUM TATASTEEL TCS TECHM TITAN TRENT ULTRACEMCO WIPRO"),
+    "MIDCAP": _sector_members("AARTIIND AUBANK AUROPHARMA BALKRISIND BHARATFORG COFORGE CONCOR CUMMINS DEEPAKNTR DIXON FEDERALBNK HINDPETRO INDHOTEL INDUSTOWER LALPATHLAB LAURUSLABS MPHASIS PERSISTENT PIIND POLYCAB PRESTIGE RVNL SHREECEM SRF SUPREMEIND TATACHEM TVSMOTOR VOLTAS ZEEL"),
+    "CONSR DURBL": _sector_members("DIXON POLYCAB HAVELLS CROMPTON VOLTAS WHIRLPOOL AMBER KAYNES TITAN VGUARD BLUESTAR HINDWARE SYMPHONY"),
+    "REALTY": _sector_members("DLF GODREJPROP OBEROIRLTY PHOENIXLTD PRESTIGE SOBHA BRIGADE MAHLIFE SUNTECK ANANTRAJ"),
+    "SERVICES": _sector_members("INDUSTOWER BHARTIARTL IDEA CONCOR ADANIPORTS INDHOTEL ETERNAL ZOMATO NAUKRI BSE MCX CDSL KFINTECH CAMS ANGELONE 360ONE BAJFINANCE HDFCLIFE ICICIPRULI"),
+    "IT": _sector_members("TCS INFY HCLTECH WIPRO TECHM LTIM COFORGE PERSISTENT MPHASIS BSOFT OFSS NAUKRI LTTS INTELLECT KPITTECH TATAELXSI ECLERX FSL"),
+    "FMCG": _sector_members("HINDUNILVR ITC NESTLEIND BRITANNIA TATACONSUM DABUR MARICO GODREJCP COLPAL UBL MCDOWELL-N VBL EMAMILTD GILLETTE"),
+    "FINNIFTY": _sector_members("HDFCBANK ICICIBANK SBIN AXISBANK KOTAKBANK INDUSINDBK FEDERALBNK BANKBARODA BAJFINANCE BAJAJFINSV CHOLAFIN SHRIRAMFIN MUTHOOTFIN PFC RECLTD HDFCLIFE ICICIPRULI SBILIFE ICICIGI HDFCAMC ANGELONE BSE CDSL KFINTECH CAMS"),
+    "CHEMICALS": _sector_members("AARTIIND ATUL DEEPAKNTR CHAMBLFERT COROMANDEL GNFC GUJGASLTD NAVINFLUOR SRF UPL PIIND PIDILITIND AETHER CHEMPLAST FINPIPE FINCABLES TATACHEM BALAMINES CLEAN"),
+    "PVT BANK": _sector_members("HDFCBANK ICICIBANK AXISBANK KOTAKBANK INDUSINDBK FEDERALBNK BANDHANBNK IDFCFIRSTB RBLBANK AUBANK YESBANK"),
+}
+SECTOR_LABEL_ORDER = [
+    "PSU BANK", "OIL & GAS", "METAL", "ENERGY", "BANKNIFTY", "PHARMA",
+    "COMMODITIES", "INFRA", "AUTO", "HEALTHCARE", "DEFENCE", "CAPITAL MRKT",
+    "CONSUMPTION", "NIFTY", "MIDCAP", "CONSR DURBL", "REALTY", "SERVICES",
+    "IT", "FMCG", "FINNIFTY", "CHEMICALS", "PVT BANK",
+]
+
+
+def build_sector_rankings(snapshots: list[dict], gpt_power_stocks: list[dict],
+                          leaders: list[dict], breaker_stocks: list[dict]) -> tuple[list[dict], dict]:
+    """Build screenshot-matched sector rankings from available constituent stock returns.
+
+    This is a constituent-based proxy, not a claim that an official index quote was retrieved.
+    Existing GPT POWER/BRAHMASTRA/BREAKER selection and scoring are not modified.
+    """
+    by_symbol = {str(row.get("symbol", "")).upper(): row for row in snapshots}
+    eligible: dict[str, dict] = {}
+
+    def add_eligible(record: dict, source: str) -> None:
+        symbol = str(record.get("symbol", "")).upper().strip()
+        if not symbol:
+            return
+        item = eligible.setdefault(symbol, {
+            "symbol": symbol, "sources": [], "price": record.get("price"),
+            "pctChange": record.get("pctChange"), "sector": by_symbol.get(symbol, {}).get("sector", "General"),
+            "fnoEligible": bool(record.get("fnoEligible", False)),
+        })
+        if source not in item["sources"]:
+            item["sources"].append(source)
+        if item.get("price") is None:
+            item["price"] = record.get("price")
+        if not item.get("pctChange"):
+            item["pctChange"] = record.get("pctChange")
+        item["fnoEligible"] = bool(item.get("fnoEligible") or record.get("fnoEligible", False))
+        if source == "GPT POWER":
+            item["score"] = record.get("powerScore")
+            item["signal"] = record.get("status", record.get("type", "WATCH"))
+        elif source == "BRAHMASTRA":
+            item["score"] = record.get("score", record.get("numScore"))
+            item["signal"] = record.get("type", "BRAHMASTRA")
+        elif source == "BREAKER":
+            item["score"] = max(safe_float(record.get("bullScore")), safe_float(record.get("bearScore")))
+            item["signal"] = "BUY" if record.get("hasBuySignal") else "SELL" if record.get("hasSellSignal") else "BREAKER WATCH"
+
+    for row in gpt_power_stocks:
+        add_eligible(row, "GPT POWER")
+    for row in leaders:
+        if row.get("tier") == "BRAHMASTRA":
+            add_eligible(row, "BRAHMASTRA")
+    for row in breaker_stocks:
+        add_eligible(row, "BREAKER")
+
+    rankings: list[dict] = []
+    for label in SECTOR_LABEL_ORDER:
+        universe = SECTOR_INDEX_MEMBERS[label]
+        members = [by_symbol[symbol] for symbol in universe if symbol in by_symbol]
+        valid_changes = [safe_float(row.get("pctChangeNum")) for row in members
+                         if row.get("pctChangeNum") is not None and math.isfinite(safe_float(row.get("pctChangeNum")))]
+        change = round(sum(valid_changes) / len(valid_changes), 2) if valid_changes else None
+        valid_symbols = {str(row.get("symbol", "")).upper() for row in members}
+        sector_eligible = []
+        for symbol in universe:
+            item = eligible.get(symbol)
+            if item:
+                sector_eligible.append(dict(item))
+        sector_eligible.sort(key=lambda row: (
+            -len(row.get("sources", [])),
+            -safe_float(row.get("score")),
+            str(row.get("symbol", "")),
+        ))
+        rankings.append({
+            "name": label,
+            "changePct": change,
+            "coverage": len(valid_changes),
+            "universeSize": len(universe),
+            "advances": sum(1 for value in valid_changes if value > 0),
+            "declines": sum(1 for value in valid_changes if value < 0),
+            "eligibleStocks": sector_eligible,
+            "available": bool(valid_changes),
+            "method": "Average percentage change of available representative constituents; not an official sector-index quote",
+        })
+
+    # Keep every named sector in the output. Missing-data sectors remain visible but rank after
+    # sectors with readings; they are explicitly labelled unavailable in the UI.
+    rankings.sort(key=lambda row: (row["changePct"] is None,
+                                   -(row["changePct"] if row["changePct"] is not None else -999.0),
+                                   SECTOR_LABEL_ORDER.index(row["name"])))
+    available_rankings = [row for row in rankings if row["available"]]
+    strong_names = {row["name"] for row in available_rankings[:5]}
+    weak_names = {row["name"] for row in available_rankings[-5:]}
+    for rank, row in enumerate(rankings, start=1):
+        row["rank"] = rank
+        row["strength"] = "STRONG" if row["name"] in strong_names else "WEAK" if row["name"] in weak_names else "MIDDLE"
+        row["eligibleCount"] = len(row["eligibleStocks"])
+
+    available = [row for row in rankings if row["available"]]
+    positive = sum(1 for row in available if row["changePct"] > 0)
+    negative = sum(1 for row in available if row["changePct"] < 0)
+    unchanged = sum(1 for row in available if row["changePct"] == 0)
+    directional = positive + negative
+    sentiment = {
+        "positiveCount": positive,
+        "negativeCount": negative,
+        "unchangedCount": unchanged,
+        "availableSectors": len(available),
+        "totalSectors": len(SECTOR_LABEL_ORDER),
+        "positivePct": round(positive / directional * 100, 1) if directional else 0,
+        "negativePct": round(negative / directional * 100, 1) if directional else 0,
+        "basis": "Sector constituent-proxy breadth; excludes sectors with no available constituent data",
+    }
+    return rankings, sentiment
+
+
 # Reference lot sizes are kept only for backward-compatible display.
 # They must be verified against current exchange contract specifications.
 LOT_SIZES = {
@@ -1845,6 +1989,11 @@ def main() -> None:
         breaker_stocks.extend(remaining_bulls[:10 - len(breaker_stocks)])
     breaker_stocks = breaker_stocks[:10]
 
+    # Additive sector dashboard output: uses the already-computed lists and does not alter them.
+    sector_rankings, sector_sentiment = build_sector_rankings(
+        snapshots, gpt_power_stocks, leaders, breaker_stocks
+    )
+
     scan_session = max(session_dates) if session_dates else None
     status = "SESSION DATA AVAILABLE" if scan_session == now.date().isoformat() else "LAST AVAILABLE SESSION DATA"
     source_bar_times = [m["lastSourceBarCloseAt"] for m in snapshots if m.get("lastSourceBarCloseAt")]
@@ -1908,6 +2057,8 @@ def main() -> None:
         "staleSourceSymbols": int(stale_source_symbols),
         "marketDataNote": "Free, no-key source configuration. Yahoo Finance may be delayed, incomplete or rate-limited; stale candles are flagged, not treated as live quotes. Verify quotes and order levels before trading.",
         "breadth": {"advances": int(advances), "declines": int(declines), "sentiment": sentiment},
+        "sectorRankings": sector_rankings,
+        "sectorSentiment": sector_sentiment,
         "leaders": leaders,
         "gptPowerStocks": gpt_power_stocks,
         "breakerStocks": breaker_stocks,
