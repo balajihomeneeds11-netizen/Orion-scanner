@@ -48,6 +48,7 @@
     <button data-tab="SPECIAL 10" onclick="filterCards('SPECIAL 10')" class="tab-btn px-3 py-2 rounded bg-amber-950 text-amber-200 border border-amber-600 font-extrabold whitespace-nowrap">🏆 SPECIAL 10 (<span id="cnt-SPECIAL">0</span>)</button>
     <button data-tab="GPT POWER STOCKS" onclick="filterCards('GPT POWER STOCKS')" class="tab-btn px-3 py-2 rounded bg-fuchsia-950 text-fuchsia-200 border border-fuchsia-700 font-bold whitespace-nowrap">🧠 GPT POWER STOCKS (<span id="cnt-GPT">0</span>)</button>
     <button data-tab="BRAHMASTRA" onclick="filterCards('BRAHMASTRA')" class="tab-btn px-3 py-2 rounded bg-sky-950 text-sky-300 border border-sky-700 font-semibold whitespace-nowrap">⚡ BRAHMASTRA (<span id="cnt-BRAHMASTRA">0</span>)</button>
+    <button data-tab="SECTOR" onclick="filterCards('SECTOR')" class="tab-btn px-3 py-2 rounded bg-blue-950 text-blue-200 border border-blue-600 font-extrabold whitespace-nowrap">📊 SECTOR (<span id="cnt-SECTOR">23</span>)</button>
     <button data-tab="BREAKER" onclick="filterCards('BREAKER')" class="tab-btn px-3 py-2 rounded bg-cyan-950 text-cyan-200 border border-cyan-600 font-bold whitespace-nowrap">🧨 BREAKER (<span id="cnt-BREAKER">0</span>)</button>
     <button data-tab="EXPLOSIVE" onclick="filterCards('EXPLOSIVE')" class="tab-btn px-3 py-2 rounded bg-rose-950 text-rose-300 border border-rose-700 font-semibold whitespace-nowrap">💥 EXPLOSIVE (<span id="cnt-EXPLOSIVE">0</span>)</button>
     <button data-tab="STRONG" onclick="filterCards('STRONG')" class="tab-btn px-3 py-2 rounded bg-amber-950 text-amber-300 border border-amber-700 font-semibold whitespace-nowrap">🔥 STRONG (<span id="cnt-STRONG">0</span>)</button>
@@ -68,6 +69,8 @@
   let allPowerStocks = [];
   let allBreakerStocks = [];
   let allSpecial10 = [];
+  let allSectorRankings = [];
+  let sectorSentiment = null;
   let paperTradeTracker = null;
   let paperTradeCandidates = [];
   let activeTab = 'ALL';
@@ -96,6 +99,7 @@
     document.getElementById('cnt-GPT').innerText = allPowerStocks.length;
     document.getElementById('cnt-SPECIAL').innerText = allSpecial10.length;
     document.getElementById('cnt-BRAHMASTRA').innerText = cards.filter(c => c.tier === 'BRAHMASTRA').length;
+    document.getElementById('cnt-SECTOR').innerText = allSectorRankings.length || 23;
     document.getElementById('cnt-BREAKER').innerText = allBreakerStocks.length;
     document.getElementById('cnt-EXPLOSIVE').innerText = cards.filter(c => c.tier === 'EXPLOSIVE').length;
     document.getElementById('cnt-STRONG').innerText = cards.filter(c => c.tier === 'STRONG').length;
@@ -104,6 +108,74 @@
     document.getElementById('cnt-RALLY').innerText = cards.filter(c => c.isRally).length;
     document.getElementById('cnt-DROP').innerText = cards.filter(c => c.isDrop).length;
   }
+  const SECTOR_REFERENCE_ORDER = [
+    'PSU BANK','OIL & GAS','METAL','ENERGY','BANKNIFTY','PHARMA','COMMODITIES','INFRA','AUTO',
+    'HEALTHCARE','DEFENCE','CAPITAL MRKT','CONSUMPTION','NIFTY','MIDCAP','CONSR DURBL','REALTY',
+    'SERVICES','IT','FMCG','FINNIFTY','CHEMICALS','PVT BANK'
+  ];
+  function renderSectorView(sectors, sentiment) {
+    const container = document.getElementById('cards-container');
+    const rows = Array.isArray(sectors) && sectors.length ? sectors.slice().sort((a,b) => Number(a.rank)-Number(b.rank)) : SECTOR_REFERENCE_ORDER.map((name, index) => ({rank:index+1, name, changePct:null, coverage:0, universeSize:0, advances:0, declines:0, eligibleStocks:[], eligibleCount:0, available:false}));
+    const positivePct = Math.max(0, Math.min(100, Number(sentiment?.positivePct || 0)));
+    const negativePct = Math.max(0, Math.min(100, Number(sentiment?.negativePct || 0)));
+    const neutralCount = Number(sentiment?.unchangedCount || 0);
+    const available = Number(sentiment?.availableSectors || rows.filter(x => x.available).length);
+    const positiveCount = Number(sentiment?.positiveCount || 0);
+    const negativeCount = Number(sentiment?.negativeCount || 0);
+    const sortedAvailable = rows.filter(x => x.available && Number.isFinite(Number(x.changePct)));
+    const scaleMax = Math.max(1, ...sortedAvailable.map(x => Math.abs(Number(x.changePct))));
+    const baseline = 140, barSpan = 92, startX = 38, step = 51, barW = 30;
+    const chartItems = rows.map((sector, index) => {
+      const x = startX + index * step;
+      const value = sector.available && Number.isFinite(Number(sector.changePct)) ? Number(sector.changePct) : null;
+      const h = value === null ? 3 : Math.max(2, Math.abs(value) / scaleMax * barSpan);
+      const y = value === null ? baseline - 1 : value >= 0 ? baseline - h : baseline;
+      const color = value === null ? '#64748b' : value >= 0 ? '#00b981' : '#ff626d';
+      const label = escapeHTML(sector.name);
+      const valueText = value === null ? 'N/A' : `${value > 0 ? '+' : ''}${value.toFixed(2)}%`;
+      const valueY = value === null ? baseline - 11 : value >= 0 ? y - 6 : y + h + 15;
+      const rankLabel = `#${sector.rank}`;
+      return `<g><rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="4" fill="${color}" opacity="0.96"><title>${rankLabel} ${label}: ${valueText}; ${sector.coverage || 0} constituent stocks available</title></rect><text x="${x + barW/2}" y="${valueY}" fill="${color}" font-size="10" text-anchor="middle">${valueText}</text><text x="${x + barW/2}" y="258" transform="rotate(-45 ${x + barW/2} 258)" fill="#cbd5e1" font-size="10" text-anchor="end">${label}</text></g>`;
+    }).join('');
+    const chartWidth = Math.max(1160, 74 + rows.length * step);
+    const availableRows = rows.filter(x => x.available && Number.isFinite(Number(x.changePct)));
+    const strong = availableRows.slice().sort((a,b) => Number(b.changePct)-Number(a.changePct)).slice(0,5).sort((a,b) => Number(a.rank)-Number(b.rank));
+    const weak = availableRows.slice().sort((a,b) => Number(a.changePct)-Number(b.changePct)).slice(0,5).sort((a,b) => Number(b.rank)-Number(a.rank));
+    const noSectorReadings = availableRows.length === 0;
+    const renderEligible = (sector, tone) => {
+      const list = Array.isArray(sector.eligibleStocks) ? sector.eligibleStocks : [];
+      const color = tone === 'strong' ? 'emerald' : 'rose';
+      const badge = tone === 'strong' ? 'bg-emerald-950 text-emerald-200 border-emerald-800' : 'bg-rose-950 text-rose-200 border-rose-800';
+      const changeClass = sector.changePct === null || sector.changePct === undefined ? 'text-slate-400' : Number(sector.changePct) >= 0 ? 'text-emerald-300' : 'text-rose-300';
+      const stocks = list.length ? list.map(stock => {
+        const tv = `https://in.tradingview.com/chart/?symbol=${encodeURIComponent('NSE:' + stock.symbol)}`;
+        const sources = (Array.isArray(stock.sources) ? stock.sources : []).map(source => `<span class="text-[9px] px-1.5 py-0.5 rounded border ${source==='GPT POWER'?'bg-fuchsia-950 text-fuchsia-200 border-fuchsia-800':source==='BRAHMASTRA'?'bg-sky-950 text-sky-200 border-sky-800':'bg-cyan-950 text-cyan-200 border-cyan-800'}">${escapeHTML(source)}</span>`).join(' ');
+        const ch = stock.pctChange || '—';
+        return `<div class="flex items-center justify-between gap-2 border-t border-gray-800 py-2"><div class="min-w-0"><a class="font-bold text-sm hover:text-sky-300" target="_blank" rel="noopener noreferrer" href="${tv}">${escapeHTML(stock.symbol)} ↗</a><div class="flex flex-wrap gap-1 mt-1">${sources}</div></div><div class="text-right shrink-0"><div class="text-xs text-gray-200">${price(stock.price)}</div><div class="text-[11px] ${signedClass(ch)}">${escapeHTML(ch)}</div></div></div>`;
+      }).join('') : `<div class="text-xs text-gray-500 py-3 border-t border-gray-800">No current eligible GPT POWER / BRAHMASTRA / BREAKER stock in this sector.</div>`;
+      const rankBadge = sector.rank === 1 ? '💥 STRONG SECTOR #1' : sector.rank <= 5 ? `🔥 STRONG SECTOR #${sector.rank}` : `🔻 WEAK SECTOR #${sector.rank}`;
+      return `<article class="border border-gray-800 rounded-xl p-3 bg-[#101722] flex flex-col gap-2"><div class="flex items-start justify-between gap-2"><div><div class="text-xs font-extrabold ${tone==='strong'?'text-emerald-300':'text-rose-300'}">${rankBadge}</div><h3 class="font-bold mt-1">${escapeHTML(sector.name)}</h3></div><div class="text-right"><div class="font-bold ${changeClass}">${sector.changePct === null || sector.changePct === undefined ? 'N/A' : `${Number(sector.changePct)>0?'+':''}${num(sector.changePct,2)}%`}</div><div class="text-[10px] text-gray-500">${sector.coverage || 0} constituents</div></div></div><div class="score-track"><div class="score-fill" style="width:${sector.available ? Math.max(4, Math.abs(Number(sector.changePct))/scaleMax*100) : 0}%;background:${tone==='strong'?'#00b981':'#ff626d'}"></div></div><div class="text-[10px] text-gray-400">Eligible stocks: ${list.length} ${sector.available ? '' : '• return unavailable'}</div>${stocks}</article>`;
+    };
+    const fullTable = rows.map(sector => {
+      const v = sector.changePct === null || sector.changePct === undefined ? null : Number(sector.changePct);
+      const value = v === null || !Number.isFinite(v) ? 'N/A' : `${v>0?'+':''}${v.toFixed(2)}%`;
+      const valueClass = v === null ? 'text-gray-500' : v >= 0 ? 'text-emerald-300' : 'text-rose-300';
+      const rankStyle = Number(sector.rank) <= 5 ? 'bg-emerald-950 text-emerald-200' : Number(sector.rank) > rows.length-5 ? 'bg-rose-950 text-rose-200' : 'bg-gray-800 text-gray-200';
+      return `<tr class="border-t border-gray-800"><td class="p-2"><span class="inline-flex w-8 h-7 items-center justify-center rounded ${rankStyle} font-bold">${sector.rank}</span></td><td class="p-2 font-semibold">${Number(sector.rank)===1?'💥 ':''}${escapeHTML(sector.name)}</td><td class="p-2 text-right font-bold ${valueClass}">${value}</td><td class="p-2 text-right text-gray-400">${sector.coverage || 0}/${sector.universeSize || 0}</td><td class="p-2 text-right text-gray-300">${sector.eligibleCount || 0}</td><td class="p-2 text-right text-gray-500">${sector.available ? 'Available' : 'No data'}</td></tr>`;
+    }).join('');
+    container.innerHTML = `
+      <section class="col-span-full space-y-4">
+        <div class="rounded-lg border border-gray-800 bg-[#101722] p-3 md:p-4">
+          <div class="flex items-center justify-between gap-2 mb-2"><h2 class="font-bold text-sm">Market Sentiment</h2><div class="text-xs font-mono"><span class="text-emerald-300">${positivePct.toFixed(0)}%</span><span class="text-gray-400 mx-2">vs</span><span class="text-rose-300">${negativePct.toFixed(0)}%</span></div></div>
+          <div class="h-2 rounded-full overflow-hidden flex bg-gray-800"><div class="h-full bg-emerald-500" style="width:${positivePct}%"></div><div class="h-full bg-rose-500" style="width:${negativePct}%"></div></div>
+          <div class="flex flex-wrap justify-between gap-2 text-[10px] text-gray-500 mt-2"><span>Positive sectors: ${positiveCount}</span><span>Negative sectors: ${negativeCount}</span><span>Unchanged: ${neutralCount}</span><span>Readings: ${available}/23</span></div>
+        </div>
+        <div class="border border-gray-800 bg-[#101722] rounded-lg p-3"><div class="flex flex-wrap items-center justify-between gap-2 mb-3"><h2 class="font-bold text-sm">SECTOR • all 23 ranked</h2><span class="text-[10px] text-gray-500">Green = positive • Red = negative • Gray = unavailable</span></div><div class="overflow-x-auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${chartWidth} 370" width="${chartWidth}" height="370" role="img" aria-label="All 23 sectors ranked by representative constituent percentage change"><line x1="20" y1="${baseline}" x2="${chartWidth-16}" y2="${baseline}" stroke="#64748b" stroke-width="1"/>${chartItems}</svg></div><p class="text-[10px] text-gray-500 mt-1">Proxy calculation: average daily percentage change of available representative constituent stocks. These values are not official sector-index quotes; missing data is marked N/A.${noSectorReadings ? ' No sector readings have been generated yet; temporary ranks follow the screenshot label order until the next successful scan.' : ''}</p></div>
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-3"><div class="space-y-2"><h2 class="font-bold text-sm text-emerald-300">🔥 5 STRONGEST SECTORS</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${strong.length ? strong.map(s=>renderEligible(s,'strong')).join('') : '<div class="md:col-span-2 rounded-lg border border-gray-800 p-3 text-xs text-gray-500">Waiting for a successful scanner run to calculate the five strongest sectors.</div>'}</div></div><div class="space-y-2"><h2 class="font-bold text-sm text-rose-300">🔻 5 WEAKEST SECTORS</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${weak.length ? weak.map(s=>renderEligible(s,'weak')).join('') : '<div class="md:col-span-2 rounded-lg border border-gray-800 p-3 text-xs text-gray-500">Waiting for a successful scanner run to calculate the five weakest sectors.</div>'}</div></div></div>
+        <div class="border border-gray-800 rounded-lg overflow-hidden"><div class="bg-gray-900 px-3 py-2 flex items-center justify-between gap-2"><h2 class="font-bold text-sm">ALL 23 SECTORS • RANK 1–23</h2><span class="text-[10px] text-gray-500">Strongest to weakest</span></div><div class="overflow-x-auto"><table class="w-full min-w-[650px] text-xs text-left"><thead class="bg-gray-900/70 text-gray-400"><tr><th class="p-2">Rank</th><th class="p-2">Sector</th><th class="p-2 text-right">Change</th><th class="p-2 text-right">Coverage</th><th class="p-2 text-right">Eligible</th><th class="p-2 text-right">Data</th></tr></thead><tbody>${fullTable}</tbody></table></div></div>
+      </section>`;
+  }
+
   function renderConvictionBar(score, total) {
     let bars = '';
     for (let i=0; i<total; i++) {
@@ -139,6 +211,11 @@
     if (activeTab === 'SPECIAL 10') {
       desc.innerText = 'Top 10 unique stocks consolidated from GPT POWER, BRAHMASTRA and BREAKER. Stocks appearing across more sections are ranked first; GPT POWER and BRAHMASTRA results are included whenever available.';
       renderSpecial10(allSpecial10);
+      return;
+    }
+    if (activeTab === 'SECTOR') {
+      desc.innerText = 'Sector dashboard: all 23 reference labels ranked strongest to weakest. Top 5 and bottom 5 sectors show eligible stocks from GPT POWER, BRAHMASTRA and BREAKER. Sector changes are constituent-based proxies, not official index quotes.';
+      renderSectorView(allSectorRankings, sectorSentiment);
       return;
     }
     if (activeTab === 'BREAKER') {
@@ -449,6 +526,8 @@
       allSetups = Array.isArray(data.leaders) ? data.leaders : [];
       allPowerStocks = Array.isArray(data.gptPowerStocks) ? data.gptPowerStocks : [];
       allBreakerStocks = Array.isArray(data.breakerStocks) ? data.breakerStocks : [];
+      allSectorRankings = Array.isArray(data.sectorRankings) ? data.sectorRankings : [];
+      sectorSentiment = data.sectorSentiment || null;
       allSpecial10 = buildSpecial10();
       paperTradeTracker = data.paperTradeTracker || null;
       paperTradeCandidates = Array.isArray(data.paperTradeCandidates) ? data.paperTradeCandidates : [];
