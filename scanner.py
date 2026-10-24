@@ -2680,6 +2680,282 @@ def build_quick_picks(gpt_power_stocks: list[dict], leaders: list[dict], breaker
     }
 
 
+
+def build_top_two_trade_candidates(
+    gpt_power_stocks: list[dict],
+    leaders: list[dict],
+    breaker_stocks: list[dict],
+    sniper_scanner: dict,
+    sector_rankings: list[dict],
+    breadth_sentiment: str,
+    now: dt.datetime,
+    minimum_score: float = 24.0,
+) -> dict:
+    """Additive, direction-neutral final ranking for at most two trade candidates.
+
+    This is a research ranking, not a calibrated probability or a guarantee of movement.
+    It consumes existing scanner outputs and never alters any source scanner's selection.
+    """
+    by_symbol: dict[str, dict] = {}
+
+    def add(row: dict, source: str) -> None:
+        symbol = str(row.get("symbol", "")).upper().strip()
+        if not symbol:
+            return
+        item = by_symbol.setdefault(symbol, {
+            "symbol": symbol, "records": {"GPT POWER": [], "ORION TIERS": [], "BREAKER": [], "SNIPER SCANNER": []},
+            "sources": [], "sourceBarFresh": False, "price": None, "pctChange": None,
+            "sector": row.get("sector") or "General", "sessionDate": row.get("sessionDate"),
+        })
+        item["records"][source].append(row)
+        if source not in item["sources"]:
+            item["sources"].append(source)
+        item["sourceBarFresh"] = bool(item["sourceBarFresh"] or row.get("sourceBarFresh", False))
+        for key in ("price", "pctChange", "sector", "sessionDate"):
+            if row.get(key) is not None:
+                item[key] = row.get(key)
+
+    for row in gpt_power_stocks:
+        if isinstance(row, dict): add(row, "GPT POWER")
+    for row in leaders:
+        if isinstance(row, dict): add(row, "ORION TIERS")
+    for row in breaker_stocks:
+        if isinstance(row, dict): add(row, "BREAKER")
+    sniper_rows = sniper_scanner.get("stocks", []) if isinstance(sniper_scanner, dict) else []
+    for row in sniper_rows if isinstance(sniper_rows, list) else []:
+        if isinstance(row, dict): add(row, "SNIPER SCANNER")
+
+    sector_by_symbol: dict[str, dict] = {}
+    for sector in sector_rankings if isinstance(sector_rankings, list) else []:
+        if not isinstance(sector, dict):
+            continue
+        members = sector.get("eligibleStocks", [])
+        if isinstance(members, list):
+            for member in members:
+                if isinstance(member, dict):
+                    symbol = str(member.get("symbol", "")).upper().strip()
+                    if symbol:
+                        sector_by_symbol[symbol] = sector
+
+    def pct_value(row: dict) -> float:
+        value = row.get("pctChangeNum", row.get("pctChange", 0.0))
+        return safe_float(str(value if value is not None else 0).replace("%", ""), 0.0)
+
+    def side_of(row: dict) -> str | None:
+        value = str(row.get("type", row.get("signalType", ""))).upper().strip()
+        if value in {"CE", "BUY", "BULLISH", "LONG", "BUY WATCH"}:
+            return "CE"
+        if value in {"PE", "SELL", "BEARISH", "SHORT", "SELL WATCH"}:
+            return "PE"
+        return None
+
+    candidates: list[dict] = []
+    sentiment = str(breadth_sentiment or "").upper()
+    for symbol, item in by_symbol.items():
+        records = item["records"]
+        all_records = [row for rows in records.values() for row in rows]
+        pct = next((pct_value(row) for row in all_records if row.get("pctChange") is not None or row.get("pctChangeNum") is not None), 0.0)
+        price_now = safe_float(item.get("price"), 0.0)
+        sector = sector_by_symbol.get(symbol, {})
+        sector_change = safe_float(sector.get("changePct"), 0.0)
+        sector_rank = sector.get("rank")
+        rvols = [safe_float(row.get("rvol"), 0.0) for row in all_records if row.get("rvol") is not None]
+        rvol = max(rvols, default=0.0)
+
+        direction_results = {}
+        for side in ("CE", "PE"):
+            points = 0.0
+            aligned_sources: set[str] = set()
+            reasons: list[str] = []
+            supporting_rows: list[dict] = []
+
+            for row in records["GPT POWER"]:
+                if side_of(row) == side:
+                    aligned_sources.add("GPT POWER")
+                    supporting_rows.append(row)
+                    power_score = safe_float(row.get("powerScore"), 0.0)
+                    points += 4.0 + min(22.0, power_score * 0.22)
+                    if row.get("breakoutConfirmed") or row.get("status") == "BREAKOUT CONFIRMED":
+                        points += 5.0
+                        reasons.append("GPT POWER breakout/breakdown confirmation")
+                    else:
+                        reasons.append(f"GPT POWER score {power_score:.0f}/100")
+
+            for row in records["ORION TIERS"]:
+                if side_of(row) == side:
+                    aligned_sources.add("ORION TIERS")
+                    supporting_rows.append(row)
+                    legacy_score = safe_float(row.get("numScore", row.get("score", 0.0)), 0.0)
+                    if isinstance(row.get("score"), str) and "/" in row.get("score", ""):
+                        try: legacy_score = float(row["score"].split("/", 1)[0])
+                        except (ValueError, TypeError): pass
+                    points += 4.0 + min(14.0, legacy_score * 1.8)
+                    reasons.append(f"{row.get('tier', 'ORION tier')} direction matches")
+
+            for row in records["BREAKER"]:
+                directional_score = safe_float(row.get("bullScore" if side == "CE" else "bearScore"), 0.0)
+                direct_flags = (
+                    ("hasBuySignal", "buySetupSignal", "rFactorBuySignal", "volumeBreakoutBuySignal")
+                    if side == "CE" else
+                    ("hasSellSignal", "sellSetupSignal", "rFactorSellSignal", "volumeBreakoutSellSignal")
+                )
+                direct_signal = any(bool(row.get(flag)) for flag in direct_flags)
+                if directional_score >= 4 or direct_signal:
+                    aligned_sources.add("BREAKER")
+                    supporting_rows.append(row)
+                    points += min(13.0, directional_score * 2.0)
+                    if direct_signal:
+                        points += 5.0
+                        reasons.append(f"BREAKER {('bullish' if side == 'CE' else 'bearish')} signal")
+                    else:
+                        reasons.append(f"BREAKER score {directional_score:.0f}/6")
+
+            for row in records["SNIPER SCANNER"]:
+                mtf_match = bool(row.get("mtfBullish" if side == "CE" else "mtfBearish"))
+                strategy_match = bool(side == "CE" and (
+                    row.get("breakoutStructure") or row.get("within52wHigh1Pct") or row.get("ipoRecentCrossProxy")
+                    or safe_float(row.get("trendTemplateScore")) >= 6
+                ))
+                if mtf_match or strategy_match:
+                    aligned_sources.add("SNIPER SCANNER")
+                    supporting_rows.append(row)
+                    if mtf_match:
+                        points += 8.0
+                        reasons.append("Sniper daily/weekly trend confluence")
+                    if strategy_match:
+                        points += 3.0 if mtf_match else 6.0
+                        reasons.append("Sniper trend/breakout structure")
+
+            if not aligned_sources:
+                direction_results[side] = {"score": 0.0, "sources": [], "reasons": [], "supportingRows": []}
+                continue
+
+            # Additive common evidence; directional multipliers remain symmetric.
+            points += min(12.0, max(0, len(aligned_sources) - 1) * 4.0)
+            if item["sourceBarFresh"]:
+                points += 6.0
+                reasons.append("source data marked fresh")
+            else:
+                reasons.append("source data may be delayed/stale")
+            if rvol >= 2.0:
+                points += 5.0
+                reasons.append(f"relative volume {rvol:.2f}×")
+            elif rvol >= 1.3:
+                points += 3.0
+                reasons.append(f"relative volume {rvol:.2f}×")
+            directional_move = pct if side == "CE" else -pct
+            if directional_move > 0:
+                move_points = min(7.0, directional_move * 2.5)
+                points += move_points
+                if abs(pct) >= 0.3:
+                    reasons.append(f"price move {pct:+.2f}% aligned")
+            elif directional_move < 0:
+                points -= min(5.0, abs(directional_move) * 1.5)
+                reasons.append(f"price move {pct:+.2f}% opposes this direction")
+
+            if side == "CE" and "BULLISH" in sentiment:
+                points += 3.0; reasons.append("market breadth bullish")
+            elif side == "PE" and "BEARISH" in sentiment:
+                points += 3.0; reasons.append("market breadth bearish")
+            elif (side == "CE" and "BEARISH" in sentiment) or (side == "PE" and "BULLISH" in sentiment):
+                points -= 2.0
+
+            sector_matches = (side == "CE" and sector_change > 0) or (side == "PE" and sector_change < 0)
+            sector_opposes = (side == "CE" and sector_change < 0) or (side == "PE" and sector_change > 0)
+            if sector_matches:
+                points += 4.0
+                reasons.append(f"sector move aligned ({sector_change:+.2f}%)")
+            elif sector_opposes:
+                points -= 2.0
+                reasons.append(f"sector move opposes ({sector_change:+.2f}%)")
+            if sector_rank is not None and int(safe_float(sector_rank, 0)) <= 5 and sector_matches:
+                points += 1.0
+
+            # Attach an existing plan only when its directional side agrees. No fabricated levels.
+            plan = None
+            for row in supporting_rows:
+                raw_plan = row.get("entryPlan")
+                if isinstance(raw_plan, dict):
+                    plan_side = str(raw_plan.get("side", "")).upper()
+                    is_long_plan = "LONG" in plan_side or "BUY" in plan_side
+                    is_short_plan = "SHORT" in plan_side or "SELL" in plan_side
+                    if (side == "CE" and is_long_plan) or (side == "PE" and is_short_plan):
+                        plan = {k: raw_plan.get(k) for k in ("trigger", "stop", "target1", "target2", "method") if raw_plan.get(k) is not None}
+                        if plan: break
+                if side_of(row) == side and row.get("triggerLevel") is not None:
+                    plan = {"trigger": row.get("triggerLevel"), "stop": row.get("invalidationLevel"),
+                            "method": "Existing GPT POWER trigger/invalidation levels"}
+                    break
+                if side_of(row) == side and row.get("sl") is not None and row.get("t1") is not None:
+                    plan = {"stop": row.get("sl"), "target1": row.get("t1"),
+                            "method": "Existing ORION tier risk/target references; trigger still requires confirmation"}
+                    break
+
+            direction_results[side] = {
+                "score": round(min(100.0, max(0.0, points)), 1),
+                "sources": sorted(aligned_sources),
+                "reasons": list(dict.fromkeys(reasons))[:5],
+                "supportingRows": supporting_rows,
+                "entryPlan": plan,
+            }
+
+        bull = direction_results["CE"]
+        bear = direction_results["PE"]
+        best_side = "CE" if bull["score"] >= bear["score"] else "PE"
+        best = direction_results[best_side]
+        other = bear if best_side == "CE" else bull
+        # Avoid publishing a direction when the same symbol has nearly tied, opposing evidence.
+        if bull["score"] >= minimum_score and bear["score"] >= minimum_score and abs(bull["score"] - bear["score"]) < 5.0:
+            continue
+        if best["score"] < minimum_score or not best["sources"]:
+            continue
+
+        display_sources = []
+        for source in best["sources"]:
+            if source == "ORION TIERS":
+                tiers = sorted({str(row.get("tier")) for row in records[source] if side_of(row) == best_side and row.get("tier")})
+                display_sources.append(" / ".join(tiers) if tiers else source)
+            else:
+                display_sources.append(source)
+        reasons = list(best["reasons"])
+        if other["score"] >= minimum_score and best["score"] - other["score"] >= 5.0:
+            reasons.append(f"directional edge over opposite side: {best['score'] - other['score']:.1f} points")
+        candidates.append({
+            "symbol": symbol,
+            "direction": "BULLISH" if best_side == "CE" else "BEARISH",
+            "type": best_side,
+            "score": best["score"],
+            "scoreLabel": f"{best['score']:.1f}/100 ranking points",
+            "oppositeScore": other["score"],
+            "sources": display_sources,
+            "sourceCount": len(best["sources"]),
+            "sourceBarFresh": bool(item["sourceBarFresh"]),
+            "dataStatus": "FRESH SOURCE DATA" if item["sourceBarFresh"] else "DELAYED / LAST AVAILABLE DATA",
+            "price": price_now or None,
+            "pctChange": f"{pct:+.2f}%",
+            "sector": item.get("sector") or "General",
+            "sectorChangePct": sector_change,
+            "rvol": rvol or None,
+            "reasons": reasons[:5],
+            "entryPlan": best.get("entryPlan"),
+            "sessionDate": item.get("sessionDate"),
+            "selectionNote": "Research ranking only—not a probability or a trade guarantee. Verify live price and trigger before entry.",
+        })
+
+    candidates.sort(key=lambda row: (safe_float(row.get("score")), bool(row.get("sourceBarFresh")), safe_float(row.get("sourceCount")), safe_float(row.get("rvol"))), reverse=True)
+    selected = candidates[:2]
+    for index, row in enumerate(selected, 1):
+        row["rank"] = index
+    return {
+        "asOf": now.astimezone(IST).isoformat(),
+        "candidateCount": len(candidates),
+        "stockCount": len(selected),
+        "minimumScore": minimum_score,
+        "scoreNote": "Symmetric, additive ranking from existing scanner signals, cross-scanner agreement, directional momentum, relative volume, market/sector context and data freshness. Points are not calibrated win probabilities.",
+        "sourceDataNote": "When source candles are stale or delayed, the ranking is for research only. Verify live data and entry conditions.",
+        "stocks": selected,
+    }
+
 def _parse_pct(value: Any) -> float:
     return safe_float(str(value if value is not None else "0").replace("%", ""))
 
@@ -2738,9 +3014,35 @@ def build_telegram_messages(output: dict, now: dt.datetime) -> dict[str, tuple[s
     lines = [f"<b>ORION · COMPLETE SCANNER REPORT</b> — {html_lib.escape(stamp)}",
              f"<i>{html_lib.escape(freshness_note)}. Scores are rankings, not win probabilities.</i>"]
     all_rows = []
+    top_two_data = output.get("topTwoPicks", {}) if isinstance(output.get("topTwoPicks"), dict) else {}
+    top_two = [r for r in top_two_data.get("stocks", []) if isinstance(r, dict)]
+    lines.append(f"<b>TOP 2 TRADE CANDIDATES</b> ({len(top_two)} selected; threshold {safe_float(top_two_data.get('minimumScore'), 24.0):.0f} ranking points)")
+    if top_two:
+        for row in top_two[:2]:
+            symbol = html_lib.escape(str(row.get("symbol", "—")))
+            direction = html_lib.escape(str(row.get("direction", "WATCH")))
+            sources = html_lib.escape(", ".join(row.get("sources", [])))
+            reasons = html_lib.escape("; ".join(row.get("reasons", [])[:2]))
+            price = _telegram_price(row.get("price"))
+            change = _telegram_change(row.get("pctChange"))
+            plan = row.get("entryPlan") if isinstance(row.get("entryPlan"), dict) else {}
+            levels = ""
+            if plan:
+                items = []
+                if plan.get("trigger") is not None: items.append(f"Trigger {_telegram_price(plan.get('trigger'))}")
+                if plan.get("stop") is not None: items.append(f"Stop {_telegram_price(plan.get('stop'))}")
+                if plan.get("target1") is not None: items.append(f"T1 {_telegram_price(plan.get('target1'))}")
+                if items: levels = " | " + " · ".join(items)
+            status = "FRESH" if row.get("sourceBarFresh") else "STALE / VERIFY LIVE"
+            lines.append(f"• <b>#{row.get('rank', '—')} {symbol}</b> — {direction} | Rank {safe_float(row.get('score')):.1f}/100 | {price} ({change}) | {status} | Sources: {sources}{levels}")
+            if reasons:
+                lines.append(f"  <i>{reasons}</i>")
+            all_rows.append(row)
+    else:
+        lines.append("• No candidate reached the minimum evidence threshold; no trade is forced.")
 
     def add_section(title, rows, limit, formatter):
-        lines.append(f"\n<b>{html_lib.escape(title)}</b> ({len(rows)} candidate(s))")
+        lines.append(f"<b>{html_lib.escape(title)}</b> ({len(rows)} candidate(s))")
         if not rows:
             lines.append("• No qualifying candidates in this scan")
             return
@@ -2762,15 +3064,38 @@ def build_telegram_messages(output: dict, now: dt.datetime) -> dict[str, tuple[s
     add_section("BREAKER", breaker_all, 3, lambda r: common(r) + f" | {html_lib.escape(str(r.get('type', r.get('signal','WATCH'))))}")
 
     message = "\n".join(lines)
-    # Telegram sendMessage has a 4096-character limit. Keep the consolidated report
-    # within a safe margin and preserve every section heading, even on busy scans.
+    # Telegram has a 4096-character limit. If needed, shrink category rows from the
+    # least-priority sections, while retaining TOP 2 and every section heading.
     if len(message) > 3900:
-        message = message[:3860].rsplit("\n", 1)[0] + "\n<i>Report shortened to fit Telegram's single-message limit.</i>"
+        # Keep the report structure and top-two section intact; progressively remove
+        # trailing candidates from the later sections until the message fits.
+        removable = ["BREAKER", "SNIPER SCANNER", "SPECIAL 10", "BRAHMĀSTRA", "GPT POWER", "QUICK PICKS"]
+        current = list(lines)
+        for title in removable:
+            if len("\n".join(current)) <= 3900:
+                break
+            heading_idx = next((i for i, line in enumerate(current) if line.startswith(f"<b>{title}</b> (")), None)
+            if heading_idx is None:
+                continue
+            end_idx = next((i for i in range(heading_idx + 1, len(current)) if current[i].startswith("<b>") and "</b> (" in current[i]), len(current))
+            block = current[heading_idx:end_idx]
+            row_indices = [i for i in range(heading_idx + 1, end_idx) if current[i].startswith("• <b>")]
+            while len("\n".join(current)) > 3900 and len(row_indices) > 1:
+                remove_idx = row_indices.pop()
+                current.pop(remove_idx)
+                row_indices = [i - 1 if i > remove_idx else i for i in row_indices]
+            if len("\n".join(current)) > 3900 and len(row_indices) == 1:
+                remove_idx = row_indices[0]
+                current[remove_idx] = "• Candidate list abbreviated to fit Telegram's single-message limit."
+        message = "\n".join(current)
+    if len(message) > 4096:
+        # Very long symbol/source strings are uncommon; always preserve valid HTML and headings.
+        message = message[:3900].rsplit("\n", 1)[0] + "\n<i>Details shortened to fit Telegram's single-message limit.</i>"
     return {"COMPLETE REPORT": (message, all_rows)}
 
 
 def dispatch_telegram_updates(output: dict, previous_output: dict, now: dt.datetime) -> dict:
-    """Send one consolidated Telegram report per scan; suppress unchanged reports."""
+    """Send exactly one consolidated Telegram report per successful scan; no category spam."""
     previous_state = previous_output.get("telegramAlertState", {})
     previous_state = previous_state if isinstance(previous_state, dict) else {}
     new_state = dict(previous_state)
@@ -2785,12 +3110,10 @@ def dispatch_telegram_updates(output: dict, previous_output: dict, now: dt.datet
         output["telegramAlertState"] = new_state
         return new_state
     message, rows = section
-    # Include message text in the signature so count/empty-section changes also notify.
     signature = hashlib.sha256(message.encode("utf-8")).hexdigest()
-    if previous_state.get("COMPLETE REPORT") == signature:
-        new_state["COMPLETE REPORT"] = signature
-        print("Telegram COMPLETE REPORT: unchanged; duplicate message suppressed.")
-    elif send_telegram_alert(message):
+    # Deliberately send once per scan, even when unchanged. This provides one full
+    # consolidated notification on each workflow run and avoids silent duplicate suppression.
+    if send_telegram_alert(message):
         new_state["COMPLETE REPORT"] = signature
         print(f"Telegram COMPLETE REPORT: one consolidated message sent; rows={len(rows)}; chars={len(message)}.")
     else:
@@ -3024,8 +3347,13 @@ def main() -> None:
     sniper_scanner = build_sniper_scanner_data(snapshots, now, sniper_universe_memberships, sniper_universe_sources)
     special10_stocks = build_special10_candidates(gpt_power_stocks, leaders, breaker_stocks)
     quick_picks = build_quick_picks(gpt_power_stocks, leaders, breaker_stocks, sniper_scanner, sector_rankings, stock_fuel_metrics, now)
+    top_two_picks = build_top_two_trade_candidates(
+        gpt_power_stocks, leaders, breaker_stocks, sniper_scanner, sector_rankings,
+        sentiment, now,
+    )
     print(f"Sniper Scanner: {sniper_scanner['stockCount']} symbols; fresh={sniper_scanner['freshRecordCount']}; market-cap metadata available={sniper_scanner['marketCapDataAvailable']}")
     print(f"ORION QUICK PICKS: {quick_picks['stockCount']} shown from {quick_picks['candidateCount']} unique candidates")
+    print(f"ORION TOP 2: {top_two_picks['stockCount']} selected from {top_two_picks['candidateCount']} directional candidates")
     print("Sniper universes: " + ", ".join(f"{k}={len(v)}" for k, v in sniper_universe_memberships.items()))
 
     output = {
@@ -3044,6 +3372,7 @@ def main() -> None:
         "sniperScanner": sniper_scanner,
         "special10Stocks": special10_stocks,
         "quickPicks": quick_picks,
+        "topTwoPicks": top_two_picks,
         "fuelMetricNote": "Displayed fuel is an estimated remaining daily ATR-range allowance, calculated as 100 minus today's true range (including the previous-close gap) relative to the prior 14-session daily ATR; it is not a probability or directional forecast. Legacy internal fuel used by existing signal heuristic/ranking logic is preserved. Marked stale when source candles are stale.",
         "leaders": leaders,
         "gptPowerStocks": gpt_power_stocks,
