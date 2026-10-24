@@ -2708,61 +2708,69 @@ def _telegram_change(value: Any) -> str:
 
 
 def build_telegram_messages(output: dict, now: dt.datetime) -> dict[str, tuple[str, list[dict]]]:
-    """Build separate fresh-source messages for GPT POWER, BRAHMĀSTRA, SPECIAL 10, Sniper."""
-    # Preserve the original GPT POWER notification behaviour: send the top five
-    # scanner candidates whenever the GPT POWER list is non-empty. Do not require
-    # sourceBarFresh here, because after-hours scans may legitimately use the last
-    # available completed session and the old scanner still notified in that case.
-    fresh = lambda row: bool(row.get("sourceBarFresh", False))
-    gpt = list(output.get("gptPowerStocks", []))[:5]
-    brahmastra = [row for row in output.get("leaders", []) if row.get("tier") in ("BRAHMASTRA", "BRAHMĀSTRA") and fresh(row)][:5]
-    breaker = [row for row in output.get("breakerStocks", []) if fresh(row)]
+    """Build one consolidated Telegram message with all scanner categories."""
+    gpt_all = [r for r in output.get("gptPowerStocks", []) if isinstance(r, dict)]
+    leaders_all = [r for r in output.get("leaders", []) if isinstance(r, dict)]
+    brahmastra_all = [r for r in leaders_all if r.get("tier") in ("BRAHMASTRA", "BRAHMĀSTRA")]
+    breaker_all = [r for r in output.get("breakerStocks", []) if isinstance(r, dict)]
+    quick_data = output.get("quickPicks", {}) if isinstance(output.get("quickPicks"), dict) else {}
+    quick_all = [r for r in quick_data.get("stocks", []) if isinstance(r, dict)]
     sniper_data = output.get("sniperScanner", {}) if isinstance(output.get("sniperScanner"), dict) else {}
+    sniper_all = [r for r in sniper_data.get("stocks", []) if isinstance(r, dict)]
     sniper = []
-    sniper_rows = sniper_data.get("stocks", []) if isinstance(sniper_data.get("stocks", []), list) else []
-    for row in sniper_rows:
-        if not fresh(row): continue
+    for row in sniper_all:
         strategies = sniper_strategy_matches(row)
         if strategies:
-            copied = dict(row); copied["sniperStrategies"] = strategies; sniper.append(copied)
+            copy_row = dict(row)
+            copy_row["sniperStrategies"] = strategies
+            sniper.append(copy_row)
     sniper.sort(key=lambda row: (len(row.get("sniperStrategies", [])), safe_float(row.get("trendTemplateScore")), safe_float(row.get("rvol")), _parse_pct(row.get("pctChange"))), reverse=True)
-    sniper = sniper[:6]
-    special = build_special10_candidates(
-        [row for row in output.get("gptPowerStocks", []) if fresh(row)],
-        [row for row in output.get("leaders", []) if row.get("tier") in ("BRAHMASTRA", "BRAHMĀSTRA") and fresh(row)],
-        breaker,
-    )
-    # Only notify on a valid same-day, source-fresh snapshot.
-    sections: dict[str, tuple[str, list[dict]]] = {}
+
+    # Use the existing additive merge/rank function; do not alter stock scoring or selection.
+    special_all = build_special10_candidates(gpt_all, brahmastra_all, breaker_all)
     stamp = now.astimezone(IST).strftime("%d %b %Y · %I:%M %p IST")
-    if gpt:
-        lines = [f"<b>ORION · GPT POWER STOCKS</b> — {html_lib.escape(stamp)}", "<i>Fresh-source snapshot; score is not a win probability.</i>"]
-        for row in gpt:
-            lines.append(f"• <b>{html_lib.escape(str(row.get('symbol','')))}</b> {html_lib.escape(str(row.get('type','')))} | Score {safe_float(row.get('powerScore')):.0f}/100 | {html_lib.escape(str(row.get('status','WATCH')))} | RVOL {safe_float(row.get('rvol')):.2f}× | {_telegram_price(row.get('price'))} | {_telegram_change(row.get('pctChange'))}")
-        sections["GPT POWER"] = ("\n".join(lines), gpt)
-    if brahmastra:
-        lines = [f"<b>ORION · BRAHMĀSTRA</b> — {html_lib.escape(stamp)}", "<i>Fresh-source candidates; verify the current trigger.</i>"]
-        for row in brahmastra:
-            lines.append(f"• <b>{html_lib.escape(str(row.get('symbol','')))}</b> {html_lib.escape(str(row.get('type','')))} | Score {safe_float(row.get('numScore', row.get('score'))):.0f}/7 | {html_lib.escape(str(row.get('detectTime','—')))} | {_telegram_price(row.get('price'))} | {_telegram_change(row.get('pctChange'))}")
-        sections["BRAHMĀSTRA"] = ("\n".join(lines), brahmastra)
-    if special:
-        lines = [f"<b>ORION · SPECIAL 10</b> — {html_lib.escape(stamp)}", "<i>Cross-scanner shortlist; overlap is ranking evidence, not a probability.</i>"]
-        for row in special[:8]:
-            sources = ", ".join(row.get("sources", []))
-            lines.append(f"• <b>#{row.get('specialRank')} {html_lib.escape(row['symbol'])}</b> | COMMON {row.get('commonCount')}/3 | {html_lib.escape(sources)} | {html_lib.escape(str(row.get('signal','WATCH')))} | {_telegram_price(row.get('price'))} | {_telegram_change(row.get('pctChange'))}")
-        sections["SPECIAL 10"] = ("\n".join(lines), special[:8])
-    if sniper:
-        lines = [f"<b>ORION · SNIPER SCANNER</b> — {html_lib.escape(stamp)}", "<i>Fresh candidates passing default Sniper filters; IPO reference remains provisional.</i>"]
-        for row in sniper:
-            names = ", ".join(row.get("sniperStrategies", [])); plan = row.get("entryPlan") if isinstance(row.get("entryPlan"), dict) else {}
-            levels = f" | Trigger {_telegram_price(plan.get('trigger'))} · SL {_telegram_price(plan.get('stop'))}" if plan else " | entry plan N/A"
-            lines.append(f"• <b>{html_lib.escape(str(row.get('symbol','')))}</b> | {html_lib.escape(names)} | Trend {safe_float(row.get('trendTemplateScore')):.0f}/8 | RVOL {safe_float(row.get('rvol')):.2f}× | {_telegram_change(row.get('pctChange'))}{levels}")
-        sections["SNIPER SCANNER"] = ("\n".join(lines), sniper)
-    return sections
+    freshness_values = [bool(r.get("sourceBarFresh", False)) for r in (quick_all + gpt_all + brahmastra_all + breaker_all)]
+    fresh_count = sum(freshness_values)
+    total_count = len(freshness_values)
+    freshness_note = ("Source bars marked fresh" if total_count and fresh_count == total_count else
+                      f"MIXED/DELAYED DATA: {fresh_count}/{total_count} checked candidates have fresh source bars" if fresh_count else
+                      "LAST AVAILABLE DATA may be stale/delayed; verify live quotes before acting")
+    lines = [f"<b>ORION · COMPLETE SCANNER REPORT</b> — {html_lib.escape(stamp)}",
+             f"<i>{html_lib.escape(freshness_note)}. Scores are rankings, not win probabilities.</i>"]
+    all_rows = []
+
+    def add_section(title, rows, limit, formatter):
+        lines.append(f"\n<b>{html_lib.escape(title)}</b> ({len(rows)} candidate(s))")
+        if not rows:
+            lines.append("• No qualifying candidates in this scan")
+            return
+        for row in rows[:limit]:
+            lines.append("• " + formatter(row))
+            all_rows.append(row)
+
+    def common(row):
+        sym = html_lib.escape(str(row.get("symbol", "—")))
+        price = _telegram_price(row.get("price"))
+        change = _telegram_change(row.get("pctChange"))
+        return f"<b>{sym}</b> {price} ({change})"
+
+    add_section("QUICK PICKS", quick_all, 5, lambda r: common(r) + f" | {html_lib.escape(str(r.get('signal', r.get('status', 'WATCH'))))} | Score {safe_float(r.get('rankScore', r.get('powerScore'))):.0f}")
+    add_section("GPT POWER", gpt_all, 5, lambda r: common(r) + f" | {html_lib.escape(str(r.get('type','')))} | Score {safe_float(r.get('powerScore')):.0f}/100 | {html_lib.escape(str(r.get('status','WATCH')))} | RVOL {safe_float(r.get('rvol')):.2f}×")
+    add_section("BRAHMĀSTRA", brahmastra_all, 4, lambda r: common(r) + f" | {html_lib.escape(str(r.get('type','')))} | Score {safe_float(r.get('numScore', r.get('score'))):.0f}/7")
+    add_section("SPECIAL 10", special_all, 5, lambda r: common(r) + f" | #{r.get('specialRank','—')} | overlap {r.get('commonCount',0)}/3 | {html_lib.escape(str(r.get('signal','WATCH')))}")
+    add_section("SNIPER SCANNER", sniper, 4, lambda r: common(r) + f" | {html_lib.escape(', '.join(r.get('sniperStrategies', [])))} | Trend {safe_float(r.get('trendTemplateScore')):.0f}/8 | RVOL {safe_float(r.get('rvol')):.2f}×")
+    add_section("BREAKER", breaker_all, 3, lambda r: common(r) + f" | {html_lib.escape(str(r.get('type', r.get('signal','WATCH'))))}")
+
+    message = "\n".join(lines)
+    # Telegram sendMessage has a 4096-character limit. Keep the consolidated report
+    # within a safe margin and preserve every section heading, even on busy scans.
+    if len(message) > 3900:
+        message = message[:3860].rsplit("\n", 1)[0] + "\n<i>Report shortened to fit Telegram's single-message limit.</i>"
+    return {"COMPLETE REPORT": (message, all_rows)}
 
 
 def dispatch_telegram_updates(output: dict, previous_output: dict, now: dt.datetime) -> dict:
-    """Send separate category alerts only when a fresh shortlist changes; suppress repeat spam."""
+    """Send one consolidated Telegram report per scan; suppress unchanged reports."""
     previous_state = previous_output.get("telegramAlertState", {})
     previous_state = previous_state if isinstance(previous_state, dict) else {}
     new_state = dict(previous_state)
@@ -2770,25 +2778,24 @@ def dispatch_telegram_updates(output: dict, previous_output: dict, now: dt.datet
         print("Telegram disabled: configure TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID repository secrets.")
         output["telegramAlertState"] = new_state
         return new_state
-    messages = build_telegram_messages(output, now)
-    for name in ("GPT POWER", "BRAHMĀSTRA", "SPECIAL 10", "SNIPER SCANNER"):
-        section = messages.get(name)
-        if not section:
-            new_state[name] = "EMPTY"
-            print(f"Telegram {name}: no fresh qualifying candidates; no message sent.")
-            continue
-        message, rows = section
-        signature = _telegram_signature(rows, name)
-        if previous_state.get(name) == signature:
-            new_state[name] = signature
-            print(f"Telegram {name}: unchanged shortlist; duplicate message suppressed.")
-            continue
-        if send_telegram_alert(message):
-            new_state[name] = signature
-            print(f"Telegram {name}: separate message sent ({len(rows)} candidate(s)).")
-        else:
-            new_state[name] = previous_state.get(name, "")
-            print(f"Telegram {name}: send failed; will retry next scan.")
+    sections = build_telegram_messages(output, now)
+    section = sections.get("COMPLETE REPORT")
+    if not section:
+        print("Telegram COMPLETE REPORT: could not build message.")
+        output["telegramAlertState"] = new_state
+        return new_state
+    message, rows = section
+    # Include message text in the signature so count/empty-section changes also notify.
+    signature = hashlib.sha256(message.encode("utf-8")).hexdigest()
+    if previous_state.get("COMPLETE REPORT") == signature:
+        new_state["COMPLETE REPORT"] = signature
+        print("Telegram COMPLETE REPORT: unchanged; duplicate message suppressed.")
+    elif send_telegram_alert(message):
+        new_state["COMPLETE REPORT"] = signature
+        print(f"Telegram COMPLETE REPORT: one consolidated message sent; rows={len(rows)}; chars={len(message)}.")
+    else:
+        new_state["COMPLETE REPORT"] = previous_state.get("COMPLETE REPORT", "")
+        print("Telegram COMPLETE REPORT: send failed; will retry next scan.")
     output["telegramAlertState"] = new_state
     return new_state
 
@@ -3058,8 +3065,7 @@ def main() -> None:
         }
     }
 
-    # Separate Telegram messages by scanner section. Their signatures are persisted in data.json
-    # and committed by the existing workflow so repeated scheduled scans do not spam identical alerts.
+    # Send one consolidated Telegram report containing all scanner sections.
     dispatch_telegram_updates(output, previous_scan_output, now)
 
     # Write to a temporary sibling file and atomically replace data.json only after
