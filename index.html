@@ -16,6 +16,10 @@
     .power-card { background:linear-gradient(145deg,#121b2b 0%,#10151f 100%); }
     .sector-stock-badge svg { display:block; }
     .fuel-meter { min-width:135px; }
+    .sniper-card { background:linear-gradient(145deg,#142337 0%,#101722 100%); }
+    .sniper-filter.active { border-color:#10b981; background:#064e3b; color:#d1fae5; box-shadow:inset 0 0 0 1px #10b981; }
+    .sniper-result { background:linear-gradient(145deg,#111b2a 0%,#0d1420 100%); }
+    .sniper-mini-bar { height:5px; border-radius:999px; background:#263447; overflow:hidden; }
     @media (max-width:420px) { .fuel-meter { min-width:125px; } }
 
     a { -webkit-tap-highlight-color:transparent; }
@@ -53,6 +57,7 @@
     <button data-tab="GPT POWER STOCKS" onclick="filterCards('GPT POWER STOCKS')" class="tab-btn px-3 py-2 rounded bg-fuchsia-950 text-fuchsia-200 border border-fuchsia-700 font-bold whitespace-nowrap">🧠 GPT POWER STOCKS (<span id="cnt-GPT">0</span>)</button>
     <button data-tab="BRAHMASTRA" onclick="filterCards('BRAHMASTRA')" class="tab-btn px-3 py-2 rounded bg-sky-950 text-sky-300 border border-sky-700 font-semibold whitespace-nowrap">⚡ BRAHMASTRA (<span id="cnt-BRAHMASTRA">0</span>)</button>
     <button data-tab="SECTOR" onclick="filterCards('SECTOR')" class="tab-btn px-3 py-2 rounded bg-blue-950 text-blue-200 border border-blue-600 font-extrabold whitespace-nowrap">📊 SECTOR (<span id="cnt-SECTOR">23</span>)</button>
+    <button data-tab="SNIPER SCANNER" onclick="filterCards('SNIPER SCANNER')" class="tab-btn px-3 py-2 rounded bg-emerald-950 text-emerald-200 border border-emerald-600 font-extrabold whitespace-nowrap">🎯 SNIPER SCANNER (<span id="cnt-SNIPER">0</span>)</button>
     <button data-tab="BREAKER" onclick="filterCards('BREAKER')" class="tab-btn px-3 py-2 rounded bg-cyan-950 text-cyan-200 border border-cyan-600 font-bold whitespace-nowrap">🧨 BREAKER (<span id="cnt-BREAKER">0</span>)</button>
     <button data-tab="EXPLOSIVE" onclick="filterCards('EXPLOSIVE')" class="tab-btn px-3 py-2 rounded bg-rose-950 text-rose-300 border border-rose-700 font-semibold whitespace-nowrap">💥 EXPLOSIVE (<span id="cnt-EXPLOSIVE">0</span>)</button>
     <button data-tab="STRONG" onclick="filterCards('STRONG')" class="tab-btn px-3 py-2 rounded bg-amber-950 text-amber-300 border border-amber-700 font-semibold whitespace-nowrap">🔥 STRONG (<span id="cnt-STRONG">0</span>)</button>
@@ -76,6 +81,11 @@
   let allSectorRankings = [];
   let sectorSentiment = null;
   let stockFuelMetrics = {};
+  let sniperScannerData = null;
+  let sniperScanKind = 'volumeBreakout';
+  let sniperMarketCapFilter = '';
+  let sniperCustomizeOpen = '';
+  let sniperSettings = { minVolumeRatio: 2.0, minPriceChangePct: 1.0, nearHighPct: 1.0, highVolumeRatio: 1.2, minTrendScore: 6, capital: '', riskPct: '' };
   let paperTradeTracker = null;
   let paperTradeCandidates = [];
   let activeTab = 'ALL';
@@ -106,6 +116,8 @@
     document.getElementById('cnt-BRAHMASTRA').innerText = cards.filter(c => c.tier === 'BRAHMASTRA').length;
     document.getElementById('cnt-SECTOR').innerText = allSectorRankings.length || 23;
     document.getElementById('cnt-BREAKER').innerText = allBreakerStocks.length;
+    const sniperCount = document.getElementById('cnt-SNIPER');
+    if (sniperCount) sniperCount.innerText = sniperScannerData?.stockCount ?? 0;
     document.getElementById('cnt-EXPLOSIVE').innerText = cards.filter(c => c.tier === 'EXPLOSIVE').length;
     document.getElementById('cnt-STRONG').innerText = cards.filter(c => c.tier === 'STRONG').length;
     document.getElementById('cnt-SPURT').innerText = cards.filter(c => c.tier === 'SPURT').length;
@@ -304,6 +316,155 @@
       </section>`;
   }
 
+
+  const SNIPER_STRATEGIES = {
+    volumeBreakout: {
+      title: 'Volume Breakout', icon: '⚡', badge: 'POPULAR', tone: 'orange',
+      description: 'Clears a pivot / prior 20-session high with strong same-time-of-day relative volume; avoids treating resistance proximity alone as a break.',
+      rules: ['Breakout structure confirmed', 'RVOL (same time) ≥ threshold', 'Price change ≥ threshold']
+    },
+    fresh52wHigh: {
+      title: 'Fresh 52W High', icon: '⇧', badge: 'POPULAR', tone: 'emerald',
+      description: 'Stocks near their trailing 52-week high with positive price change and volume confirmation.',
+      rules: ['Within threshold of 52W high', 'Price change ≥ threshold', 'RVOL (same time) ≥ threshold']
+    },
+    ipoListingHigh: {
+      title: 'IPO · Listing-Day High Breakout', icon: '↗', badge: 'PROXY', tone: 'cyan',
+      description: 'Looks for a recent first-observed-history reference break. Yahoo history does not verify official IPO dates, so every result is explicitly marked provisional.',
+      rules: ['Short daily history (IPO proxy)', 'Current price above first observed high', 'Prior 5-session closes show a possible recent cross']
+    },
+    trendTemplate: {
+      title: '8-Point Trend Template', icon: '◎', badge: 'TREND', tone: 'emerald',
+      description: 'Daily trend checklist across price and 50/150/200-session averages, long-term slope, and 52-week positioning.',
+      rules: ['Daily history needed for all 8 checks', 'Default shortlist: at least 6/8', '8/8 is the strongest template match']
+    },
+    chartPatterns: {
+      title: 'Chart Patterns', icon: '⌁', badge: 'HEURISTIC', tone: 'cyan',
+      description: 'Conservative daily-OHLC flags for VCP, Cup & Handle, Bull Flag and Flat Base. These are screening heuristics, not confirmed visual pattern recognition.',
+      rules: ['VCP', 'Cup & Handle', 'Bull Flag', 'Flat Base']
+    },
+    mtfConfluence: {
+      title: 'Multi-Timeframe Confluence', icon: '▥', badge: 'DAILY + WEEKLY', tone: 'blue',
+      description: 'Looks for daily trend alignment with weekly moving-average direction using available history.',
+      rules: ['Daily trend alignment', 'Weekly trend alignment', 'Bullish and bearish candidates separated']
+    }
+  };
+  function sniperToneClasses(tone) {
+    const map = {
+      orange: 'border-orange-700 bg-orange-950/40 text-orange-200',
+      emerald: 'border-emerald-700 bg-emerald-950/40 text-emerald-200',
+      cyan: 'border-cyan-700 bg-cyan-950/40 text-cyan-200',
+      blue: 'border-sky-700 bg-sky-950/40 text-sky-200'
+    };
+    return map[tone] || map.blue;
+  }
+  function toggleSniperCustomize(kind) {
+    sniperCustomizeOpen = sniperCustomizeOpen === kind ? '' : kind;
+    renderSniperScanner();
+  }
+  function selectSniperCap(cap) {
+    sniperMarketCapFilter = sniperMarketCapFilter === cap ? '' : cap;
+    renderSniperScanner();
+  }
+  function readSniperSettings() {
+    const read = (id, fallback, min, max) => {
+      const el = document.getElementById(id);
+      const v = el ? Number(el.value) : fallback;
+      return Number.isFinite(v) ? Math.max(min, Math.min(max, v)) : fallback;
+    };
+    sniperSettings.minVolumeRatio = read('sniper-min-rvol', sniperSettings.minVolumeRatio, 0.1, 20);
+    sniperSettings.minPriceChangePct = read('sniper-min-change', sniperSettings.minPriceChangePct, -20, 100);
+    sniperSettings.nearHighPct = read('sniper-near-high', sniperSettings.nearHighPct, 0.1, 15);
+    sniperSettings.highVolumeRatio = read('sniper-high-rvol', sniperSettings.highVolumeRatio, 0.1, 20);
+    sniperSettings.minTrendScore = Math.round(read('sniper-trend-score', sniperSettings.minTrendScore, 1, 8));
+    const capitalEl = document.getElementById('sniper-capital');
+    const riskEl = document.getElementById('sniper-risk-pct');
+    if (capitalEl) { const v = Number(capitalEl.value); sniperSettings.capital = capitalEl.value.trim() && Number.isFinite(v) && v > 0 ? v : ''; }
+    if (riskEl) { const v = Number(riskEl.value); sniperSettings.riskPct = riskEl.value.trim() && Number.isFinite(v) && v > 0 && v <= 10 ? v : ''; }
+  }
+  function runSniperScan(kind) {
+    readSniperSettings();
+    sniperScanKind = kind;
+    renderSniperScanner();
+  }
+  function getSniperMatches(kind) {
+    const rows = Array.isArray(sniperScannerData?.stocks) ? sniperScannerData.stocks : [];
+    let matches = rows.filter(s => {
+      if (kind === 'volumeBreakout') return s.breakoutStructure && s.rvolAvailable && Number(s.rvol) >= sniperSettings.minVolumeRatio && Number(s.pctChange) >= sniperSettings.minPriceChangePct;
+      if (kind === 'fresh52wHigh') return s.high52w !== null && Number(s.price) >= Number(s.high52w) * (1 - sniperSettings.nearHighPct / 100) && s.rvolAvailable && Number(s.rvol) >= sniperSettings.highVolumeRatio && Number(s.pctChange) >= sniperSettings.minPriceChangePct;
+      if (kind === 'ipoListingHigh') return Boolean(s.ipoRecentCrossProxy);
+      if (kind === 'trendTemplate') return Number(s.trendTemplateAvailable) === 8 && Number(s.trendTemplateScore) >= sniperSettings.minTrendScore;
+      if (kind === 'chartPatterns') return Array.isArray(s.patterns) && s.patterns.length > 0;
+      if (kind === 'mtfConfluence') return Boolean(s.mtfBullish || s.mtfBearish);
+      return false;
+    });
+    if (sniperMarketCapFilter) {
+      if (!sniperScannerData?.marketCapDataAvailable) return [];
+      matches = matches.filter(s => s.marketCapBucket === sniperMarketCapFilter);
+    }
+    return matches.sort((a,b) => {
+      const aFresh = Boolean(a.sourceBarFresh), bFresh = Boolean(b.sourceBarFresh);
+      if (aFresh !== bFresh) return aFresh ? -1 : 1;
+      if (kind === 'trendTemplate') return Number(b.trendTemplateScore)-Number(a.trendTemplateScore) || Number(b.pctChange)-Number(a.pctChange);
+      if (kind === 'fresh52wHigh') return Number(a.distanceTo52wHighPct)-Number(b.distanceTo52wHighPct);
+      return Number(b.rvol || 0)-Number(a.rvol || 0) || Number(b.pctChange)-Number(a.pctChange);
+    });
+  }
+  function renderSniperResultCard(s, kind) {
+    const tvUrl = `https://in.tradingview.com/chart/?symbol=${encodeURIComponent('NSE:' + s.symbol)}`;
+    const fresh = Boolean(s.sourceBarFresh);
+    const change = Number(s.pctChange);
+    const changeClass = Number.isFinite(change) ? (change >= 0 ? 'text-emerald-300' : 'text-rose-300') : 'text-gray-400';
+    const plan = s.entryPlan;
+    const riskBudget = Number(sniperSettings.capital) > 0 && Number(sniperSettings.riskPct) > 0 ? Number(sniperSettings.capital) * Number(sniperSettings.riskPct) / 100 : null;
+    const riskQty = plan && riskBudget !== null && Number(plan.riskPerShare) > 0 ? Math.max(0, Math.floor(riskBudget / Number(plan.riskPerShare))) : null;
+    const cashQty = plan && plan.side === 'LONG reference' && Number(sniperSettings.capital) > 0 && Number(plan.trigger) > 0 ? Math.max(0, Math.floor(Number(sniperSettings.capital) / Number(plan.trigger))) : null;
+    const plannedQty = riskQty === null ? null : cashQty === null ? riskQty : Math.min(riskQty, cashQty);
+    const positionHtml = plannedQty !== null ? `<div class="rounded bg-black/30 p-2 mt-2 text-[11px]"><span class="text-gray-500">Risk-budget size</span><div class="font-bold text-sky-200">${plannedQty.toLocaleString('en-IN')} shares · max planned loss ≈ ${price(plannedQty * Number(plan.riskPerShare))}</div><div class="text-[10px] text-gray-500">Based on capital ${price(sniperSettings.capital)} and risk ${num(sniperSettings.riskPct,2)}%; ignores fees, slippage, lot-size constraints and short margin.</div><div class="text-[10px] text-gray-400 mt-1">Step plan: initiate only on trigger confirmation; consider a second tranche only after a valid retest. Do not add if the stop/structure is invalidated.</div></div>` : `<div class="rounded bg-black/20 p-2 mt-2 text-[10px] text-gray-500">Position-size calculator: enter capital and max risk per trade above to estimate a risk-budget quantity.</div>`;
+    const planHtml = plan ? `<div class="grid grid-cols-2 gap-2 mt-2 text-[11px]"><div class="rounded bg-black/30 p-2"><span class="text-gray-500 block">${escapeHTML(plan.side)} trigger</span><b>${price(plan.trigger)}</b></div><div class="rounded bg-black/30 p-2"><span class="text-gray-500 block">Reference stop</span><b class="text-rose-300">${price(plan.stop)}</b></div><div class="rounded bg-black/30 p-2"><span class="text-gray-500 block">T1 · 1R</span><b class="text-emerald-300">${price(plan.target1)}</b></div><div class="rounded bg-black/30 p-2"><span class="text-gray-500 block">T2 · 2R</span><b class="text-emerald-300">${price(plan.target2)}</b></div></div>` : '<div class="text-[10px] text-gray-500 mt-2">Entry plan unavailable: insufficient ATR / trigger data.</div>';
+    const detail = kind === 'trendTemplate' ? `Trend Template ${s.trendTemplateScore}/8 (${s.trendTemplateAvailable} checks available)` : kind === 'fresh52wHigh' ? `52W high ${price(s.high52w)} · ${s.distanceTo52wHighPct === null ? 'distance N/A' : num(s.distanceTo52wHighPct,2)+'% below high'}` : kind === 'volumeBreakout' ? `RVOL ${s.rvolAvailable ? num(s.rvol,2)+'× same-time baseline' : 'N/A'} · ${s.cleared20dHigh ? '20D HIGH CLEARED' : s.clearedPivotAndORB ? 'PIVOT + ORB CLEARED' : 'BREAKOUT LEVEL'}` : kind === 'ipoListingHigh' ? `First-observed high proxy ${price(s.ipoReferenceHigh)} · listing day not independently verified` : kind === 'chartPatterns' ? (s.patterns || []).join(' · ') : `Daily ${s.dailyTrendBull?'Bullish':s.dailyTrendBear?'Bearish':'Mixed'} · Weekly ${s.weeklyTrendBull===true?'Bullish':s.weeklyTrendBear===true?'Bearish':'Mixed / unavailable'}`;
+    const templateChecks = kind === 'trendTemplate' ? `<div class="mt-2 grid grid-cols-2 gap-1">${(s.trendTemplatePasses || []).map(x => `<div class="rounded px-2 py-1 text-[10px] border ${x.pass===true?'border-emerald-800 bg-emerald-950/40 text-emerald-200':x.pass===false?'border-rose-900 bg-rose-950/30 text-rose-300':'border-gray-800 bg-gray-900 text-gray-500'}">${x.pass===true?'✓':x.pass===false?'✗':'—'} ${escapeHTML(x.label)}</div>`).join('')}</div>` : '';
+    const patternBadges = kind === 'chartPatterns' ? `<div class="flex flex-wrap gap-1 mt-2">${(s.patterns || []).map(x => `<span class="px-2 py-1 rounded border border-cyan-800 bg-cyan-950/40 text-cyan-200 text-[10px]">${escapeHTML(x)}</span>`).join('')}</div>` : '';
+    const provisional = kind === 'ipoListingHigh' ? '<div class="mt-2 rounded border border-amber-800 bg-amber-950/30 p-2 text-[10px] text-amber-200">PROVISIONAL: first observed daily candle is not a verified IPO listing-day candle.</div>' : '';
+    return `<article class="sniper-result border border-gray-800 rounded-xl p-3 flex flex-col gap-2"><div class="flex items-start justify-between gap-2"><div><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="text-lg font-extrabold text-white hover:text-emerald-300">${escapeHTML(s.symbol)} ↗</a><div class="text-[10px] text-gray-500">${escapeHTML(s.sector || 'General')}</div></div><div class="text-right"><div class="font-bold">${price(s.price)}</div><div class="text-xs font-semibold ${changeClass}">${Number.isFinite(change)?`${change>0?'+':''}${change.toFixed(2)}%`:'N/A'}</div></div></div><div class="flex flex-wrap items-center gap-1.5"><span class="px-2 py-1 rounded border text-[10px] ${fresh?'border-emerald-800 bg-emerald-950/40 text-emerald-200':'border-amber-800 bg-amber-950/40 text-amber-200'}">${fresh?'SOURCE FRESH':'STALE / LAST SNAPSHOT'}</span><span class="px-2 py-1 rounded border border-gray-700 bg-gray-900 text-gray-300 text-[10px]">${escapeHTML(s.asOf ? new Date(s.asOf).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'})+' IST' : 'time N/A')}</span></div><div class="text-xs text-gray-300">${escapeHTML(detail)}</div>${templateChecks}${patternBadges}${provisional}${planHtml}${positionHtml}<div class="mt-auto pt-2 border-t border-gray-800 flex items-center justify-between gap-2"><span class="text-[10px] text-gray-500">Reference only · no orders placed</span><a href="${tvUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded bg-sky-950 border border-sky-800 text-sky-200 text-[11px] font-semibold">📊 Chart</a></div></article>`;
+  }
+  function renderSniperScanner() {
+    const container = document.getElementById('cards-container');
+    const rows = Array.isArray(sniperScannerData?.stocks) ? sniperScannerData.stocks : [];
+    const meta = SNIPER_STRATEGIES[sniperScanKind] || SNIPER_STRATEGIES.volumeBreakout;
+    const matches = getSniperMatches(sniperScanKind);
+    const resultCount = matches.length;
+    const dateText = sniperScannerData?.asOf ? new Date(sniperScannerData.asOf).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})+' IST' : 'No scanner snapshot';
+    const capOptions = [
+      {name:'Large-Cap', value:'Large-Cap', range:'₹20,000+ Cr', accent:'text-purple-300'},
+      {name:'Mid-Cap', value:'Mid-Cap', range:'₹5,000–20,000 Cr', accent:'text-sky-300'},
+      {name:'Small-Cap', value:'Small-Cap', range:'₹500–5,000 Cr', accent:'text-cyan-300'},
+      {name:'Micro-Cap', value:'Micro-Cap', range:'Below ₹500 Cr', accent:'text-gray-300'}
+    ];
+    const capHtml = capOptions.map(c => `<button type="button" onclick="selectSniperCap('${c.value}')" class="sniper-filter border ${sniperMarketCapFilter===c.value?'active':'border-gray-700 bg-[#101b2d]'} rounded-lg p-3 text-left ${sniperMarketCapFilter===c.value?'':'hover:border-sky-700'}"><span class="block font-bold ${c.accent}">${c.name}</span><span class="block text-xs text-gray-400 mt-1">${c.range}</span><span class="block text-[10px] text-gray-500 mt-1">${sniperScannerData?.marketCapDataAvailable ? 'Apply filter' : 'Metadata unavailable'}</span></button>`).join('');
+    const strategies = Object.entries(SNIPER_STRATEGIES).map(([key, strategy]) => {
+      const kindCount = rows.filter(s => {
+        if (key==='volumeBreakout') return s.breakoutStructure && s.rvolAvailable && Number(s.rvol)>=sniperSettings.minVolumeRatio && Number(s.pctChange)>=sniperSettings.minPriceChangePct;
+        if (key==='fresh52wHigh') return s.high52w!==null && Number(s.price)>=Number(s.high52w)*(1-sniperSettings.nearHighPct/100) && s.rvolAvailable && Number(s.rvol)>=sniperSettings.highVolumeRatio && Number(s.pctChange)>=sniperSettings.minPriceChangePct;
+        if (key==='ipoListingHigh') return Boolean(s.ipoRecentCrossProxy);
+        if (key==='trendTemplate') return Number(s.trendTemplateAvailable)===8 && Number(s.trendTemplateScore)>=sniperSettings.minTrendScore;
+        if (key==='chartPatterns') return Array.isArray(s.patterns) && s.patterns.length>0;
+        if (key==='mtfConfluence') return Boolean(s.mtfBullish||s.mtfBearish);
+        return false;
+      }).length;
+      const isSelected = sniperScanKind===key;
+      const customize = sniperCustomizeOpen===key;
+      const customPanel = customize ? `<div class="rounded-lg border border-gray-700 bg-black/20 p-2 mt-2 grid grid-cols-2 gap-2 text-xs">${key==='volumeBreakout'?`<label class="text-gray-300">Min same-time RVOL<input id="sniper-min-rvol" type="number" step="0.1" min="0.1" max="20" value="${sniperSettings.minVolumeRatio}" class="block w-full mt-1 rounded bg-gray-900 border border-gray-700 p-2 text-white" /></label><label class="text-gray-300">Min price change %<input id="sniper-min-change" type="number" step="0.1" min="-20" max="100" value="${sniperSettings.minPriceChangePct}" class="block w-full mt-1 rounded bg-gray-900 border border-gray-700 p-2 text-white" /></label>`:''}${key==='fresh52wHigh'?`<label class="text-gray-300">Max distance below high %<input id="sniper-near-high" type="number" step="0.1" min="0.1" max="15" value="${sniperSettings.nearHighPct}" class="block w-full mt-1 rounded bg-gray-900 border border-gray-700 p-2 text-white" /></label><label class="text-gray-300">Min same-time RVOL<input id="sniper-high-rvol" type="number" step="0.1" min="0.1" max="20" value="${sniperSettings.highVolumeRatio}" class="block w-full mt-1 rounded bg-gray-900 border border-gray-700 p-2 text-white" /></label>`:''}${key==='trendTemplate'?`<label class="text-gray-300 col-span-2">Minimum score (6–8 of 8)<input id="sniper-trend-score" type="number" min="1" max="8" step="1" value="${sniperSettings.minTrendScore}" class="block w-full mt-1 rounded bg-gray-900 border border-gray-700 p-2 text-white" /></label>`:''}<div class="col-span-2 flex gap-2"><button type="button" onclick="runSniperScan('${key}')" class="rounded bg-emerald-700 hover:bg-emerald-600 px-3 py-2 font-bold text-white">Apply & scan</button><button type="button" onclick="toggleSniperCustomize('${key}')" class="rounded border border-gray-700 px-3 py-2 text-gray-300">Close</button></div></div>`:'';
+      const rules = strategy.rules.map(rule=>`<span class="inline-block mr-1.5 mb-1 px-2 py-1 rounded border border-gray-800 bg-black/20 text-[10px] text-gray-300">${escapeHTML(rule)}</span>`).join('');
+      return `<article class="sniper-card border ${isSelected?'border-emerald-500':'border-gray-800'} rounded-xl p-3 flex flex-col gap-2"><div class="flex items-start gap-3"><div class="w-11 h-11 shrink-0 rounded-lg flex items-center justify-center text-xl ${sniperToneClasses(strategy.tone)}">${strategy.icon}</div><div class="min-w-0 flex-1"><div class="flex flex-wrap items-center gap-2"><h3 class="font-extrabold">${strategy.title}</h3><span class="px-2 py-0.5 rounded border text-[9px] ${sniperToneClasses(strategy.tone)}">${strategy.badge}</span></div><p class="text-[11px] leading-relaxed text-gray-400 mt-1">${strategy.description}</p></div><span class="text-xs text-gray-300 font-mono">${kindCount}</span></div><div>${rules}</div>${customPanel}<div class="flex gap-2 mt-1"><button type="button" onclick="runSniperScan('${key}')" class="flex-1 rounded-lg border border-emerald-800 bg-emerald-950/50 hover:bg-emerald-900/60 px-3 py-2 text-sm font-semibold text-emerald-200">▷ Run Scan</button><button type="button" onclick="toggleSniperCustomize('${key}')" class="rounded-lg border border-gray-700 bg-gray-900 hover:border-sky-700 px-3 py-2 text-xs text-gray-300">⚙ Customize</button></div></article>`;
+    }).join('');
+    const marketCapWarning = !sniperScannerData?.marketCapDataAvailable ? `<div class="rounded-lg border border-amber-800 bg-amber-950/30 p-3 text-xs text-amber-200">⚠️ ${escapeHTML(sniperScannerData?.marketCapNote || 'Market-cap metadata is not included in the current stock feed. Size filters remain unapplied until a trusted data source is connected.')}</div>` : '';
+    let capNotice = '';
+    if (sniperMarketCapFilter && !sniperScannerData?.marketCapDataAvailable) capNotice = `<div class="rounded-lg border border-rose-800 bg-rose-950/30 p-3 text-xs text-rose-200">No scan result is shown because ${escapeHTML(sniperMarketCapFilter)} cannot be verified from the current data. Clear the cap filter to scan without inventing market-cap labels.</div>`;
+    const resultBody = !sniperScannerData ? `<div class="rounded-lg border border-gray-800 p-5 text-sm text-gray-400">This project’s current data.json does not contain Sniper Scanner metrics yet. Run the updated Python scanner once, then refresh this page.</div>` : resultCount ? `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">${matches.slice(0,60).map(s=>renderSniperResultCard(s,sniperScanKind)).join('')}</div>${resultCount>60?`<p class="text-xs text-gray-500">Showing first 60 of ${resultCount} matching symbols.</p>`:''}` : `<div class="rounded-lg border border-gray-800 bg-[#101722] p-5 text-sm text-gray-400">No symbols match the selected strategy in the current snapshot. This is valid: the scanner will not force a setup. Check data freshness, then run the next scheduled GitHub scan.</div>`;
+    container.innerHTML = `<section class="col-span-full space-y-4"><div class="rounded-xl border border-emerald-900/80 bg-gradient-to-br from-emerald-950/30 to-[#101722] p-4"><div class="flex flex-wrap items-center justify-between gap-3"><span class="px-3 py-1.5 rounded-lg bg-emerald-900/60 border border-emerald-700 text-emerald-200 font-extrabold text-xs">🎯 SNIPER MODE · RESEARCH SCREENER</span><span class="text-[10px] ${Number(sniperScannerData?.freshRecordCount||0)>0?'text-emerald-300':'text-amber-300'}">${Number(sniperScannerData?.freshRecordCount||0)} source-fresh / ${Number(sniperScannerData?.stockCount||0)} symbols</span></div><h2 class="text-2xl md:text-3xl font-extrabold mt-4">Ready to Find High-Probability Setups</h2><p class="text-sm text-gray-300 leading-relaxed mt-2"><span class="text-emerald-300 font-semibold">Sniper Mode</span> screens existing ORION snapshots for strong trends, breakouts and daily/weekly alignment. It is a research checklist—not a probability guarantee, broker integration or order-execution system.</p><div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4"><div class="rounded-lg border border-gray-800 bg-black/20 p-3"><h3 class="font-bold text-sm mb-2">What You’ll Get</h3><ul class="space-y-2 text-xs text-gray-300"><li>✓ 8-point daily trend template (SMA50/150/200 and 52-week position)</li><li>✓ VCP, Cup & Handle, Bull Flag and Flat Base heuristic flags</li><li>✓ Daily + weekly trend confluence</li><li>✓ Reference trigger, 0.5 ATR stop and 1R/2R levels when computable</li><li>✓ Volume Breakout, Fresh 52W High and provisional IPO-reference screens</li></ul></div><div class="rounded-lg border border-gray-800 bg-black/20 p-3"><h3 class="font-bold text-sm mb-2">Snapshot details</h3><div class="text-xs text-gray-300 space-y-1"><div>Updated: <b>${escapeHTML(dateText)}</b></div><div>Rows available: <b>${rows.length}</b></div><div>Market-cap feed: <b class="${sniperScannerData?.marketCapDataAvailable?'text-emerald-300':'text-amber-300'}">${sniperScannerData?.marketCapDataAvailable?'Present for some symbols':'Not available'}</b></div><div>Refresh: <b>Runs when data.json refreshes</b></div></div><div class="grid grid-cols-2 gap-2 mt-3"><label class="text-[10px] text-gray-400">Capital (₹)<input id="sniper-capital" inputmode="decimal" type="number" min="1" step="1000" placeholder="Enter capital" value="${escapeHTML(sniperSettings.capital)}" class="block mt-1 w-full rounded bg-gray-900 border border-gray-700 p-2 text-white text-xs" /></label><label class="text-[10px] text-gray-400">Max risk per trade (%)<input id="sniper-risk-pct" inputmode="decimal" type="number" min="0.01" max="10" step="0.1" placeholder="e.g. 0.5" value="${escapeHTML(sniperSettings.riskPct)}" class="block mt-1 w-full rounded bg-gray-900 border border-gray-700 p-2 text-white text-xs" /></label></div><p class="text-[10px] text-gray-500 mt-2">${escapeHTML(sniperScannerData?.volumeRatioNote || 'RVOL is time-of-day matched to available recent sessions; it is not a 20-day cumulative volume ratio.')}</p></div></div></div><div class="rounded-xl border border-gray-800 bg-[#101722] p-3"><div class="flex items-center justify-between gap-2 mb-3"><h2 class="font-bold">Market Cap Filters</h2><button type="button" onclick="selectSniperCap('')" class="text-[10px] text-sky-300">Clear filter</button></div><div class="grid grid-cols-2 md:grid-cols-4 gap-2">${capHtml}</div>${marketCapWarning}<p class="text-[10px] text-gray-500 mt-2">Ranges mirror the reference design: Large ≥ ₹20,000 Cr; Mid ₹5,000–20,000 Cr; Small ₹500–5,000 Cr; Micro &lt; ₹500 Cr. These filters only operate when reliable market-cap metadata exists.</p></div><div><div class="flex flex-wrap items-center justify-between gap-2 mb-2"><h2 class="font-bold">Scanning Strategies</h2><span class="text-[10px] text-gray-500">Tap Run Scan to filter the latest downloaded snapshot</span></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-3">${strategies}</div></div><div class="rounded-xl border border-gray-800 bg-[#101722] p-3"><div class="flex flex-wrap items-center justify-between gap-2 mb-3"><div><h2 class="font-extrabold">${escapeHTML(meta.title)} · Results</h2><p class="text-[10px] text-gray-500 mt-1">${resultCount} match(es) · snapshot ${escapeHTML(sniperScannerData?.sessionDate || 'unavailable')}</p></div><span class="text-[10px] text-gray-500">${sniperMarketCapFilter?escapeHTML(sniperMarketCapFilter):'All market caps (unfiltered)'}</span></div>${capNotice}${resultBody}</div><div class="rounded-lg border border-sky-900 bg-sky-950/25 p-3 text-xs text-sky-100"><b>Risk / integration note:</b> entry levels are formula-based references only. The current feed doesn’t include verified listing-day metadata or reliable market-cap values, and the static GitHub Pages frontend has no broker authentication. Zerodha order execution is not connected; do not paste broker keys into this website.</div></section>`;
+  }
+
   function renderConvictionBar(score, total) {
     let bars = '';
     for (let i=0; i<total; i++) {
@@ -339,6 +500,11 @@
     if (activeTab === 'SPECIAL 10') {
       desc.innerText = 'Top 10 unique stocks consolidated from GPT POWER, BRAHMASTRA and BREAKER. Stocks appearing across more sections are ranked first; GPT POWER and BRAHMASTRA results are included whenever available.';
       renderSpecial10(allSpecial10);
+      return;
+    }
+    if (activeTab === 'SNIPER SCANNER') {
+      desc.innerText = 'Sniper Mode scans the latest generated ORION snapshot for breakout, trend-template, multi-timeframe, and chart-pattern candidates. Run Scan filters this data.json snapshot; it does not start a new backend scan.';
+      renderSniperScanner();
       return;
     }
     if (activeTab === 'SECTOR') {
@@ -661,6 +827,7 @@
       allSectorRankings = Array.isArray(data.sectorRankings) ? data.sectorRankings : [];
       sectorSentiment = data.sectorSentiment || null;
       stockFuelMetrics = data.stockFuelMetrics && typeof data.stockFuelMetrics === 'object' ? data.stockFuelMetrics : {};
+      sniperScannerData = data.sniperScanner && typeof data.sniperScanner === 'object' ? data.sniperScanner : null;
       allSpecial10 = buildSpecial10();
       paperTradeTracker = data.paperTradeTracker || null;
       paperTradeCandidates = Array.isArray(data.paperTradeCandidates) ? data.paperTradeCandidates : [];
