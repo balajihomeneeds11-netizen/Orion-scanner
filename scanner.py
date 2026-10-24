@@ -6,6 +6,8 @@ claim predictive certainty. Yahoo Finance data may be delayed or incomplete.
 from __future__ import annotations
 
 import datetime as dt
+import html as html_lib
+import hashlib
 import json
 import math
 import os
@@ -622,18 +624,26 @@ LOT_SIZES = {
 }
 
 
-def send_telegram_alert(message: str) -> None:
+def send_telegram_alert(message: str) -> bool:
+    """Send one HTML Telegram message. Returns True only when Telegram accepts it."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        return
+        print("Telegram dispatch skipped: TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID is not configured.")
+        return False
     try:
         from urllib.parse import urlencode
         from urllib.request import Request, urlopen
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-        payload = urlencode({"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "HTML"}).encode()
+        payload = urlencode({"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "HTML", "disable_web_page_preview": "true"}).encode()
         with urlopen(Request(url, data=payload), timeout=10) as response:
-            response.read()
+            body = response.read()
+            status_code = response.status
+        result = json.loads(body.decode("utf-8")) if body else {}
+        if status_code == 200 and result.get("ok") is True:
+            return True
+        print(f"Telegram rejected message: {result.get('description', 'unknown response')}")
     except Exception as exc:
-        print(f"Telegram dispatch error: {exc}")
+        print(f"Telegram dispatch error: {type(exc).__name__}: {exc}")
+    return False
 
 
 def to_ist_index(frame: pd.DataFrame) -> pd.DataFrame:
@@ -2482,10 +2492,307 @@ def build_sniper_scanner_data(snapshots: list[dict], now: dt.datetime,
         "stocks": rows,
     }
 
+
+def load_previous_scan_output(path: str = "data.json") -> dict:
+    """Load prior output for Telegram de-duplication and persistent tracker state."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            value = json.load(f)
+        return value if isinstance(value, dict) else {}
+    except (OSError, json.JSONDecodeError, TypeError):
+        return {}
+
+
+def build_special10_candidates(gpt_power_stocks: list[dict], leaders: list[dict], breaker_stocks: list[dict]) -> list[dict]:
+    """Mirror the browser SPECIAL 10 merge/rank logic for shared UI and Telegram output."""
+    by_symbol: dict[str, dict] = {}
+
+    def add(record: dict, source: str) -> None:
+        symbol = str(record.get("symbol", "")).strip().upper()
+        if not symbol:
+            return
+        item = by_symbol.setdefault(symbol, {
+            "symbol": symbol, "sources": [], "power": None, "brahmastra": None, "breaker": None,
+            "price": record.get("price"), "pctChange": record.get("pctChange"),
+            "sector": record.get("sector") or record.get("sectorStatus") or "General",
+            "sourceBarFresh": bool(record.get("sourceBarFresh", False)),
+        })
+        if source not in item["sources"]:
+            item["sources"].append(source)
+        if source == "GPT POWER": item["power"] = record
+        elif source == "BRAHMASTRA": item["brahmastra"] = record
+        elif source == "BREAKER": item["breaker"] = record
+        if record.get("price") is not None: item["price"] = record.get("price")
+        if record.get("pctChange") is not None: item["pctChange"] = record.get("pctChange")
+        if record.get("sector") or record.get("sectorStatus"):
+            item["sector"] = record.get("sector") or record.get("sectorStatus")
+        item["sourceBarFresh"] = bool(item["sourceBarFresh"] or record.get("sourceBarFresh", False))
+
+    for record in gpt_power_stocks: add(record, "GPT POWER")
+    for record in leaders:
+        if record.get("tier") == "BRAHMĀSTRA" or record.get("tier") == "BRAHMASTRA":
+            add(record, "BRAHMĀSTRA")
+    for record in breaker_stocks: add(record, "BREAKER")
+
+    rows = list(by_symbol.values())
+    for item in rows:
+        power, brahmastra, breaker = item.get("power") or {}, item.get("brahmastra") or {}, item.get("breaker") or {}
+        item["commonCount"] = len(item["sources"])
+        item["rankScore"] = (
+            item["commonCount"] * 1000 + safe_float(power.get("powerScore"))
+            + safe_float(brahmastra.get("numScore")) * 10
+            + max(safe_float(breaker.get("bullScore")), safe_float(breaker.get("bearScore"))) * 15
+            + (30 if power.get("status") == "BREAKOUT CONFIRMED" else 0)
+            + (25 if breaker.get("hasBuySignal") or breaker.get("hasSellSignal") else 0)
+        )
+        item["signal"] = (
+            "BREAKER BUY" if breaker.get("hasBuySignal") else
+            "BREAKER SELL" if breaker.get("hasSellSignal") else
+            "GPT CONFIRMED" if power.get("status") == "BREAKOUT CONFIRMED" else
+            "BRAHMĀSTRA" if brahmastra else "WATCH"
+        )
+    rows.sort(key=lambda row: (-safe_float(row.get("rankScore")), row["symbol"]))
+    selected: list[dict] = []
+
+    def push_unique(row: Optional[dict]) -> None:
+        if row and not any(existing["symbol"] == row["symbol"] for existing in selected) and len(selected) < 10:
+            selected.append(row)
+
+    push_unique(next((row for row in rows if row.get("power")), None))
+    push_unique(next((row for row in rows if row.get("brahmastra")), None))
+    for row in rows: push_unique(row)
+    for idx, row in enumerate(selected, 1): row["specialRank"] = idx
+    return selected
+
+
+def sniper_strategy_matches(stock: dict) -> list[str]:
+    """Use the Sniper UI's default thresholds for an additive shortlist/alert."""
+    matches = []
+    change = safe_float(stock.get("pctChange")); rvol = safe_float(stock.get("rvol"))
+    rvol_available = bool(stock.get("rvolAvailable")); price = safe_float(stock.get("price"))
+    if stock.get("breakoutStructure") and rvol_available and rvol >= 2.0 and change >= 1.0:
+        matches.append("Volume Breakout")
+    high52 = stock.get("high52w")
+    if high52 is not None and safe_float(high52) > 0 and price >= safe_float(high52) * 0.99 and rvol_available and rvol >= 1.2 and change >= 1.0:
+        matches.append("Fresh 52W High")
+    if int(safe_float(stock.get("trendTemplateAvailable"))) == 8 and int(safe_float(stock.get("trendTemplateScore"))) >= 6:
+        matches.append("8-Point Trend Template")
+    patterns = stock.get("patterns") if isinstance(stock.get("patterns"), list) else []
+    if patterns: matches.append("Chart Patterns: " + ", ".join(str(x) for x in patterns[:3]))
+    if stock.get("mtfBullish") or stock.get("mtfBearish"): matches.append("Daily + Weekly Confluence")
+    if stock.get("ipoRecentCrossProxy"): matches.append("IPO High (provisional)")
+    return matches
+
+
+def build_quick_picks(gpt_power_stocks: list[dict], leaders: list[dict], breaker_stocks: list[dict],
+                      sniper_scanner: dict, sector_rankings: list[dict], stock_fuel_metrics: dict,
+                      now: dt.datetime) -> dict:
+    """Rank a top-10 shortlist from existing signals; does not modify source scores."""
+    by_symbol: dict[str, dict] = {}
+
+    def add(record: dict, source: str) -> None:
+        symbol = str(record.get("symbol", "")).upper().strip()
+        if not symbol: return
+        item = by_symbol.setdefault(symbol, {
+            "symbol": symbol, "sources": [], "price": None, "pctChange": None, "sector": "General",
+            "sourceBarFresh": False, "power": None, "brahmastra": None, "breaker": None,
+            "sniper": None, "sniperStrategies": [], "sessionDate": record.get("sessionDate"),
+        })
+        if source not in item["sources"]: item["sources"].append(source)
+        item["sourceBarFresh"] = bool(item["sourceBarFresh"] or record.get("sourceBarFresh", False))
+        if record.get("sessionDate"): item["sessionDate"] = record.get("sessionDate")
+        for key in ("price", "pctChange", "sector", "type", "status"):
+            if record.get(key) is not None: item[key] = record.get(key)
+        if source == "GPT POWER": item["power"] = record
+        elif source == "BRAHMĀSTRA": item["brahmastra"] = record
+        elif source == "BREAKER": item["breaker"] = record
+        elif source == "SNIPER SCANNER":
+            item["sniper"] = record
+            item["sniperStrategies"] = sniper_strategy_matches(record)
+
+    for row in gpt_power_stocks: add(row, "GPT POWER")
+    for row in leaders:
+        if row.get("tier") == "BRAHMĀSTRA" or row.get("tier") == "BRAHMASTRA": add(row, "BRAHMĀSTRA")
+    for row in breaker_stocks: add(row, "BREAKER")
+    sniper_rows = sniper_scanner.get("stocks", []) if isinstance(sniper_scanner, dict) else []
+    if isinstance(sniper_rows, list):
+        for row in sniper_rows:
+            if sniper_strategy_matches(row): add(row, "SNIPER SCANNER")
+
+    sector_by_symbol: dict[str, dict] = {}
+    for sector in sector_rankings:
+        members = sector.get("eligibleStocks", [])
+        if isinstance(members, list):
+            for member in members:
+                symbol = str(member.get("symbol", "")).upper().strip()
+                if symbol: sector_by_symbol[symbol] = sector
+    fuel_metrics = stock_fuel_metrics if isinstance(stock_fuel_metrics, dict) else {}
+    results = []
+    for symbol, item in by_symbol.items():
+        power = item.get("power") or {}; brahmastra = item.get("brahmastra") or {}
+        breaker = item.get("breaker") or {}; sniper = item.get("sniper") or {}
+        metric = fuel_metrics.get(symbol, {})
+        if not item.get("sector") or item.get("sector") == "General": item["sector"] = metric.get("sector") or "General"
+        item["fuelLeftPct"] = metric.get("fuelLeftPct"); item["atrUsedPct"] = metric.get("atrUsedPct")
+        item["fuelAsOf"] = metric.get("asOf"); item["entryPlan"] = sniper.get("entryPlan")
+        item["rvol"] = sniper.get("rvol", power.get("rvol")); item["trendTemplateScore"] = sniper.get("trendTemplateScore")
+        item["pctChangeNum"] = safe_float(str(item.get("pctChange", "0")).replace("%", ""))
+        item["commonCount"] = len(item["sources"])
+        sector = sector_by_symbol.get(symbol, {})
+        item["sectorRank"] = sector.get("rank"); item["sectorChangePct"] = sector.get("changePct")
+        evidence = []
+        if len(item["sources"]) > 1: evidence.append(f"Appears in {len(item['sources'])} scanner sections")
+        if power: evidence.append(f"GPT POWER {safe_float(power.get('powerScore')):.0f}/100 · {power.get('status', 'candidate')}")
+        if brahmastra: evidence.append(f"BRAHMĀSTRA {brahmastra.get('numScore', brahmastra.get('score', 'active'))}/7")
+        if breaker: evidence.append(f"BREAKER bull/bear {safe_float(breaker.get('bullScore')):.0f}/6 / {safe_float(breaker.get('bearScore')):.0f}/6")
+        if sniper.get("trendTemplateAvailable") is not None: evidence.append(f"Trend template {safe_float(sniper.get('trendTemplateScore')):.0f}/8")
+        if sniper.get("rvolAvailable"): evidence.append(f"RVOL {safe_float(sniper.get('rvol')):.2f}×")
+        evidence.extend(item.get("sniperStrategies", [])[:3])
+        if item.get("sectorRank") and item.get("sectorChangePct") is not None:
+            evidence.append(f"Sector rank #{item['sectorRank']} ({safe_float(item['sectorChangePct']):+.2f}%)")
+        item["evidence"] = evidence[:8]
+        score = max(0, item["commonCount"] - 1) * 100 + (25 if item["sourceBarFresh"] else 0)
+        score += safe_float(power.get("powerScore")) * 0.25 + safe_float(brahmastra.get("numScore")) * 4
+        score += max(safe_float(breaker.get("bullScore")), safe_float(breaker.get("bearScore"))) * 4
+        score += min(8, safe_float(sniper.get("trendTemplateScore"))) * 3 + min(4, safe_float(item.get("rvol"))) * 3
+        if sniper.get("breakoutStructure"): score += 12
+        if sniper.get("mtfBullish"): score += 8
+        if power.get("breakoutConfirmed"): score += 10
+        if item.get("sectorRank") and int(safe_float(item["sectorRank"])) <= 5: score += 10
+        elif item.get("sectorRank") and int(safe_float(item["sectorRank"])) >= 19: score -= 5
+        item["rankScore"] = round(score, 1)
+        item["rankLabel"] = "Research ranking only—not a probability or guarantee"
+        item["signalSummary"] = (
+            "BREAKOUT CONFIRMED" if power.get("status") == "BREAKOUT CONFIRMED" else
+            "BREAKER BUY" if breaker.get("hasBuySignal") else
+            "BREAKER SELL" if breaker.get("hasSellSignal") else
+            "BRAHMĀSTRA" if brahmastra else "SNIPER SETUP" if item.get("sniperStrategies") else "WATCH"
+        )
+        results.append(item)
+    results.sort(key=lambda row: (bool(row.get("sourceBarFresh")), safe_float(row.get("rankScore")), safe_float(row.get("rvol"))), reverse=True)
+    return {
+        "asOf": now.astimezone(IST).isoformat(),
+        "sessionDate": max((str(row.get("sessionDate")) for row in results if row.get("sessionDate")), default=None),
+        "candidateCount": len(results), "stockCount": min(10, len(results)),
+        "source": "Additive shortlist from existing GPT POWER, BRAHMĀSTRA, BREAKER and Sniper signals; source scoring and selection are unchanged.",
+        "rankNote": "Rank score prioritizes cross-scanner overlap, freshness, existing scores and trend/volume/sector evidence. It is not a probability or trading recommendation.",
+        "stocks": [{k: v for k, v in row.items() if k not in ("power", "brahmastra", "breaker", "sniper")} for row in results[:10]],
+    }
+
+
+def _parse_pct(value: Any) -> float:
+    return safe_float(str(value if value is not None else "0").replace("%", ""))
+
+
+def _telegram_signature(rows: list[dict], category: str) -> str:
+    normalized = []
+    for row in rows:
+        symbol = str(row.get("symbol", "")).upper()
+        if category == "GPT POWER": state = (row.get("type"), row.get("status"), bool(row.get("breakoutConfirmed")))
+        elif category == "BRAHMĀSTRA": state = (row.get("type"), row.get("tier", "BRAHMASTRA"))
+        elif category == "SPECIAL 10": state = (tuple(sorted(row.get("sources", []))), row.get("signal"))
+        else: state = (tuple(row.get("sniperStrategies", [])), bool(row.get("mtfBullish")), bool(row.get("mtfBearish")))
+        normalized.append((symbol, state))
+    normalized.sort(key=lambda item: item[0])
+    raw = json.dumps(normalized, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest() if normalized else "EMPTY"
+
+
+def _telegram_price(value: Any) -> str:
+    number = safe_float(value, 0.0)
+    return f"₹{number:,.2f}" if number > 0 else "price N/A"
+
+
+def _telegram_change(value: Any) -> str:
+    return f"{_parse_pct(value):+.2f}%"
+
+
+def build_telegram_messages(output: dict, now: dt.datetime) -> dict[str, tuple[str, list[dict]]]:
+    """Build separate fresh-source messages for GPT POWER, BRAHMĀSTRA, SPECIAL 10, Sniper."""
+    fresh = lambda row: bool(row.get("sourceBarFresh", False))
+    gpt = [row for row in output.get("gptPowerStocks", []) if fresh(row)][:5]
+    brahmastra = [row for row in output.get("leaders", []) if row.get("tier") in ("BRAHMASTRA", "BRAHMĀSTRA") and fresh(row)][:5]
+    breaker = [row for row in output.get("breakerStocks", []) if fresh(row)]
+    sniper_data = output.get("sniperScanner", {}) if isinstance(output.get("sniperScanner"), dict) else {}
+    sniper = []
+    sniper_rows = sniper_data.get("stocks", []) if isinstance(sniper_data.get("stocks", []), list) else []
+    for row in sniper_rows:
+        if not fresh(row): continue
+        strategies = sniper_strategy_matches(row)
+        if strategies:
+            copied = dict(row); copied["sniperStrategies"] = strategies; sniper.append(copied)
+    sniper.sort(key=lambda row: (len(row.get("sniperStrategies", [])), safe_float(row.get("trendTemplateScore")), safe_float(row.get("rvol")), _parse_pct(row.get("pctChange"))), reverse=True)
+    sniper = sniper[:6]
+    special = build_special10_candidates(
+        [row for row in output.get("gptPowerStocks", []) if fresh(row)],
+        [row for row in output.get("leaders", []) if row.get("tier") in ("BRAHMASTRA", "BRAHMĀSTRA") and fresh(row)],
+        breaker,
+    )
+    # Only notify on a valid same-day, source-fresh snapshot.
+    sections: dict[str, tuple[str, list[dict]]] = {}
+    stamp = now.astimezone(IST).strftime("%d %b %Y · %I:%M %p IST")
+    if gpt:
+        lines = [f"<b>ORION · GPT POWER STOCKS</b> — {html_lib.escape(stamp)}", "<i>Fresh-source snapshot; score is not a win probability.</i>"]
+        for row in gpt:
+            lines.append(f"• <b>{html_lib.escape(str(row.get('symbol','')))}</b> {html_lib.escape(str(row.get('type','')))} | Score {safe_float(row.get('powerScore')):.0f}/100 | {html_lib.escape(str(row.get('status','WATCH')))} | RVOL {safe_float(row.get('rvol')):.2f}× | {_telegram_price(row.get('price'))} | {_telegram_change(row.get('pctChange'))}")
+        sections["GPT POWER"] = ("\n".join(lines), gpt)
+    if brahmastra:
+        lines = [f"<b>ORION · BRAHMĀSTRA</b> — {html_lib.escape(stamp)}", "<i>Fresh-source candidates; verify the current trigger.</i>"]
+        for row in brahmastra:
+            lines.append(f"• <b>{html_lib.escape(str(row.get('symbol','')))}</b> {html_lib.escape(str(row.get('type','')))} | Score {safe_float(row.get('numScore', row.get('score'))):.0f}/7 | {html_lib.escape(str(row.get('detectTime','—')))} | {_telegram_price(row.get('price'))} | {_telegram_change(row.get('pctChange'))}")
+        sections["BRAHMĀSTRA"] = ("\n".join(lines), brahmastra)
+    if special:
+        lines = [f"<b>ORION · SPECIAL 10</b> — {html_lib.escape(stamp)}", "<i>Cross-scanner shortlist; overlap is ranking evidence, not a probability.</i>"]
+        for row in special[:8]:
+            sources = ", ".join(row.get("sources", []))
+            lines.append(f"• <b>#{row.get('specialRank')} {html_lib.escape(row['symbol'])}</b> | COMMON {row.get('commonCount')}/3 | {html_lib.escape(sources)} | {html_lib.escape(str(row.get('signal','WATCH')))} | {_telegram_price(row.get('price'))} | {_telegram_change(row.get('pctChange'))}")
+        sections["SPECIAL 10"] = ("\n".join(lines), special[:8])
+    if sniper:
+        lines = [f"<b>ORION · SNIPER SCANNER</b> — {html_lib.escape(stamp)}", "<i>Fresh candidates passing default Sniper filters; IPO reference remains provisional.</i>"]
+        for row in sniper:
+            names = ", ".join(row.get("sniperStrategies", [])); plan = row.get("entryPlan") if isinstance(row.get("entryPlan"), dict) else {}
+            levels = f" | Trigger {_telegram_price(plan.get('trigger'))} · SL {_telegram_price(plan.get('stop'))}" if plan else " | entry plan N/A"
+            lines.append(f"• <b>{html_lib.escape(str(row.get('symbol','')))}</b> | {html_lib.escape(names)} | Trend {safe_float(row.get('trendTemplateScore')):.0f}/8 | RVOL {safe_float(row.get('rvol')):.2f}× | {_telegram_change(row.get('pctChange'))}{levels}")
+        sections["SNIPER SCANNER"] = ("\n".join(lines), sniper)
+    return sections
+
+
+def dispatch_telegram_updates(output: dict, previous_output: dict, now: dt.datetime) -> dict:
+    """Send separate category alerts only when a fresh shortlist changes; suppress repeat spam."""
+    previous_state = previous_output.get("telegramAlertState", {})
+    previous_state = previous_state if isinstance(previous_state, dict) else {}
+    new_state = dict(previous_state)
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("Telegram disabled: configure TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID repository secrets.")
+        output["telegramAlertState"] = new_state
+        return new_state
+    messages = build_telegram_messages(output, now)
+    for name in ("GPT POWER", "BRAHMĀSTRA", "SPECIAL 10", "SNIPER SCANNER"):
+        section = messages.get(name)
+        if not section:
+            new_state[name] = "EMPTY"
+            print(f"Telegram {name}: no fresh qualifying candidates; no message sent.")
+            continue
+        message, rows = section
+        signature = _telegram_signature(rows, name)
+        if previous_state.get(name) == signature:
+            new_state[name] = signature
+            print(f"Telegram {name}: unchanged shortlist; duplicate message suppressed.")
+            continue
+        if send_telegram_alert(message):
+            new_state[name] = signature
+            print(f"Telegram {name}: separate message sent ({len(rows)} candidate(s)).")
+        else:
+            new_state[name] = previous_state.get(name, "")
+            print(f"Telegram {name}: send failed; will retry next scan.")
+    output["telegramAlertState"] = new_state
+    return new_state
+
 def main() -> None:
     now = dt.datetime.now(IST)
     if skip_scheduled_run_if_market_closed(now):
         return
+    previous_scan_output = load_previous_scan_output("data.json")
     current_ist_time = now.strftime("%I:%M %p")
     global FNO_SYMBOLS, FNO_UNIVERSE_SOURCE, FNO_SYMBOL_SET, SYMBOLS, YF_SYMBOLS
     FNO_SYMBOLS, FNO_UNIVERSE_SOURCE = load_fno_symbols()
@@ -2704,7 +3011,10 @@ def main() -> None:
 
     sniper_universe_memberships, sniper_universe_sources = build_sniper_universe_memberships()
     sniper_scanner = build_sniper_scanner_data(snapshots, now, sniper_universe_memberships, sniper_universe_sources)
+    special10_stocks = build_special10_candidates(gpt_power_stocks, leaders, breaker_stocks)
+    quick_picks = build_quick_picks(gpt_power_stocks, leaders, breaker_stocks, sniper_scanner, sector_rankings, stock_fuel_metrics, now)
     print(f"Sniper Scanner: {sniper_scanner['stockCount']} symbols; fresh={sniper_scanner['freshRecordCount']}; market-cap metadata available={sniper_scanner['marketCapDataAvailable']}")
+    print(f"ORION QUICK PICKS: {quick_picks['stockCount']} shown from {quick_picks['candidateCount']} unique candidates")
     print("Sniper universes: " + ", ".join(f"{k}={len(v)}" for k, v in sniper_universe_memberships.items()))
 
     output = {
@@ -2721,6 +3031,8 @@ def main() -> None:
         "sectorSentiment": sector_sentiment,
         "stockFuelMetrics": stock_fuel_metrics,
         "sniperScanner": sniper_scanner,
+        "special10Stocks": special10_stocks,
+        "quickPicks": quick_picks,
         "fuelMetricNote": "Displayed fuel is an estimated remaining daily ATR-range allowance, calculated as 100 minus today's true range (including the previous-close gap) relative to the prior 14-session daily ATR; it is not a probability or directional forecast. Legacy internal fuel used by existing signal heuristic/ranking logic is preserved. Marked stale when source candles are stale.",
         "leaders": leaders,
         "gptPowerStocks": gpt_power_stocks,
@@ -2742,6 +3054,10 @@ def main() -> None:
         }
     }
 
+    # Separate Telegram messages by scanner section. Their signatures are persisted in data.json
+    # and committed by the existing workflow so repeated scheduled scans do not spam identical alerts.
+    dispatch_telegram_updates(output, previous_scan_output, now)
+
     # Write to a temporary sibling file and atomically replace data.json only after
     # serialization completes, preserving the last valid dashboard data on write errors.
     temp_output = "data.json.tmp"
@@ -2753,14 +3069,6 @@ def main() -> None:
     print(f"F&O eligibility: {len(FNO_SYMBOL_SET)} symbols from {FNO_UNIVERSE_SOURCE}")
     print(f"Saved data.json: data={len(snapshots)}, legacy signals={len(leaders)}, GPT POWER F&O candidates={len(gpt_power_stocks)}")
     print(f"Session: {scan_session}; Status: {status}; Advances={advances}, Declines={declines}")
-
-    # Optional concise Telegram headline. This function is intentionally not called per ticker.
-    if gpt_power_stocks and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-        top = gpt_power_stocks[:5]
-        lines = [f"<b>ORION GPT POWER STOCKS</b> — {current_ist_time} IST"]
-        for item in top:
-            lines.append(f"{item['symbol']} {item['type']} | Score {item['powerScore']}/100 | {item['status']} | RVOL {item['rvol']}x")
-        send_telegram_alert("\n".join(lines))
 
 
 if __name__ == "__main__":
