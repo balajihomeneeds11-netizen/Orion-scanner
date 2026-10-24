@@ -2709,8 +2709,12 @@ def _telegram_change(value: Any) -> str:
 
 def build_telegram_messages(output: dict, now: dt.datetime) -> dict[str, tuple[str, list[dict]]]:
     """Build separate fresh-source messages for GPT POWER, BRAHMĀSTRA, SPECIAL 10, Sniper."""
+    # Preserve the original GPT POWER notification behaviour: send the top five
+    # scanner candidates whenever the GPT POWER list is non-empty. Do not require
+    # sourceBarFresh here, because after-hours scans may legitimately use the last
+    # available completed session and the old scanner still notified in that case.
     fresh = lambda row: bool(row.get("sourceBarFresh", False))
-    gpt = [row for row in output.get("gptPowerStocks", []) if fresh(row)][:5]
+    gpt = list(output.get("gptPowerStocks", []))[:5]
     brahmastra = [row for row in output.get("leaders", []) if row.get("tier") in ("BRAHMASTRA", "BRAHMĀSTRA") and fresh(row)][:5]
     breaker = [row for row in output.get("breakerStocks", []) if fresh(row)]
     sniper_data = output.get("sniperScanner", {}) if isinstance(output.get("sniperScanner"), dict) else {}
