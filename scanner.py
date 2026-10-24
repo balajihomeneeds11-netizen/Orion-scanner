@@ -2183,7 +2183,108 @@ def make_paper_tracker(
 
 
 
-def build_sniper_scanner_data(snapshots: list[dict], now: dt.datetime) -> dict:
+# Sniper Scanner universe membership is additive and does not feed into ORION scoring.
+# Broad-market constituents are refreshed from official Nifty Indices CSVs when available.
+SNIPER_BROAD_INDEX_CSVS: dict[str, str] = {
+    "NIFTY_50": "https://www.niftyindices.com/IndexConstituent/ind_nifty50list.csv",
+    "NIFTY_MIDCAP_100": "https://www.niftyindices.com/IndexConstituent/ind_niftymidcap100list.csv",
+    "NIFTY_MIDCAP_150": "https://www.niftyindices.com/IndexConstituent/ind_niftymidcap150list.csv",
+    "NIFTY_SMALLCAP_250": "https://www.niftyindices.com/IndexConstituent/ind_niftysmallcap250list.csv",
+    "NIFTY_500": "https://www.niftyindices.com/IndexConstituent/ind_nifty500list.csv",
+}
+
+SNIPER_SECTOR_MEMBERSHIP_KEYS: dict[str, str] = {
+    "NIFTY_BANK": "BANKNIFTY",
+    "NIFTY_FINANCIAL": "FINNIFTY",
+    "NIFTY_HEALTHCARE": "HEALTHCARE",
+    "NIFTY_SERVICES": "SERVICES",
+    "NIFTY_PRIVATE_BANK": "PVT BANK",
+    "NIFTY_PSU_BANK": "PSU BANK",
+    "NIFTY_IT": "IT",
+    "NIFTY_PHARMA": "PHARMA",
+    "NIFTY_AUTO": "AUTO",
+    "NIFTY_FMCG": "FMCG",
+    "NIFTY_METAL": "METAL",
+    "NIFTY_ENERGY": "ENERGY",
+    "NIFTY_OIL_GAS": "OIL & GAS",
+    "NIFTY_REALTY": "REALTY",
+    "NIFTY_CONSUMER_DURABLES": "CONSR DURBL",
+    "NIFTY_INFRASTRUCTURE": "INFRA",
+    "NIFTY_CONSUMPTION": "CONSUMPTION",
+    "NIFTY_COMMODITIES": "COMMODITIES",
+    "NIFTY_DEFENCE": "DEFENCE",
+}
+
+SNIPER_MEDIA_MEMBERS = set("ZEEL SUNTV PVRINOX NETWORK18 TV18BRDCST NAZARA SAREGAMA HATHWAY DEN DISHTV TVTODAY".split())
+
+
+def build_sniper_universe_memberships() -> tuple[dict[str, list[str]], dict[str, str]]:
+    """Build separate selection universes for Sniper Scanner only.
+
+    Broad-market constituents are loaded from Nifty Indices CSVs with bounded timeouts.
+    Sectoral sets use ORION's bundled representative baskets and are labelled as such.
+    Missing official list data is left unavailable instead of falsely approximating an index.
+    """
+    memberships: dict[str, set[str]] = {}
+    sources: dict[str, str] = {}
+
+    # Live/refreshable broad-market constituents. A failed download stays unavailable,
+    # except NIFTY 50 which can use the pre-existing ORION reference set as a labelled fallback.
+    for key, url in SNIPER_BROAD_INDEX_CSVS.items():
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36",
+                "Referer": "https://www.niftyindices.com/",
+                "Accept": "text/csv,text/plain,*/*",
+            })
+            with urllib.request.urlopen(req, timeout=3.0) as response:
+                raw = response.read().decode("utf-8-sig", errors="replace")
+            frame = pd.read_csv(StringIO(raw))
+            symbol_column = next((col for col in frame.columns if str(col).strip().lower() in {"symbol", "symbols", "ticker"}), None)
+            found = set()
+            if symbol_column is not None:
+                found = {str(v).strip().upper() for v in frame[symbol_column].dropna().tolist()
+                         if re.fullmatch(r"[A-Z0-9&.\-]{1,30}", str(v).strip().upper())}
+            minimums = {"NIFTY_50": 40, "NIFTY_MIDCAP_100": 80, "NIFTY_MIDCAP_150": 120,
+                        "NIFTY_SMALLCAP_250": 200, "NIFTY_500": 400}
+            if len(found) >= minimums[key]:
+                memberships[key] = found
+                sources[key] = f"Nifty Indices constituent CSV ({len(found)} symbols)"
+            else:
+                raise ValueError(f"CSV had only {len(found)} symbols")
+        except Exception as exc:
+            print(f"SNIPER universe list unavailable: {key} ({type(exc).__name__})")
+            if key == "NIFTY_50":
+                fallback = set(SECTOR_INDEX_MEMBERS.get("NIFTY", set()))
+                if len(fallback) >= 40:
+                    memberships[key] = fallback
+                    sources[key] = "ORION bundled NIFTY reference list fallback; may be outdated"
+                else:
+                    memberships[key] = set()
+                    sources[key] = "Unavailable; official membership CSV could not be verified"
+            else:
+                memberships[key] = set()
+                sources[key] = "Unavailable; official membership CSV could not be verified"
+
+    memberships["FNO_STOCKS"] = set(FNO_SYMBOL_SET)
+    sources["FNO_STOCKS"] = f"Current NSE F&O underlying list: {FNO_UNIVERSE_SOURCE}" if FNO_SYMBOL_SET else "F&O membership unavailable; NSE list not verified"
+
+    # Sectoral membership uses the project's current reference baskets (matching the
+    # Sector dashboard definitions). These are stock filters, not a claim of full official index composition.
+    for filter_key, sector_key in SNIPER_SECTOR_MEMBERSHIP_KEYS.items():
+        members = set(SECTOR_INDEX_MEMBERS.get(sector_key, set()))
+        memberships[filter_key] = members
+        sources[filter_key] = f"ORION {sector_key} reference basket ({len(members)} symbols; not a live official constituent feed)" if members else "Sector reference basket unavailable"
+    memberships["NIFTY_MEDIA"] = set(SNIPER_MEDIA_MEMBERS)
+    sources["NIFTY_MEDIA"] = "ORION media-sector reference basket; not a live official constituent feed"
+
+    normalized = {key: sorted(symbol for symbol in values if symbol) for key, values in memberships.items()}
+    return normalized, sources
+
+
+def build_sniper_scanner_data(snapshots: list[dict], now: dt.datetime,
+                              universe_memberships: Optional[dict[str, list[str]]] = None,
+                              universe_sources: Optional[dict[str, str]] = None) -> dict:
     """Build additive Sniper Scanner research results from already-downloaded data.
 
     These results never feed back into GPT POWER, legacy tiers, BRAHMASTRA or BREAKER.
@@ -2367,6 +2468,9 @@ def build_sniper_scanner_data(snapshots: list[dict], now: dt.datetime) -> dict:
         "volumeRatioNote": "RVOL is time-of-day matched against available recent intraday sessions, not a claimed 20-day cumulative-volume baseline. Results are indicative if the provider has fewer sessions.",
         "patternNote": "Chart-pattern flags are heuristic screens from daily OHLC history, not a confirmed visual chart-pattern detector.",
         "ipoNote": "IPO screen uses first-observed daily bar as a listing-high proxy when history is short. It is not proof of official IPO/listing date or listing-day high.",
+        "universeMemberships": universe_memberships if universe_memberships is not None else {},
+        "universeMembershipSources": universe_sources if universe_sources is not None else {},
+        "universeMembershipNote": "Universe selection filters Sniper Scanner only. Broad-market membership is loaded from Nifty Indices constituent CSVs when available; sectoral filters use ORION reference baskets, which may not include every current official constituent. Missing broad-market lists are not approximated.",
         "strategies": {
             "volumeBreakout": {"label":"Volume Breakout", "defaultMinRvol":2.0, "defaultMinChangePct":1.0},
             "fresh52wHigh": {"label":"Fresh 52W High", "defaultNearHighPct":1.0, "defaultMinRvol":1.2, "defaultMinChangePct":1.0},
@@ -2598,8 +2702,10 @@ def main() -> None:
             "method": "100 - min(100, session true range including previous-close gap / prior 14-session daily ATR x 100)"
         }
 
-    sniper_scanner = build_sniper_scanner_data(snapshots, now)
+    sniper_universe_memberships, sniper_universe_sources = build_sniper_universe_memberships()
+    sniper_scanner = build_sniper_scanner_data(snapshots, now, sniper_universe_memberships, sniper_universe_sources)
     print(f"Sniper Scanner: {sniper_scanner['stockCount']} symbols; fresh={sniper_scanner['freshRecordCount']}; market-cap metadata available={sniper_scanner['marketCapDataAvailable']}")
+    print("Sniper universes: " + ", ".join(f"{k}={len(v)}" for k, v in sniper_universe_memberships.items()))
 
     output = {
         "lastUpdated": current_ist_time,
