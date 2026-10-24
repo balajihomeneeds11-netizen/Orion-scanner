@@ -2182,6 +2182,202 @@ def make_paper_tracker(
     return tracker
 
 
+
+def build_sniper_scanner_data(snapshots: list[dict], now: dt.datetime) -> dict:
+    """Build additive Sniper Scanner research results from already-downloaded data.
+
+    These results never feed back into GPT POWER, legacy tiers, BRAHMASTRA or BREAKER.
+    Pattern labels are heuristic candidate flags, not confirmed chart patterns.
+    Market-cap filters stay unavailable unless a trusted market-cap field is supplied.
+    """
+    rows: list[dict] = []
+    for m in snapshots:
+        context = m.get("context") or {}
+        hist = context.get("hist")
+        if not isinstance(hist, pd.DataFrame) or hist.empty or not {"Open", "High", "Low", "Close", "Volume"}.issubset(hist.columns):
+            continue
+        h = hist.dropna(subset=["High", "Low", "Close"]).copy()
+        if h.empty:
+            continue
+        close_s = pd.to_numeric(h["Close"], errors="coerce").dropna()
+        high_s = pd.to_numeric(h["High"], errors="coerce").dropna()
+        low_s = pd.to_numeric(h["Low"], errors="coerce").dropna()
+        vol_s = pd.to_numeric(h["Volume"], errors="coerce").fillna(0)
+        price_now = safe_float(m.get("price"), 0.0)
+        if price_now <= 0 or close_s.empty or high_s.empty or low_s.empty:
+            continue
+
+        high52 = safe_float(context.get("high52w"), safe_float(high_s.tail(252).max()))
+        low52 = safe_float(low_s.tail(252).min())
+        high20 = safe_float(high_s.tail(20).max()) if len(high_s) >= 20 else None
+        avg_vol20 = safe_float(vol_s.tail(20).median()) if len(vol_s) >= 20 else None
+        # A pivot calculated from the prior completed session.
+        pdh, pdl, prev_close = (safe_float(context.get(k), 0.0) for k in ("pdh", "pdl", "prevClose"))
+        pivot = (pdh + pdl + prev_close) / 3.0 if min(pdh, pdl, prev_close) > 0 else None
+        orb_high = safe_float(m.get("orbHigh15"), 0.0)
+        orb_low = safe_float(m.get("orbLow15"), 0.0)
+        rvol = safe_float(m.get("rvol"), 0.0)
+        rvol_available = bool(m.get("rvolAvailable", False))
+        pct_change = safe_float(m.get("pctChangeNum"), 0.0)
+        fresh = bool(m.get("sourceBarFresh", False))
+        source_asof = m.get("lastSourceBarCloseAt")
+
+        cleared_20d_high = bool(high20 and price_now > high20)
+        cleared_pivot = bool(pivot and price_now > pivot and orb_high > 0 and price_now > orb_high)
+        breakout_structure = bool(cleared_20d_high or cleared_pivot)
+        distance_to_52w_high = ((high52 - price_now) / high52 * 100.0) if high52 > 0 else None
+        within_52w_high_1pct = bool(high52 > 0 and price_now >= high52 * 0.99)
+
+        # Standard 8-point trend-template approximation, evaluated only when the moving
+        # averages needed for it exist. The user can see the score and available points.
+        closes = close_s.astype(float)
+        sma50 = safe_float(closes.tail(50).mean()) if len(closes) >= 50 else None
+        sma150 = safe_float(closes.tail(150).mean()) if len(closes) >= 150 else None
+        sma200 = safe_float(closes.tail(200).mean()) if len(closes) >= 200 else None
+        sma200_series = closes.rolling(200).mean().dropna() if len(closes) >= 200 else pd.Series(dtype=float)
+        sma200_rising = (bool(sma200_series.iloc[-1] > sma200_series.iloc[-21])
+                         if len(sma200_series) >= 21 else None)
+        template_checks = [
+            (price_now > sma50) if sma50 is not None else None,
+            (price_now > sma150) if sma150 is not None else None,
+            (price_now > sma200) if sma200 is not None else None,
+            (sma50 > sma150) if sma50 is not None and sma150 is not None else None,
+            (sma150 > sma200) if sma150 is not None and sma200 is not None else None,
+            sma200_rising,
+            (low52 > 0 and price_now >= low52 * 1.30) if len(closes) >= 200 else None,
+            (high52 > 0 and price_now >= high52 * 0.75) if len(closes) >= 200 else None,
+        ]
+        template_available = sum(v is not None for v in template_checks)
+        template_score = sum(v is True for v in template_checks)
+        template_detail = [
+            "Price > SMA50", "Price > SMA150", "Price > SMA200", "SMA50 > SMA150",
+            "SMA150 > SMA200", "SMA200 rising", "30% above 52W low", "Within 25% of 52W high"
+        ]
+        template_points = [{"label": name, "pass": check} for name, check in zip(template_detail, template_checks)]
+
+        # Daily + weekly confluence uses prior completed daily history for its averages.
+        daily_bull = bool(sma50 is not None and sma150 is not None and price_now > sma50 and sma50 > sma150)
+        daily_bear = bool(sma50 is not None and sma150 is not None and price_now < sma50 and sma50 < sma150)
+        weekly_close = closes.resample("W-FRI").last().dropna() if len(closes) >= 30 else pd.Series(dtype=float)
+        weekly_sma10 = weekly_close.rolling(10).mean().dropna() if len(weekly_close) >= 10 else pd.Series(dtype=float)
+        weekly_bull = (bool(price_now > weekly_sma10.iloc[-1] and weekly_sma10.iloc[-1] > weekly_sma10.iloc[-5])
+                       if len(weekly_sma10) >= 5 else None)
+        weekly_bear = (bool(price_now < weekly_sma10.iloc[-1] and weekly_sma10.iloc[-1] < weekly_sma10.iloc[-5])
+                       if len(weekly_sma10) >= 5 else None)
+        mtf_bull = bool(daily_bull and weekly_bull is True)
+        mtf_bear = bool(daily_bear and weekly_bear is True)
+
+        # Conservative, explicitly heuristic chart-pattern flags based on daily OHLC.
+        ranges = (pd.to_numeric(h["High"], errors="coerce") - pd.to_numeric(h["Low"], errors="coerce")).dropna()
+        patterns: list[str] = []
+        pattern_evidence: dict[str, bool] = {"VCP": False, "CUP_HANDLE": False, "BULL_FLAG": False, "FLAT_BASE": False}
+        if len(ranges) >= 15 and len(high_s) >= 20:
+            r_old = safe_float(ranges.tail(15).iloc[:5].mean())
+            r_mid = safe_float(ranges.tail(10).iloc[:5].mean())
+            r_new = safe_float(ranges.tail(5).mean())
+            pattern_evidence["VCP"] = bool(r_old > 0 and r_mid > 0 and r_new > 0 and r_new < r_mid * 0.92 and r_mid < r_old * 0.92 and price_now >= high_s.tail(20).max() * 0.94)
+        if len(closes) >= 25:
+            base_close = safe_float(closes.iloc[-16])
+            recent_close = safe_float(closes.iloc[-6])
+            lead_gain = (recent_close / base_close - 1.0) * 100.0 if base_close > 0 else 0.0
+            flag_pullback = (price_now / recent_close - 1.0) * 100.0 if recent_close > 0 else 0.0
+            pattern_evidence["BULL_FLAG"] = bool(lead_gain >= 8.0 and -6.0 <= flag_pullback <= 3.0 and price_now >= (sma20 := safe_float(closes.tail(20).mean())))
+        if len(high_s) >= 20 and len(low_s) >= 20:
+            range_pct = (safe_float(high_s.tail(20).max()) - safe_float(low_s.tail(20).min())) / max(price_now, 0.01) * 100.0
+            pattern_evidence["FLAT_BASE"] = bool(range_pct <= 10.0 and price_now >= safe_float(high_s.tail(20).max()) * 0.90)
+        if len(h) >= 60:
+            hh = pd.to_numeric(h["High"], errors="coerce")
+            rim = safe_float(hh.iloc[-60:-20].max())
+            cup_low = safe_float(pd.to_numeric(h["Low"], errors="coerce").iloc[-40:-10].min())
+            handle_low = safe_float(pd.to_numeric(h["Low"], errors="coerce").tail(5).min())
+            pullback_from_rim = (rim - handle_low) / rim * 100.0 if rim > 0 else 0.0
+            pattern_evidence["CUP_HANDLE"] = bool(rim > 0 and cup_low < rim * 0.92 and price_now >= rim * 0.95 and 1.0 <= pullback_from_rim <= 12.0)
+        patterns = [name.replace("_", " ") for name, detected in pattern_evidence.items() if detected]
+
+        # A first-observed-daily-bar reference can be a proxy for recent IPOs, but is not
+        # guaranteed to be the official listing day. Keep the caveat in the emitted record.
+        history_sessions = int(len(closes))
+        first_seen_high = safe_float(high_s.iloc[0]) if len(high_s) else None
+        recent_closes = closes.tail(5)
+        ipo_proxy_available = bool(history_sessions < 230 and first_seen_high and first_seen_high > 0)
+        ipo_recent_cross = bool(ipo_proxy_available and price_now > first_seen_high and any(float(c) <= first_seen_high for c in recent_closes))
+
+        atr = safe_float(m.get("atr"), 0.0)
+        long_trigger = max([v for v in (pivot, orb_high if orb_high > 0 else None, high20) if v is not None], default=None)
+        short_trigger = min([v for v in (pdl if pdl > 0 else None, orb_low if orb_low > 0 else None) if v is not None], default=None)
+        entry_plan = None
+        # Make the displayed reference side agree with the trend/momentum context where possible.
+        prefer_short = bool(mtf_bear or (daily_bear and pct_change < 0))
+        if atr > 0 and prefer_short and short_trigger is not None:
+            risk = max(atr * 0.5, short_trigger * 0.0025)
+            entry_plan = {"side":"SHORT reference", "trigger":round(short_trigger,2), "stop":round(short_trigger+risk,2), "target1":round(short_trigger-risk,2), "target2":round(short_trigger-2*risk,2), "riskPerShare":round(risk,2), "method":"Trigger level with 0.5 ATR stop; T1=1R, T2=2R"}
+        elif atr > 0 and long_trigger is not None:
+            risk = max(atr * 0.5, long_trigger * 0.0025)
+            entry_plan = {"side":"LONG reference", "trigger":round(long_trigger,2), "stop":round(long_trigger-risk,2), "target1":round(long_trigger+risk,2), "target2":round(long_trigger+2*risk,2), "riskPerShare":round(risk,2), "method":"Trigger level with 0.5 ATR stop; T1=1R, T2=2R"}
+        elif atr > 0 and short_trigger is not None:
+            risk = max(atr * 0.5, short_trigger * 0.0025)
+            entry_plan = {"side":"SHORT reference", "trigger":round(short_trigger,2), "stop":round(short_trigger+risk,2), "target1":round(short_trigger-risk,2), "target2":round(short_trigger-2*risk,2), "riskPerShare":round(risk,2), "method":"Trigger level with 0.5 ATR stop; T1=1R, T2=2R"}
+
+        cap_cr = m.get("marketCapCr")
+        try:
+            cap_cr = float(cap_cr) if cap_cr is not None and math.isfinite(float(cap_cr)) and float(cap_cr) > 0 else None
+        except (TypeError, ValueError):
+            cap_cr = None
+        cap_bucket = None
+        if cap_cr is not None:
+            cap_bucket = "Large-Cap" if cap_cr >= 20000 else "Mid-Cap" if cap_cr >= 5000 else "Small-Cap" if cap_cr >= 500 else "Micro-Cap"
+
+        rows.append({
+            "symbol": str(m.get("symbol", "")).upper(), "sector": m.get("sector", "General"),
+            "price": round(price_now, 2), "pctChange": round(pct_change, 2),
+            "sessionReturnPct": round(safe_float(m.get("sessionReturnPct")), 2),
+            "rvol": round(rvol, 2), "rvolAvailable": rvol_available,
+            "sourceBarFresh": fresh, "sourceBarAgeMinutes": m.get("sourceBarAgeMinutes"),
+            "asOf": source_asof, "sessionDate": m.get("sessionDate"),
+            "high52w": round(high52, 2) if high52 > 0 else None,
+            "low52w": round(low52, 2) if low52 > 0 else None,
+            "distanceTo52wHighPct": round(distance_to_52w_high, 2) if distance_to_52w_high is not None else None,
+            "within52wHigh1Pct": within_52w_high_1pct,
+            "prior20dHigh": round(high20, 2) if high20 is not None else None,
+            "cleared20dHigh": cleared_20d_high, "pivot": round(pivot, 2) if pivot is not None else None,
+            "clearedPivotAndORB": cleared_pivot, "breakoutStructure": breakout_structure,
+            "trendTemplateScore": template_score, "trendTemplateAvailable": template_available,
+            "trendTemplatePasses": template_points, "dailyTrendBull": daily_bull, "dailyTrendBear": daily_bear,
+            "weeklyTrendBull": weekly_bull, "weeklyTrendBear": weekly_bear,
+            "mtfBullish": mtf_bull, "mtfBearish": mtf_bear,
+            "patterns": patterns, "patternEvidence": pattern_evidence,
+            "historySessions": history_sessions, "ipoReferenceAvailable": ipo_proxy_available,
+            "ipoReferenceHigh": round(first_seen_high,2) if ipo_proxy_available else None,
+            "ipoRecentCrossProxy": ipo_recent_cross,
+            "ipoReferenceNote": "First observed daily candle is only a proxy; not verified as official listing-day high." if ipo_proxy_available else None,
+            "marketCapCr": cap_cr, "marketCapBucket": cap_bucket,
+            "entryPlan": entry_plan,
+        })
+
+    # Stable ordering by power/momentum but preserve every supported symbol for filter scans.
+    rows.sort(key=lambda r: (bool(r.get("sourceBarFresh")), int(r.get("trendTemplateScore", 0)), float(r.get("pctChange", 0))), reverse=True)
+    cap_available = any(r.get("marketCapCr") is not None for r in rows)
+    return {
+        "asOf": now.astimezone(IST).isoformat(),
+        "sessionDate": max((r.get("sessionDate") or "" for r in rows), default="") or None,
+        "source": "Existing ORION scanner snapshots + 1-year daily OHLC history; 5-minute RVOL is versus median cumulative volume at the same time across available recent sessions.",
+        "freshRecordCount": sum(1 for r in rows if r.get("sourceBarFresh")),
+        "stockCount": len(rows), "marketCapDataAvailable": cap_available,
+        "marketCapNote": "Reliable market-cap metadata is not present in the current OHLC feed. Cap filters are shown but cannot be applied until a trusted metadata source is configured." if not cap_available else "Market cap available for at least some symbols; unavailable symbols remain unclassified.",
+        "volumeRatioNote": "RVOL is time-of-day matched against available recent intraday sessions, not a claimed 20-day cumulative-volume baseline. Results are indicative if the provider has fewer sessions.",
+        "patternNote": "Chart-pattern flags are heuristic screens from daily OHLC history, not a confirmed visual chart-pattern detector.",
+        "ipoNote": "IPO screen uses first-observed daily bar as a listing-high proxy when history is short. It is not proof of official IPO/listing date or listing-day high.",
+        "strategies": {
+            "volumeBreakout": {"label":"Volume Breakout", "defaultMinRvol":2.0, "defaultMinChangePct":1.0},
+            "fresh52wHigh": {"label":"Fresh 52W High", "defaultNearHighPct":1.0, "defaultMinRvol":1.2, "defaultMinChangePct":1.0},
+            "ipoListingHigh": {"label":"IPO · Listing-Day High Breakout", "requiresReferenceValidation":True},
+            "trendTemplate": {"label":"8-Point Trend Template", "defaultMinScore":6},
+            "mtfConfluence": {"label":"Daily + Weekly Confluence"},
+            "chartPatterns": {"label":"VCP / Cup & Handle / Bull Flag / Flat Base"},
+        },
+        "stocks": rows,
+    }
+
 def main() -> None:
     now = dt.datetime.now(IST)
     if skip_scheduled_run_if_market_closed(now):
@@ -2402,6 +2598,9 @@ def main() -> None:
             "method": "100 - min(100, session true range including previous-close gap / prior 14-session daily ATR x 100)"
         }
 
+    sniper_scanner = build_sniper_scanner_data(snapshots, now)
+    print(f"Sniper Scanner: {sniper_scanner['stockCount']} symbols; fresh={sniper_scanner['freshRecordCount']}; market-cap metadata available={sniper_scanner['marketCapDataAvailable']}")
+
     output = {
         "lastUpdated": current_ist_time,
         "scanGeneratedAt": now.isoformat(),
@@ -2415,6 +2614,7 @@ def main() -> None:
         "sectorRankings": sector_rankings,
         "sectorSentiment": sector_sentiment,
         "stockFuelMetrics": stock_fuel_metrics,
+        "sniperScanner": sniper_scanner,
         "fuelMetricNote": "Displayed fuel is an estimated remaining daily ATR-range allowance, calculated as 100 minus today's true range (including the previous-close gap) relative to the prior 14-session daily ATR; it is not a probability or directional forecast. Legacy internal fuel used by existing signal heuristic/ranking logic is preserved. Marked stale when source candles are stale.",
         "leaders": leaders,
         "gptPowerStocks": gpt_power_stocks,
