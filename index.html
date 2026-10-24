@@ -84,6 +84,7 @@
   let sniperScannerData = null;
   let sniperScanKind = 'volumeBreakout';
   let sniperMarketCapFilter = '';
+  let sniperUniverseFilter = 'ALL_STOCKS';
   let sniperCustomizeOpen = '';
   let sniperSettings = { minVolumeRatio: 2.0, minPriceChangePct: 1.0, nearHighPct: 1.0, highVolumeRatio: 1.2, minTrendScore: 6, capital: '', riskPct: '' };
   let paperTradeTracker = null;
@@ -362,6 +363,59 @@
     sniperCustomizeOpen = sniperCustomizeOpen === kind ? '' : kind;
     renderSniperScanner();
   }
+  const SNIPER_UNIVERSE_GROUPS = [
+    { label: 'Broad Market', options: [
+      { value: 'NIFTY_50', label: 'Nifty 50' },
+      { value: 'FNO_STOCKS', label: 'F&O Stocks' },
+      { value: 'NIFTY_MIDCAP_100', label: 'Nifty Midcap 100' },
+      { value: 'NIFTY_MIDCAP_150', label: 'Nifty Midcap 150' },
+      { value: 'NIFTY_SMALLCAP_250', label: 'Nifty Smallcap 250' },
+      { value: 'NIFTY_500', label: 'Nifty 500' }
+    ]},
+    { label: 'Sectoral', options: [
+      { value: 'NIFTY_BANK', label: 'Nifty Bank' },
+      { value: 'NIFTY_FINANCIAL', label: 'Nifty Financial' },
+      { value: 'NIFTY_HEALTHCARE', label: 'Nifty Healthcare' },
+      { value: 'NIFTY_SERVICES', label: 'Nifty Services' },
+      { value: 'NIFTY_PRIVATE_BANK', label: 'Nifty Private Bank' },
+      { value: 'NIFTY_PSU_BANK', label: 'Nifty PSU Bank' },
+      { value: 'NIFTY_IT', label: 'Nifty IT' },
+      { value: 'NIFTY_PHARMA', label: 'Nifty Pharma' },
+      { value: 'NIFTY_AUTO', label: 'Nifty Auto' },
+      { value: 'NIFTY_FMCG', label: 'Nifty FMCG' },
+      { value: 'NIFTY_METAL', label: 'Nifty Metal' },
+      { value: 'NIFTY_ENERGY', label: 'Nifty Energy' },
+      { value: 'NIFTY_OIL_GAS', label: 'Nifty Oil & Gas' },
+      { value: 'NIFTY_REALTY', label: 'Nifty Realty' },
+      { value: 'NIFTY_MEDIA', label: 'Nifty Media' },
+      { value: 'NIFTY_CONSUMER_DURABLES', label: 'Nifty Consumer Durables' },
+      { value: 'NIFTY_INFRASTRUCTURE', label: 'Nifty Infrastructure' },
+      { value: 'NIFTY_CONSUMPTION', label: 'Nifty Consumption' },
+      { value: 'NIFTY_COMMODITIES', label: 'Nifty Commodities' },
+      { value: 'NIFTY_DEFENCE', label: 'Nifty Defence' }
+    ]}
+  ];
+  function selectSniperUniverse(value) {
+    sniperUniverseFilter = value || 'ALL_STOCKS';
+    renderSniperScanner();
+  }
+  function getSniperUniverseRows() {
+    const rows = Array.isArray(sniperScannerData?.stocks) ? sniperScannerData.stocks : [];
+    if (sniperUniverseFilter === 'ALL_STOCKS') return rows;
+    const list = sniperScannerData?.universeMemberships?.[sniperUniverseFilter];
+    if (!Array.isArray(list) || !list.length) return [];
+    const members = new Set(list.map(s => String(s || '').trim().toUpperCase()));
+    return rows.filter(s => members.has(String(s.symbol || '').trim().toUpperCase()));
+  }
+  function selectedSniperUniverseLabel() {
+    if (sniperUniverseFilter === 'ALL_STOCKS') return 'All Stocks';
+    for (const group of SNIPER_UNIVERSE_GROUPS) {
+      const found = group.options.find(o => o.value === sniperUniverseFilter);
+      if (found) return found.label;
+    }
+    return 'All Stocks';
+  }
+
   function selectSniperCap(cap) {
     sniperMarketCapFilter = sniperMarketCapFilter === cap ? '' : cap;
     renderSniperScanner();
@@ -387,17 +441,17 @@
     sniperScanKind = kind;
     renderSniperScanner();
   }
+  function sniperPassesStrategy(s, kind) {
+    if (kind === 'volumeBreakout') return s.breakoutStructure && s.rvolAvailable && Number(s.rvol) >= sniperSettings.minVolumeRatio && Number(s.pctChange) >= sniperSettings.minPriceChangePct;
+    if (kind === 'fresh52wHigh') return s.high52w !== null && Number(s.price) >= Number(s.high52w) * (1 - sniperSettings.nearHighPct / 100) && s.rvolAvailable && Number(s.rvol) >= sniperSettings.highVolumeRatio && Number(s.pctChange) >= sniperSettings.minPriceChangePct;
+    if (kind === 'ipoListingHigh') return Boolean(s.ipoRecentCrossProxy);
+    if (kind === 'trendTemplate') return Number(s.trendTemplateAvailable) === 8 && Number(s.trendTemplateScore) >= sniperSettings.minTrendScore;
+    if (kind === 'chartPatterns') return Array.isArray(s.patterns) && s.patterns.length > 0;
+    if (kind === 'mtfConfluence') return Boolean(s.mtfBullish || s.mtfBearish);
+    return false;
+  }
   function getSniperMatches(kind) {
-    const rows = Array.isArray(sniperScannerData?.stocks) ? sniperScannerData.stocks : [];
-    let matches = rows.filter(s => {
-      if (kind === 'volumeBreakout') return s.breakoutStructure && s.rvolAvailable && Number(s.rvol) >= sniperSettings.minVolumeRatio && Number(s.pctChange) >= sniperSettings.minPriceChangePct;
-      if (kind === 'fresh52wHigh') return s.high52w !== null && Number(s.price) >= Number(s.high52w) * (1 - sniperSettings.nearHighPct / 100) && s.rvolAvailable && Number(s.rvol) >= sniperSettings.highVolumeRatio && Number(s.pctChange) >= sniperSettings.minPriceChangePct;
-      if (kind === 'ipoListingHigh') return Boolean(s.ipoRecentCrossProxy);
-      if (kind === 'trendTemplate') return Number(s.trendTemplateAvailable) === 8 && Number(s.trendTemplateScore) >= sniperSettings.minTrendScore;
-      if (kind === 'chartPatterns') return Array.isArray(s.patterns) && s.patterns.length > 0;
-      if (kind === 'mtfConfluence') return Boolean(s.mtfBullish || s.mtfBearish);
-      return false;
-    });
+    let matches = getSniperUniverseRows().filter(s => sniperPassesStrategy(s, kind));
     if (sniperMarketCapFilter) {
       if (!sniperScannerData?.marketCapDataAvailable) return [];
       matches = matches.filter(s => s.marketCapBucket === sniperMarketCapFilter);
@@ -431,6 +485,10 @@
   function renderSniperScanner() {
     const container = document.getElementById('cards-container');
     const rows = Array.isArray(sniperScannerData?.stocks) ? sniperScannerData.stocks : [];
+    const universeRows = getSniperUniverseRows();
+    const selectedUniverseLabel = selectedSniperUniverseLabel();
+    const selectedMembership = sniperScannerData?.universeMemberships?.[sniperUniverseFilter];
+    const universeMembershipMissing = sniperUniverseFilter !== 'ALL_STOCKS' && (!Array.isArray(selectedMembership) || selectedMembership.length === 0);
     const meta = SNIPER_STRATEGIES[sniperScanKind] || SNIPER_STRATEGIES.volumeBreakout;
     const matches = getSniperMatches(sniperScanKind);
     const resultCount = matches.length;
@@ -443,15 +501,7 @@
     ];
     const capHtml = capOptions.map(c => `<button type="button" onclick="selectSniperCap('${c.value}')" class="sniper-filter border ${sniperMarketCapFilter===c.value?'active':'border-gray-700 bg-[#101b2d]'} rounded-lg p-3 text-left ${sniperMarketCapFilter===c.value?'':'hover:border-sky-700'}"><span class="block font-bold ${c.accent}">${c.name}</span><span class="block text-xs text-gray-400 mt-1">${c.range}</span><span class="block text-[10px] text-gray-500 mt-1">${sniperScannerData?.marketCapDataAvailable ? 'Apply filter' : 'Metadata unavailable'}</span></button>`).join('');
     const strategies = Object.entries(SNIPER_STRATEGIES).map(([key, strategy]) => {
-      const kindCount = rows.filter(s => {
-        if (key==='volumeBreakout') return s.breakoutStructure && s.rvolAvailable && Number(s.rvol)>=sniperSettings.minVolumeRatio && Number(s.pctChange)>=sniperSettings.minPriceChangePct;
-        if (key==='fresh52wHigh') return s.high52w!==null && Number(s.price)>=Number(s.high52w)*(1-sniperSettings.nearHighPct/100) && s.rvolAvailable && Number(s.rvol)>=sniperSettings.highVolumeRatio && Number(s.pctChange)>=sniperSettings.minPriceChangePct;
-        if (key==='ipoListingHigh') return Boolean(s.ipoRecentCrossProxy);
-        if (key==='trendTemplate') return Number(s.trendTemplateAvailable)===8 && Number(s.trendTemplateScore)>=sniperSettings.minTrendScore;
-        if (key==='chartPatterns') return Array.isArray(s.patterns) && s.patterns.length>0;
-        if (key==='mtfConfluence') return Boolean(s.mtfBullish||s.mtfBearish);
-        return false;
-      }).length;
+      const kindCount = getSniperMatches(key).length;
       const isSelected = sniperScanKind===key;
       const customize = sniperCustomizeOpen===key;
       const customPanel = customize ? `<div class="rounded-lg border border-gray-700 bg-black/20 p-2 mt-2 grid grid-cols-2 gap-2 text-xs">${key==='volumeBreakout'?`<label class="text-gray-300">Min same-time RVOL<input id="sniper-min-rvol" type="number" step="0.1" min="0.1" max="20" value="${sniperSettings.minVolumeRatio}" class="block w-full mt-1 rounded bg-gray-900 border border-gray-700 p-2 text-white" /></label><label class="text-gray-300">Min price change %<input id="sniper-min-change" type="number" step="0.1" min="-20" max="100" value="${sniperSettings.minPriceChangePct}" class="block w-full mt-1 rounded bg-gray-900 border border-gray-700 p-2 text-white" /></label>`:''}${key==='fresh52wHigh'?`<label class="text-gray-300">Max distance below high %<input id="sniper-near-high" type="number" step="0.1" min="0.1" max="15" value="${sniperSettings.nearHighPct}" class="block w-full mt-1 rounded bg-gray-900 border border-gray-700 p-2 text-white" /></label><label class="text-gray-300">Min same-time RVOL<input id="sniper-high-rvol" type="number" step="0.1" min="0.1" max="20" value="${sniperSettings.highVolumeRatio}" class="block w-full mt-1 rounded bg-gray-900 border border-gray-700 p-2 text-white" /></label>`:''}${key==='trendTemplate'?`<label class="text-gray-300 col-span-2">Minimum score (6–8 of 8)<input id="sniper-trend-score" type="number" min="1" max="8" step="1" value="${sniperSettings.minTrendScore}" class="block w-full mt-1 rounded bg-gray-900 border border-gray-700 p-2 text-white" /></label>`:''}<div class="col-span-2 flex gap-2"><button type="button" onclick="runSniperScan('${key}')" class="rounded bg-emerald-700 hover:bg-emerald-600 px-3 py-2 font-bold text-white">Apply & scan</button><button type="button" onclick="toggleSniperCustomize('${key}')" class="rounded border border-gray-700 px-3 py-2 text-gray-300">Close</button></div></div>`:'';
@@ -462,7 +512,7 @@
     let capNotice = '';
     if (sniperMarketCapFilter && !sniperScannerData?.marketCapDataAvailable) capNotice = `<div class="rounded-lg border border-rose-800 bg-rose-950/30 p-3 text-xs text-rose-200">No scan result is shown because ${escapeHTML(sniperMarketCapFilter)} cannot be verified from the current data. Clear the cap filter to scan without inventing market-cap labels.</div>`;
     const resultBody = !sniperScannerData ? `<div class="rounded-lg border border-gray-800 p-5 text-sm text-gray-400">This project’s current data.json does not contain Sniper Scanner metrics yet. Run the updated Python scanner once, then refresh this page.</div>` : resultCount ? `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">${matches.slice(0,60).map(s=>renderSniperResultCard(s,sniperScanKind)).join('')}</div>${resultCount>60?`<p class="text-xs text-gray-500">Showing first 60 of ${resultCount} matching symbols.</p>`:''}` : `<div class="rounded-lg border border-gray-800 bg-[#101722] p-5 text-sm text-gray-400">No symbols match the selected strategy in the current snapshot. This is valid: the scanner will not force a setup. Check data freshness, then run the next scheduled GitHub scan.</div>`;
-    container.innerHTML = `<section class="col-span-full space-y-4"><div class="rounded-xl border border-emerald-900/80 bg-gradient-to-br from-emerald-950/30 to-[#101722] p-4"><div class="flex flex-wrap items-center justify-between gap-3"><span class="px-3 py-1.5 rounded-lg bg-emerald-900/60 border border-emerald-700 text-emerald-200 font-extrabold text-xs">🎯 SNIPER MODE · RESEARCH SCREENER</span><span class="text-[10px] ${Number(sniperScannerData?.freshRecordCount||0)>0?'text-emerald-300':'text-amber-300'}">${Number(sniperScannerData?.freshRecordCount||0)} source-fresh / ${Number(sniperScannerData?.stockCount||0)} symbols</span></div><h2 class="text-2xl md:text-3xl font-extrabold mt-4">Ready to Find High-Probability Setups</h2><p class="text-sm text-gray-300 leading-relaxed mt-2"><span class="text-emerald-300 font-semibold">Sniper Mode</span> screens existing ORION snapshots for strong trends, breakouts and daily/weekly alignment. It is a research checklist—not a probability guarantee, broker integration or order-execution system.</p><div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4"><div class="rounded-lg border border-gray-800 bg-black/20 p-3"><h3 class="font-bold text-sm mb-2">What You’ll Get</h3><ul class="space-y-2 text-xs text-gray-300"><li>✓ 8-point daily trend template (SMA50/150/200 and 52-week position)</li><li>✓ VCP, Cup & Handle, Bull Flag and Flat Base heuristic flags</li><li>✓ Daily + weekly trend confluence</li><li>✓ Reference trigger, 0.5 ATR stop and 1R/2R levels when computable</li><li>✓ Volume Breakout, Fresh 52W High and provisional IPO-reference screens</li></ul></div><div class="rounded-lg border border-gray-800 bg-black/20 p-3"><h3 class="font-bold text-sm mb-2">Snapshot details</h3><div class="text-xs text-gray-300 space-y-1"><div>Updated: <b>${escapeHTML(dateText)}</b></div><div>Rows available: <b>${rows.length}</b></div><div>Market-cap feed: <b class="${sniperScannerData?.marketCapDataAvailable?'text-emerald-300':'text-amber-300'}">${sniperScannerData?.marketCapDataAvailable?'Present for some symbols':'Not available'}</b></div><div>Refresh: <b>Runs when data.json refreshes</b></div></div><div class="grid grid-cols-2 gap-2 mt-3"><label class="text-[10px] text-gray-400">Capital (₹)<input id="sniper-capital" inputmode="decimal" type="number" min="1" step="1000" placeholder="Enter capital" value="${escapeHTML(sniperSettings.capital)}" class="block mt-1 w-full rounded bg-gray-900 border border-gray-700 p-2 text-white text-xs" /></label><label class="text-[10px] text-gray-400">Max risk per trade (%)<input id="sniper-risk-pct" inputmode="decimal" type="number" min="0.01" max="10" step="0.1" placeholder="e.g. 0.5" value="${escapeHTML(sniperSettings.riskPct)}" class="block mt-1 w-full rounded bg-gray-900 border border-gray-700 p-2 text-white text-xs" /></label></div><p class="text-[10px] text-gray-500 mt-2">${escapeHTML(sniperScannerData?.volumeRatioNote || 'RVOL is time-of-day matched to available recent sessions; it is not a 20-day cumulative volume ratio.')}</p></div></div></div><div class="rounded-xl border border-gray-800 bg-[#101722] p-3"><div class="flex items-center justify-between gap-2 mb-3"><h2 class="font-bold">Market Cap Filters</h2><button type="button" onclick="selectSniperCap('')" class="text-[10px] text-sky-300">Clear filter</button></div><div class="grid grid-cols-2 md:grid-cols-4 gap-2">${capHtml}</div>${marketCapWarning}<p class="text-[10px] text-gray-500 mt-2">Ranges mirror the reference design: Large ≥ ₹20,000 Cr; Mid ₹5,000–20,000 Cr; Small ₹500–5,000 Cr; Micro &lt; ₹500 Cr. These filters only operate when reliable market-cap metadata exists.</p></div><div><div class="flex flex-wrap items-center justify-between gap-2 mb-2"><h2 class="font-bold">Scanning Strategies</h2><span class="text-[10px] text-gray-500">Tap Run Scan to filter the latest downloaded snapshot</span></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-3">${strategies}</div></div><div class="rounded-xl border border-gray-800 bg-[#101722] p-3"><div class="flex flex-wrap items-center justify-between gap-2 mb-3"><div><h2 class="font-extrabold">${escapeHTML(meta.title)} · Results</h2><p class="text-[10px] text-gray-500 mt-1">${resultCount} match(es) · snapshot ${escapeHTML(sniperScannerData?.sessionDate || 'unavailable')}</p></div><span class="text-[10px] text-gray-500">${sniperMarketCapFilter?escapeHTML(sniperMarketCapFilter):'All market caps (unfiltered)'}</span></div>${capNotice}${resultBody}</div><div class="rounded-lg border border-sky-900 bg-sky-950/25 p-3 text-xs text-sky-100"><b>Risk / integration note:</b> entry levels are formula-based references only. The current feed doesn’t include verified listing-day metadata or reliable market-cap values, and the static GitHub Pages frontend has no broker authentication. Zerodha order execution is not connected; do not paste broker keys into this website.</div></section>`;
+    container.innerHTML = `<section class="col-span-full space-y-4"><div class="rounded-xl border border-emerald-900/80 bg-gradient-to-br from-emerald-950/30 to-[#101722] p-4"><div class="flex flex-wrap items-center justify-between gap-3"><span class="px-3 py-1.5 rounded-lg bg-emerald-900/60 border border-emerald-700 text-emerald-200 font-extrabold text-xs">🎯 SNIPER MODE · RESEARCH SCREENER</span><span class="text-[10px] ${Number(sniperScannerData?.freshRecordCount||0)>0?'text-emerald-300':'text-amber-300'}">${Number(sniperScannerData?.freshRecordCount||0)} source-fresh / ${Number(sniperScannerData?.stockCount||0)} symbols</span></div><h2 class="text-2xl md:text-3xl font-extrabold mt-4">Ready to Find High-Probability Setups</h2><p class="text-sm text-gray-300 leading-relaxed mt-2"><span class="text-emerald-300 font-semibold">Sniper Mode</span> screens existing ORION snapshots for strong trends, breakouts and daily/weekly alignment. It is a research checklist—not a probability guarantee, broker integration or order-execution system.</p><div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4"><div class="rounded-lg border border-gray-800 bg-black/20 p-3"><h3 class="font-bold text-sm mb-2">What You’ll Get</h3><ul class="space-y-2 text-xs text-gray-300"><li>✓ 8-point daily trend template (SMA50/150/200 and 52-week position)</li><li>✓ VCP, Cup & Handle, Bull Flag and Flat Base heuristic flags</li><li>✓ Daily + weekly trend confluence</li><li>✓ Reference trigger, 0.5 ATR stop and 1R/2R levels when computable</li><li>✓ Volume Breakout, Fresh 52W High and provisional IPO-reference screens</li></ul></div><div class="rounded-lg border border-gray-800 bg-black/20 p-3"><h3 class="font-bold text-sm mb-2">Snapshot details</h3><div class="text-xs text-gray-300 space-y-1"><div>Updated: <b>${escapeHTML(dateText)}</b></div><div>Rows available: <b>${rows.length}</b></div><div>Market-cap feed: <b class="${sniperScannerData?.marketCapDataAvailable?'text-emerald-300':'text-amber-300'}">${sniperScannerData?.marketCapDataAvailable?'Present for some symbols':'Not available'}</b></div><div>Refresh: <b>Runs when data.json refreshes</b></div></div><div class="grid grid-cols-2 gap-2 mt-3"><label class="text-[10px] text-gray-400">Capital (₹)<input id="sniper-capital" inputmode="decimal" type="number" min="1" step="1000" placeholder="Enter capital" value="${escapeHTML(sniperSettings.capital)}" class="block mt-1 w-full rounded bg-gray-900 border border-gray-700 p-2 text-white text-xs" /></label><label class="text-[10px] text-gray-400">Max risk per trade (%)<input id="sniper-risk-pct" inputmode="decimal" type="number" min="0.01" max="10" step="0.1" placeholder="e.g. 0.5" value="${escapeHTML(sniperSettings.riskPct)}" class="block mt-1 w-full rounded bg-gray-900 border border-gray-700 p-2 text-white text-xs" /></label></div><p class="text-[10px] text-gray-500 mt-2">${escapeHTML(sniperScannerData?.volumeRatioNote || 'RVOL is time-of-day matched to available recent sessions; it is not a 20-day cumulative volume ratio.')}</p></div></div></div><div class="rounded-xl border border-sky-900 bg-[#101722] p-3"><div class="flex flex-wrap items-center justify-between gap-2 mb-2"><div><h2 class="font-bold">Stock Universe / Sector Selection</h2><p class="text-[10px] text-gray-500 mt-1">Filter only Sniper Scanner results; other ORION tabs are unchanged.</p></div><span class="text-[10px] text-sky-200">${universeRows.length} matching symbols</span></div><label for="sniper-universe-select" class="block text-xs text-gray-300 mb-1">Choose index or sector</label><select id="sniper-universe-select" onchange="selectSniperUniverse(this.value)" class="w-full rounded-lg border border-gray-700 bg-gray-900 text-gray-100 p-3 text-sm"><option value="ALL_STOCKS" ${sniperUniverseFilter==='ALL_STOCKS'?'selected':''}>All Stocks</option>${SNIPER_UNIVERSE_GROUPS.map(group=>`<optgroup label="${escapeHTML(group.label)}">${group.options.map(option=>`<option value="${escapeHTML(option.value)}" ${sniperUniverseFilter===option.value?'selected':''}>${escapeHTML(option.label)}</option>`).join('')}</optgroup>`).join('')}</select><p class="text-[10px] text-gray-400 mt-2">${escapeHTML(sniperUniverseFilter==='ALL_STOCKS' ? (sniperScannerData?.universeMembershipNote || 'All scanned stocks are included.') : (sniperScannerData?.universeMembershipSources?.[sniperUniverseFilter] || 'Membership list has not been generated yet. Run the updated scanner workflow to refresh it.'))}</p>${universeMembershipMissing?`<div class="mt-2 rounded border border-amber-800 bg-amber-950/30 p-2 text-xs text-amber-200">Membership data for ${escapeHTML(selectedUniverseLabel)} is unavailable in this snapshot. No approximate membership has been substituted. Run the updated GitHub scan when network access is available.</div>`:''}</div><div class="rounded-xl border border-gray-800 bg-[#101722] p-3"><div class="flex items-center justify-between gap-2 mb-3"><h2 class="font-bold">Market Cap Filters</h2><button type="button" onclick="selectSniperCap('')" class="text-[10px] text-sky-300">Clear filter</button></div><div class="grid grid-cols-2 md:grid-cols-4 gap-2">${capHtml}</div>${marketCapWarning}<p class="text-[10px] text-gray-500 mt-2">Ranges mirror the reference design: Large ≥ ₹20,000 Cr; Mid ₹5,000–20,000 Cr; Small ₹500–5,000 Cr; Micro &lt; ₹500 Cr. These filters only operate when reliable market-cap metadata exists.</p></div><div><div class="flex flex-wrap items-center justify-between gap-2 mb-2"><h2 class="font-bold">Scanning Strategies</h2><span class="text-[10px] text-gray-500">Tap Run Scan to filter the latest downloaded snapshot</span></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-3">${strategies}</div></div><div class="rounded-xl border border-gray-800 bg-[#101722] p-3"><div class="flex flex-wrap items-center justify-between gap-2 mb-3"><div><h2 class="font-extrabold">${escapeHTML(meta.title)} · Results</h2><p class="text-[10px] text-gray-500 mt-1">${resultCount} match(es) · ${escapeHTML(selectedUniverseLabel)} · snapshot ${escapeHTML(sniperScannerData?.sessionDate || 'unavailable')}</p></div><span class="text-[10px] text-gray-500">${sniperMarketCapFilter?escapeHTML(sniperMarketCapFilter):'All market caps (unfiltered)'}</span></div>${capNotice}${resultBody}</div><div class="rounded-lg border border-sky-900 bg-sky-950/25 p-3 text-xs text-sky-100"><b>Risk / integration note:</b> entry levels are formula-based references only. The current feed doesn’t include verified listing-day metadata or reliable market-cap values, and the static GitHub Pages frontend has no broker authentication. Zerodha order execution is not connected; do not paste broker keys into this website.</div></section>`;
   }
 
   function renderConvictionBar(score, total) {
